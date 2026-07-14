@@ -8,10 +8,8 @@ import java.util.concurrent.TimeUnit
 
 //单例模式保证单一
 object RetrofitClient{
-
     //固定的开头请求
     private const val BASE_URL = "https://music.generalsio.top/"
-
     private val okHttpClient: OkHttpClient by lazy {
         //日志拦截器
         val loggingInterceptor = HttpLoggingInterceptor().apply {

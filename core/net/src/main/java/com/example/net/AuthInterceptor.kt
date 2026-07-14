@@ -7,16 +7,13 @@ import okhttp3.Response
 class AuthInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-
         //根据文档来看好像是 os=pc
         val cookie = "os=pc"
-
         //构造一个新的请求，把Cookie塞进Header里
         val requestBuilder = originalRequest.newBuilder()
         if (cookie.isNotEmpty()) {
             requestBuilder.addHeader("Cookie", cookie)
         }
-
         //继续执行带有Header的新请求
         return chain.proceed(requestBuilder.build())
     }

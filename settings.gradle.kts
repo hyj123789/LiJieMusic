@@ -26,3 +26,5 @@ rootProject.name = "LiJieMusic"
 include(":app")
 include(":core:util")
 include(":core:net")
+include(":feature:player")
+include(":core:therouter")
