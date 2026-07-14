@@ -1,0 +1,13 @@
+*.iml
+.gradle
+/local.properties
+
+#这里改了配置了忽略全部的idea
+.idea/
+
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
