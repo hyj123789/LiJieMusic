@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "LiJieMusic"
 include(":app")
+include(":core:util")
 include(":core:net")
