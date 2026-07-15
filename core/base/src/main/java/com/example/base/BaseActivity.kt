@@ -29,12 +29,14 @@ abstract class BaseActivity<VB : ViewBinding>(
 
         //执行子类的初始化
         initView()
-        observeData()
+        initEvent()
+        initObservers()
     }
 
-    abstract fun observeData()
+    open fun initView(){}
+    open fun initEvent(){}
 
-    abstract fun initView()
+    open fun initObservers() {}
 
     private fun setupImmersiveStatusBar(){
         // 让内容顶到状态栏下面

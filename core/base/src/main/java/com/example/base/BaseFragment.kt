@@ -36,15 +36,17 @@ abstract class BaseFragment<VB : ViewBinding>(
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
                 super.onViewCreated(view, savedInstanceState)
             //调用初始化的两个重写函数
-                initView()
-                observeData()
+            initView()
+            initEvent()
+            initObservers()
         }
 
        //子类需要实现的方法，去初始化ui
-        abstract fun initView()
+        open fun initView() {}
+        open fun initEvent() {}
 
        //选择性重写这个方法，用这个去监听ViewModel的数据的变化
-        open fun observeData() {}
+        open fun initObservers() {}
 
         override fun onDestroyView() {
                 super.onDestroyView()
