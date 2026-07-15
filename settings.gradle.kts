@@ -24,7 +24,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "LiJieMusic"
 include(":app")
-include(":core:util")
 include(":core:net")
+include(":core:base")
+include(":core:util")
 include(":feature:player")
 include(":core:therouter")
