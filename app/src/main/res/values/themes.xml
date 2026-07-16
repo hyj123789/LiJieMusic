@@ -6,4 +6,14 @@
     </style>
 
     <style name="Theme.LiJieMusic" parent="Base.Theme.LiJieMusic" />
+
+    <style name="BottomNavTextNormal">
+        <item name="android:textSize">16sp</item> <!-- 默认稍微小一点 -->
+        <item name="android:textStyle">normal</item> <!-- 正常粗细 -->
+    </style>
+
+    <style name="BottomNavTextActive">
+        <item name="android:textSize">18sp</item> <!-- 选中时稍微变大，产生动态效果 -->
+        <item name="android:textStyle">bold</item> <!-- 选中时字体加粗！ -->
+    </style>
 </resources>

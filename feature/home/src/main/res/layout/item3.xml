@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 🌟 1. 根布局优化：加上了下边距和右边距，告别拥挤 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:layout_marginEnd="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp">
+
+    <ImageView
+        android:id="@+id/img3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="#EAEAEA"/>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/singer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:text="歌手"/>
+
+    <TextView
+    android:id="@+id/sing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="#999999"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:text="歌名"/>
+        </LinearLayout>
+
+    <View
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_weight="1"/>
+
+    <ImageView
+    android:layout_width="28dp"
+    android:layout_height="28dp"
+    android:layout_marginEnd="8dp"
+    android:src="@drawable/play"
+    app:tint="#999999" />
+
+    </LinearLayout>

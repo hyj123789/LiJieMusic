@@ -1,12 +1,18 @@
 package com.example.lijiemusic
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -15,6 +21,19 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        val layoutMiniPlayer = findViewById<ConstraintLayout>(R.id.layout_mini_player)
+
+
+        layoutMiniPlayer.setOnClickListener {
+
+            Toast.makeText(this, "准备弹出全屏播放页面！", Toast.LENGTH_SHORT).show()
         }
     }
 }

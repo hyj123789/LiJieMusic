@@ -40,6 +40,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.material)
 
     // TheRouter
@@ -53,4 +55,5 @@ dependencies {
     implementation(project(":core:net"))
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
+    implementation(project(":feature:home"))
 }
