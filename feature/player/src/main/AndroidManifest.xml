@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+    <!-- 网络权限：播放在线音频必须 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Android 13+ 通知权限：显示通知栏播放控制必须 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Android 9+ 前台服务权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <application
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <!--
+            MusicService：后台音乐播放服务
+            - exported=true：允许其他 App（如 Android Auto）连接
+            - foregroundServiceType=mediaPlayback：声明这是媒体播放类型的服务
+            - intent-filter：让系统知道这个服务处理 MediaSession 连接
+        -->
+        <service
+            android:name=".MusicService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

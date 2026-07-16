@@ -27,6 +27,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
@@ -34,6 +35,26 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    implementation(libs.retrofit)
+
+    // Lifecycle (ViewModel + LiveData)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Gson (JSON 解析)
+    implementation(libs.gson)
+
+    // Guava (ListenableFuture for MediaController)
+    implementation("com.google.guava:guava:33.0.0-android")
+
+    // Media3 (ExoPlayer)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
+    implementation(libs.media3.ui)
 
     implementation(project(":core:base"))
     implementation(project(":core:net"))
