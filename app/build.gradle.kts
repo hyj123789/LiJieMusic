@@ -56,4 +56,5 @@ dependencies {
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:search"))
 }

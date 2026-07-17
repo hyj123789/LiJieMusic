@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
+import com.example.util.ToastUtil
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         layoutMiniPlayer.setOnClickListener {
 
-            Toast.makeText(this, "准备弹出全屏播放页面！", Toast.LENGTH_SHORT).show()
+            ToastUtil.popToastLong("测试",this)
         }
     }
 }

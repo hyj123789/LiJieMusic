@@ -1,11 +1,10 @@
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.example.home"
+    namespace = "com.example.search"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -21,17 +20,24 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    //开启viewBinding
+
     viewBinding{
         enable = true
     }
 
-
 }
 
 dependencies {
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit)
+
     //导入base
     implementation(project(":core:base"))
+    implementation(project(":core:net"))
 
     //viewmodel
     implementation(libs.lifecycle.viewmodel.ktx)
@@ -41,17 +47,6 @@ dependencies {
     //协称
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.material)
-    implementation(libs.transportation.consumer)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-
-    implementation(project(":core:net"))
-    implementation(project(":core:therouter"))
 
     //导入therouter
     implementation(libs.therouter.router)
@@ -64,8 +59,8 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
 
+    implementation (libs.glide)
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-
-    implementation (libs.glide)
 }

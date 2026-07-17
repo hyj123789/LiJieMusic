@@ -1,10 +1,13 @@
 package com.example.home
 
 import RV4Adapter
+import android.net.Uri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.BaseFragment
@@ -62,6 +65,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         //使唤ViewModel去请求数据
         viewModel.fetchRecommendPlaylists()
+
+        binding.imgtosearch.setOnClickListener {
+
+            //对于这个暗号进行访问
+            val request = NavDeepLinkRequest.Builder
+                .fromUri(Uri.parse("musicapp://search_page"))
+                .build()
+
+            findNavController().navigate(request)
+
+        }
     }
 
      override fun initObservers() {
