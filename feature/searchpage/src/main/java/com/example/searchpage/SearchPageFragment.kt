@@ -44,7 +44,7 @@ class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearc
         lifecycleScope.launch {
             viewModel.playListFlow.collect { playlists ->
                 if (playlists.isNotEmpty()) {
-                    Adapter.setData(playlists)
+                    Adapter.submitList(playlists)
                 }
             }
         }
