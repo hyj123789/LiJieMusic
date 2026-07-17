@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.ScanFragment">
+
+    <!-- ========== 顶部标题 ========== -->
+    <TextView
+        android:id="@+id/tv_scan_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="扫码登录"
+        android:textColor="@color/text_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- ========== 二维码状态文字 ========== -->
+    <TextView
+        android:id="@+id/tv_code_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="获取二维码中"
+        android:textColor="@color/text_secondary"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_scan_title" />
+
+    <!-- ========== 二维码卡片容器 ========== -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_qrcode"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_code_status">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <!-- 二维码图片 -->
+            <ImageView
+                android:id="@+id/iv_code"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="二维码"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- 扫描框四角装饰（复用同一 drawable，旋转即可） -->
+            <View
+                android:id="@+id/v_corner_tl"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/bg_scan_corner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/v_corner_tr"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/bg_scan_corner"
+                android:rotation="90"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/v_corner_bl"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/bg_scan_corner"
+                android:rotation="270"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <View
+                android:id="@+id/v_corner_br"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/bg_scan_corner"
+                android:rotation="180"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- ========== 底部说明文字 ========== -->
+    <TextView
+        android:id="@+id/tv_scan_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:letterSpacing="0.02"
+        android:lineSpacingExtra="6dp"
+        android:text="使用网易云音乐 App\n或微信「扫一扫」登录"
+        android:textAlignment="center"
+        android:textColor="@color/text_tertiary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_qrcode" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

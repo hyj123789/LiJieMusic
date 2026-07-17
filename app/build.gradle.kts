@@ -11,6 +11,9 @@ android {
             minorApiLevel = 1
         }
     }
+    buildFeatures{
+        viewBinding=true
+    }
 
     defaultConfig {
         applicationId = "com.example.lijiemusic"
@@ -56,6 +59,6 @@ dependencies {
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
     implementation(project(":feature:home"))
-    implementation(project(":feature:search"))
+    implementation(project(":feature:login"))
     implementation(project(":feature:searchpage"))
 }
