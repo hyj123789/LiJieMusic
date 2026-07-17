@@ -106,7 +106,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 viewModel.hotSearchFlow
                     .onEach { realData ->
                         if (realData.isNotEmpty()) {
-                            HotsearcgAdapter.setData(realData)
+                            HotsearcgAdapter.submitList(realData)
                         }
                     }
                     .launchIn(this)
@@ -115,7 +115,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 viewModel.GuessFlow
                     .onEach { realData ->
                         if (realData.isNotEmpty()) {
-                            guessAdapter.setData(realData)
+                            guessAdapter.submitList(realData)
                         }
                     }
                     .launchIn(this)
@@ -124,7 +124,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 viewModel.SearchFlow
                     .onEach { realData ->
                         if (realData.isNotEmpty()) {
-                            SearchResultAdapter.setData(realData)
+                            SearchResultAdapter.submitList(realData);
                         }
                     }
                     .launchIn(this)

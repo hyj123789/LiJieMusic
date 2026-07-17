@@ -88,7 +88,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                      .onEach { realData ->
                          //只要数据不是空的就给Rv1的Apdater配置数据
                          if (realData.isNotEmpty()) {
-                             RV1Adapter.setData(realData)
+                             RV1Adapter.submitList(realData)
                          }
                      }
                      .launchIn(this) //把任务交给当前repeatOnLifecycle所在的协程去后台跑
@@ -96,7 +96,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                  viewModel.playlistFlow2
                      .onEach { realData ->
                          if (realData.isNotEmpty()) {
-                             RV2Adapter.setData(realData)
+                             RV2Adapter.submitList(realData)
                          }
                      }
                      .launchIn(this)
@@ -104,7 +104,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                  viewModel.playlistFlow3
                      .onEach { realData ->
                          if (realData.isNotEmpty()) {
-                             Rv3Adapte.setData(realData)
+                             Rv3Adapte.submitList(realData)
                          }
                      }
                      .launchIn(this)
@@ -112,7 +112,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                  viewModel.playlistFlow4
                      .onEach { realData ->
                          if (realData.isNotEmpty()) {
-                             RV4Adapter.setData(realData)
+                             RV4Adapter.submitList(realData)
                          }
                      }
                      .launchIn(this)

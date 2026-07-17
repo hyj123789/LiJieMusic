@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class PlaylistAdapter(
-    private val dataList: MutableList<PlaylistItem> = mutableListOf()
-) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
+class PlaylistAdapter : ListAdapter<PlaylistItem, PlaylistAdapter.ViewHolder>(PlaylistDiffCallback()) {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivCover: ImageView = itemView.findViewById(R.id.img)
@@ -27,10 +27,9 @@ class PlaylistAdapter(
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = dataList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val playlist = dataList[position]
+        val playlist = getItem(position)
 
         //取第一个tag作为主标题
         val mainTag = playlist.tags?.firstOrNull() ?: "精选推荐"
@@ -42,13 +41,17 @@ class PlaylistAdapter(
         Glide.with(holder.itemView.context)
             .load(playlist.coverImgUrl)
             .into(holder.ivCover)
-
     }
 
-    fun setData(newList: List<PlaylistItem>) {
-        dataList.clear()
-        dataList.addAll(newList)
-        notifyDataSetChanged()
+    class PlaylistDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
+
+        override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
+            return oldItem == newItem
+        }
     }
 
 }
