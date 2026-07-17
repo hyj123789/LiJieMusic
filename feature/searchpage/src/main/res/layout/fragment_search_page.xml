@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".SearchPageFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="16dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#F5F5F8"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/liebiao"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="14dp"
+                android:src="@drawable/liebiao"
+                app:tint="#333333" />
+
+            <TextView
+                android:id="@+id/tv_fake_search"
+                android:layout_width="0dp"
+                android:layout_weight="@integer/material_motion_duration_long_1"
+                android:layout_height="40dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/searchkuang"
+                android:drawableStart="@drawable/baseline_search_24"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:text="搜索你喜欢的歌曲..."
+                android:textColor="#999999"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/shiqu"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="14dp"
+                android:src="@drawable/shiqu"
+                app:tint="#333333" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_hot_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/rank"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:text="排行榜"
+                    android:textColor="#333333"
+                    android:textSize="13sp" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/singer"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:text="歌手"
+                    android:textColor="#333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/qufeng"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:text="曲风"
+                    android:textColor="#333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/newsing"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:text="新碟新歌"
+                    android:textColor="#333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/listenbook"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:text="听书"
+                    android:textColor="#333333"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvgedan"
+                android:paddingTop="16dp"
+                android:paddingHorizontal="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

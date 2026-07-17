@@ -27,5 +27,10 @@
             app:destination="@id/fragment_home" />
     </fragment>
 
+    <fragment
+        android:id="@+id/fragment_search"
+        android:name="com.example.searchpage.SearchPageFragment"
+        android:label="SearchPageFragment" />
+
 
 </navigation>
