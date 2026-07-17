@@ -55,8 +55,9 @@ dependencies {
 
     implementation(project(":core:base"))
     implementation(project(":core:net"))
-    implementation(project(":core:therouter"))
     implementation(project(":core:util"))
+    implementation(project(":core:therouter"))
+    implementation(project(":core:model"))
     implementation(libs.therouter.router)       // 运行时
     ksp(libs.therouter.apt)                     // 注解处理器
 }

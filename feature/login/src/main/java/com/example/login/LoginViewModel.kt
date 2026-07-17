@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.login.model.GetQrKeyRes
+import com.example.model.UserManager
 import com.example.net.CookieManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.example.net.RetrofitClient
@@ -34,10 +35,14 @@ class LoginViewModel : ViewModel() {
                 if (loginByPhone.code == 200) {
                     _toastMsg.value = "验证成功，正在登录"
                     val cookie = loginByPhone.cookie
+                    Log.d("ljh", "手机登录原始cookie: $cookie")
                     val musicU = extractMusicU(cookie)
+                    Log.d("ljh", "提取后的MUSIC_U: ${musicU ?: "null，提取失败"}")
                     if(musicU==null) return@launch
                     CookieManager.injectCookie(musicU)
+                    Log.d("ljh", "MUSIC_U已注入CookieManager")
                     _loginSuccess.value = true
+                    UserManager.profile.value=loginByPhone.profile
                 } else {
                     _toastMsg.value = loginByPhone.msg
                 }

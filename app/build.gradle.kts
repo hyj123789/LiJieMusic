@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":core:net"))
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
+    implementation(project(":core:model"))
     implementation(project(":feature:home"))
     implementation(project(":feature:login"))
     implementation(project(":feature:searchpage"))

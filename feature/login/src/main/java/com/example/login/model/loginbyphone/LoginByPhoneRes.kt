@@ -1,5 +1,5 @@
 package com.example.login.model.loginbyphone
-
+import com.example.model.Profile
 data class LoginByPhoneRes(
     val account: Account,
     val bindings: List<Binding>,

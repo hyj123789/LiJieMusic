@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.profile"
+    namespace = "com.example.model"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -20,9 +20,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures{
-        viewBinding=true
-    }
+
 }
 
 dependencies {
@@ -32,9 +30,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    implementation(project(":core:base"))
-    implementation(project(":core:net"))
-    implementation(project(":core:util"))
-    implementation(project(":core:therouter"))
-    implementation(project(":core:model"))
 }
