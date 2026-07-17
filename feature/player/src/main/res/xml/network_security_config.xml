@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 允许网易云音乐 CDN 的明文 HTTP 流量 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">m801.music.126.net</domain>
+    </domain-config>
+</network-security-config>

@@ -1,0 +1,21 @@
+package com.example.player
+
+import com.example.player.model.MusicAvailableResponse
+import com.example.player.model.SongDetailResponse
+import com.example.player.model.SongUrlResponse
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface PlayerApi {
+    @GET("/check/music")
+    suspend fun checkMusicIsAvailable(@Query("id") id: String): MusicAvailableResponse
+
+    @GET("/song/url/v1")
+    suspend fun getMusicUrl(
+        @Query("id") id: String,
+        @Query("level") level: String = "standard"
+    ): SongUrlResponse
+
+    @GET("/song/detail")
+    suspend fun getSongDetail(@Query("ids") ids: String): SongDetailResponse
+}

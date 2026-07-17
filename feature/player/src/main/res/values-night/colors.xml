@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="player_background">#1A1A1A</color>
+
+    <!-- 主文字 / 图标 -->
+    <color name="text_primary">#FFFFFF</color>
+    <!-- 次级文字 / 图标 70% -->
+    <color name="text_secondary">#B3FFFFFF</color>
+    <!-- 辅助文字 60% -->
+    <color name="text_tertiary">#99FFFFFF</color>
+
+    <!-- 主题强调色（绿） -->
+    <color name="accent_green">#1DB954</color>
+    <!-- 播放按钮图标色（绿底上） -->
+    <color name="play_icon_tint">#000000</color>
+
+    <!-- 音质标签描边 -->
+    <color name="quality_tag_stroke">#66FFFFFF</color>
+
+    <!-- 图标填充色 -->
+    <color name="icon_fill">#FFFFFF</color>
+
+    <!-- 专辑封面占位背景 -->
+    <color name="album_cover_bg">#333333</color>
+</resources>
