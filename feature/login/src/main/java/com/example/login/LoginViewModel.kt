@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     private val _loginSuccess = MutableStateFlow(false)
-    private val _toastMsg = MutableStateFlow("")
+    private val _toastMsg = MutableStateFlow<String>("")
     private val api = RetrofitClient.createApi(LoginApi::class.java)
     val loginSuccess: StateFlow<Boolean> = _loginSuccess
     val toastMsg = _toastMsg
@@ -28,6 +28,13 @@ class LoginViewModel : ViewModel() {
     fun sendCaptcha(phone: String){
         viewModelScope.launch {
             api.sentCaptcha(phone)
+        }
+    }
+
+    fun loginByGuest() {
+        viewModelScope.launch {
+            val response = api.guestLogin()
+            _toastMsg.value="游客登录中~耗时较长~~耐心等待~~~"
         }
     }
 }

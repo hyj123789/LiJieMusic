@@ -5,9 +5,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.base.BaseFragment
 import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.login.LoginViewModel
+import com.example.login.R
 import com.example.login.databinding.FragmentLoginBinding
 import com.example.util.ToastUtil
 import com.therouter.TheRouter
@@ -22,6 +24,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
         binding.btnCaptcha.setOnClickListener {
             viewModel.sendCaptcha(binding.etPhone.text.toString())
+        }
+        binding.btnLoginMail.setOnClickListener {
+            ToastUtil.popToastLong("邮箱登录暂未开放！",requireContext())
+            findNavController().navigate(R.id.action_loginFragment_to_mailFragment)
+        }
+        binding.btnLoginScan.setOnClickListener {
+            ToastUtil.popToast("跳转二维码登录界面中",requireContext())
+            findNavController().navigate(R.id.action_loginFragment_to_scanFragment)
+        }
+        binding.tvGuestLogin.setOnClickListener {
+            ToastUtil.popToastLong("游客登录中，稍慢，请等待",requireContext())
+            viewModel.loginByGuest()
         }
     }
 
