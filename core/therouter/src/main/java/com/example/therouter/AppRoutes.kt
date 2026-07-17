@@ -10,6 +10,7 @@ package com.example.lijiemusic.core.navigation
  * 4. 页面参数不拼接到路由中
  */
 object RoutePath {
+    const val MAIN_ACTIVITY = "/app/main"
     const val LOGIN_MAIN = "/login/main"
     const val HOME_MAIN = "/home/main"
     const val SEARCH_MAIN = "/search/main"
