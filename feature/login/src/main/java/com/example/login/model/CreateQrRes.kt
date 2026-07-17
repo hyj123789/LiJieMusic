@@ -5,5 +5,6 @@ data class CreateQrRes(
     val `data`: Data
 )
 data class Data(
-    val qrurl: String
+    val qrurl: String,
+    val qrimg: String
 )

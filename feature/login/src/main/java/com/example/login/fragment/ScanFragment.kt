@@ -1,60 +1,64 @@
 package com.example.login.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.base.BaseFragment
+import com.example.lijiemusic.core.navigation.RoutePath
+import com.example.login.LoginViewModel
 import com.example.login.R
+import com.example.login.databinding.FragmentScanBinding
+import com.therouter.TheRouter
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ScanFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ScanFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::inflate) {
+    private val viewModel: LoginViewModel by viewModels()
+    override fun initEvent() {
+        super.initEvent()
+        binding.btnFlush.setOnClickListener {
+            viewModel.getQrCode()
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_scan, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ScanFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ScanFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun initObservers() {
+        super.initObservers()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                launch {
+                    viewModel.loginSuccess.collect { bool ->
+                        if (bool){
+                            TheRouter.build(RoutePath.MAIN_ACTIVITY).navigation()
+                            Log.d("ljh","跳转方法执行了")
+                        }
+                    }
+                }
+                launch {
+                    viewModel.qrBitmap.collect {bitmap->
+                        if (bitmap==null) return@collect
+                        binding.ivCode.setImageBitmap(bitmap)
+                        Log.d("ljh","哟吼吼吼，加载成功")
+                    }
+                }
+                launch {
+                    viewModel.codeStatus.collect { status->
+                        binding.tvCodeStatus.text=status
+                    }
+                }
+                launch {
+                    viewModel.loginSuccess.collect { bool ->
+                        if (bool){
+                            TheRouter.build(RoutePath.MAIN_ACTIVITY).navigation()
+                        }
+                    }
                 }
             }
+        }
     }
 }

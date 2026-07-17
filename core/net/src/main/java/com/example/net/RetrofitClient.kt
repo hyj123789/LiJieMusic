@@ -21,7 +21,7 @@ object RetrofitClient{
             .readTimeout(15, TimeUnit.SECONDS)  //读取超时时间
             .writeTimeout(15, TimeUnit.SECONDS) //写入超时时间
             .addInterceptor(loggingInterceptor) //装上日志拦截器
-            .addInterceptor(AuthInterceptor())  //装上自动拦截器好接入Header
+            .cookieJar(CookieManager)
             .build()
     }
 

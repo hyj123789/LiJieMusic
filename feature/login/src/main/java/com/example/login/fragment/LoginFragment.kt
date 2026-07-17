@@ -1,5 +1,6 @@
 package com.example.login.fragment
 
+import android.content.Context
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -26,15 +27,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             viewModel.sendCaptcha(binding.etPhone.text.toString())
         }
         binding.btnLoginMail.setOnClickListener {
-            ToastUtil.popToastLong("邮箱登录暂未开放！",requireContext())
             findNavController().navigate(R.id.action_loginFragment_to_mailFragment)
         }
         binding.btnLoginScan.setOnClickListener {
-            ToastUtil.popToast("跳转二维码登录界面中",requireContext())
+            viewModel.loginByScanInPhone()
             findNavController().navigate(R.id.action_loginFragment_to_scanFragment)
         }
         binding.tvGuestLogin.setOnClickListener {
-            ToastUtil.popToastLong("游客登录中，稍慢，请等待",requireContext())
             viewModel.loginByGuest()
         }
     }
@@ -45,6 +44,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.toastMsg.collect { msg ->
+                        if (msg==null) return@collect
                         ToastUtil.popToast(msg,requireContext())
                         Log.d("ljh",msg)
                     }

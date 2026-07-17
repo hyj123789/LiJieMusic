@@ -22,7 +22,8 @@ interface LoginApi {
     @GET("/login/qr/key")
     suspend fun getQrKey() : GetQrKeyRes
     @GET("/login/qr/create")
-    suspend fun createQr(@Query("key")key: String) : CreateQrRes
+    suspend fun createQr(@Query("key")key: String,
+                         @Query("qrimg") qrimg : Boolean = true) : CreateQrRes
     @GET("/login/qr/check")
     suspend fun checkQrStatus(@Query("key") key: String) : CheckQrStatusRes
     @GET("/register/anonimous")

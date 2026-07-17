@@ -61,4 +61,5 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:login"))
     implementation(project(":feature:searchpage"))
+    implementation(project(":feature:search"))
 }

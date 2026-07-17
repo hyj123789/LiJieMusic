@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="获取二维码中"
+        android:text="点击下方按钮获取二维码"
         android:textColor="@color/text_secondary"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -122,5 +122,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cv_qrcode" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_flush"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="24dp"
+        android:text="获取或刷新二维码"
+        android:textSize="15sp"
+        app:cornerRadius="8dp"
+        app:iconGravity="start"
+        app:iconPadding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_scan_hint" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
