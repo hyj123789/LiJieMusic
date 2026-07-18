@@ -27,6 +27,7 @@ transportationConsumer = "4.1.0"
 navigationFragmentKtx = "2.9.8"
 navigationUiKtx = "2.9.8"
 glide = "4.16.0"
+media3CommonKtx = "1.10.1"
 
 [libraries]
 # AndroidX Core
@@ -91,6 +92,7 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 #glide
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

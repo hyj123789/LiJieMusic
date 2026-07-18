@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
 }
-
 android {
     namespace = "com.example.player"
     compileSdk {
@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
+    implementation(libs.transportation.consumer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
@@ -55,6 +56,12 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
     implementation(libs.media3.ui)
+
+    implementation (libs.glide)
+
+    // TheRouter
+    implementation(libs.therouter.router)
+    ksp(libs.therouter.apt)
 
     implementation(project(":core:base"))
     implementation(project(":core:net"))

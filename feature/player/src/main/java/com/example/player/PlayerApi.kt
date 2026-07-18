@@ -1,5 +1,6 @@
 package com.example.player
 
+import com.example.player.model.LyricResponse
 import com.example.player.model.MusicAvailableResponse
 import com.example.player.model.SongDetailResponse
 import com.example.player.model.SongUrlResponse
@@ -18,4 +19,7 @@ interface PlayerApi {
 
     @GET("/song/detail")
     suspend fun getSongDetail(@Query("ids") ids: String): SongDetailResponse
+
+    @GET("/lyric")
+    suspend fun getlyric(@Query("id") id: String): LyricResponse
 }

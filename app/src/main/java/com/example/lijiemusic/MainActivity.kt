@@ -1,25 +1,36 @@
 package com.example.lijiemusic
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.view.View
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseActivity
 import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.lijiemusic.databinding.ActivityMainBinding
+import com.example.player.MediaControllerHelper
+import com.example.player.PlayerViewModel
 import com.therouter.router.Route
+import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.MAIN_ACTIVITY)
 class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
+
+    //调用大播放器的viewmodel
+    private val viewModel: PlayerViewModel by viewModels()
+
+    //声明一个用来控制底层播放的 Helper
+    private var mediaControllerHelper: MediaControllerHelper? = null
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,17 +41,80 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             insets
         }
 
-
+        //navigation的相关配置
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-
         binding.bottomNavView.setupWithNavController(navController)
-        val layoutMiniPlayer = findViewById<ConstraintLayout>(R.id.layout_mini_player)
 
 
-        layoutMiniPlayer.setOnClickListener {
+
+        binding.layoutMiniPlayer.setOnClickListener {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.playerFragment)
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.playerFragment) {
+                //如果当前跳到了播放器全屏页隐藏底部的迷你播放条
+                binding.layoutMiniPlayer.visibility = View.GONE
+                //底部导航栏也一起隐藏掉
+                binding.bottomNavView.visibility = View.GONE
+            } else {
+                //如果是主页或其他页面显示迷你播放条
+                binding.layoutMiniPlayer.visibility = View.VISIBLE
+                binding.bottomNavView.visibility = View.VISIBLE
+            }
+        }
+        initMiniPlayer()
+    }
+
+    private fun initMiniPlayer() {
+
+        //初始化 Controller 并连接服务
+        mediaControllerHelper = MediaControllerHelper(this, object : MediaControllerHelper.MediaControllerListener {
+            override fun onConnected() {}
+            override fun onPlayingStateChanged(isPlaying: Boolean) {}
+            override fun onDurationChanged(duration: Long) {}
+            override fun onPositionChanged(position: Long) {}
+            override fun onMediaItemChanged(mediaItem: androidx.media3.common.MediaItem) {}
+            override fun onPlaybackEnded() {}
+        })
+        mediaControllerHelper?.connect()
+
+        //监听歌曲歌名
+        viewModel.artistName.observe(this) { name ->
+            if (name != null) {
+                binding.tvMiniSong.text = name
+            }
+        }
+
+        //监听封面
+        viewModel.coverUrl.observe(this){ cover ->
+            Glide.with(this)
+                .load(cover)
+                .transform(RoundedCorners(16)) //小封面圆角给小一点
+                .into(binding.ivMiniCover)
 
         }
+
+        //监听播放状态变化（更新播放/暂停按钮的图标）
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isPlaying.collect { isPlaying ->
+                    if (isPlaying) {
+                        binding.ivMiniPlay.setImageResource(R.drawable.play)
+                    } else {
+                        binding.ivMiniPlay.setImageResource(R.drawable.puse)
+                    }
+                }
+            }
+        }
+    }
+
+    //新增：页面销毁时，断开连接，防止内存泄漏
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaControllerHelper?.disconnect()
+        mediaControllerHelper = null
     }
 }

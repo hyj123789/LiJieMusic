@@ -3,16 +3,25 @@ package com.example.player
 import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
+import android.util.Log
+import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseFragment
+import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.player.databinding.FragmentPlayerBinding
+import com.example.player.model.LyricUtil
 import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
+import com.therouter.router.Route
+import kotlinx.coroutines.delay
 
 /**
  * 播放器 Fragment
@@ -23,14 +32,21 @@ import kotlinx.coroutines.launch
  * 3. 观察 ViewModel 状态并更新 UI
  * 4. 连接 MediaController 控制 MusicService
  */
+
+@Route(path = RoutePath.PLAYER_MAIN)
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate),
     MediaControllerHelper.MediaControllerListener {
+        //定时器
+    private var progressJob: kotlinx.coroutines.Job? = null
 
-    private val viewModel: PlayerViewModel by viewModels()
+    //让外面的小播放器也可以使用大播放器的viewmodel
+    private val viewModel: PlayerViewModel by activityViewModels()
     private var mediaControllerHelper: MediaControllerHelper? = null
 
     private val qualityOptions = arrayOf("标准", "高品质", "无损")
     private var currentQualityIndex = 0
+
+    private val lyricAdapter = LyricAdapter()
 
     /** 进度更新定时器 */
     private val handler = Handler(Looper.getMainLooper())
@@ -54,6 +70,33 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         // 初始化 MediaController 连接
         mediaControllerHelper = MediaControllerHelper(requireContext(), this)
         mediaControllerHelper?.connect()
+
+
+        // 初始化歌词的 RecyclerView
+        binding.rvLyrics.adapter = lyricAdapter
+        binding.rvLyrics.layoutManager = LinearLayoutManager(requireContext())
+
+        //点击中间区域，切换封面和歌词的显示
+        binding.flCenterContent.setOnClickListener {
+            if (binding.rvLyrics.visibility == View.VISIBLE) {
+                binding.rvLyrics.visibility = View.GONE
+                binding.ivAlbumCover.visibility = View.VISIBLE
+            } else {
+                binding.rvLyrics.visibility = View.VISIBLE
+                binding.ivAlbumCover.visibility = View.GONE
+                scrollToCurrentLyric()
+            }
+        }
+
+
+
+        val id = "2692390754"
+        // 核心测试代码：主动让 ViewModel 去请求这首测试歌曲的 URL 和 详情
+        viewModel.fetchMusicUrl(id)
+        viewModel.fetchSongDetail(id)
+        viewModel.fetchLyric(id)
+
+
     }
 
     override fun initEvent() {
@@ -140,6 +183,55 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
     }
 
     override fun initObservers() {
+
+
+
+
+        viewModel.currentSong.observe(viewLifecycleOwner) { songData ->
+            if (songData != null && !songData.url.isNullOrEmpty()) {
+                //调用ljh封装好的方法开始播放
+                mediaControllerHelper?.playSingleSong(songData.id.toString(), songData.url)
+            }
+            if (songData != null) {
+                Log.d("hyj", "拿到的歌曲URL是: ${songData.url}")
+
+                if (!songData.url.isNullOrEmpty()) {
+                    mediaControllerHelper?.playSingleSong(songData.id.toString(), songData.url)
+                } else {
+                    Log.d("hyj", "糟糕，URL是空的！没法播！")
+                }
+            }
+        }
+
+        viewModel.coverUrl.observe(viewLifecycleOwner) { url ->
+            //当网络请求成功url有值的时候，这里的代码才会被触发！
+            if (!url.isNullOrEmpty()) {
+                Glide.with(this@PlayerFragment)
+                    .load(url)
+                    .transform(RoundedCorners(30))
+                    .into(binding.ivAlbumCover)
+            } else {
+                Log.d("hyj", "播放器封面链接还是空的！")
+            }
+        }
+
+        viewModel.lyricData.observe(viewLifecycleOwner) { lrcString ->
+            if (!lrcString.isNullOrEmpty()) {
+                //不是空音乐
+                val parsedList = LyricUtil.parseLyric(lrcString)
+                lyricAdapter.submitList(parsedList)
+                startProgressTicker()
+            } else {
+                //如果是空音乐
+                lyricAdapter.submitList(emptyList())
+                stopProgressTicker()
+            }
+        }
+
+
+
+
+
         super.initObservers()
 
         // 观察播放状态
@@ -202,6 +294,49 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         )
     }
 
+
+
+    //时间引擎：利用生命周期安全的协程定时器
+// 时间引擎：利用生命周期安全的协程定时器
+    private fun startProgressTicker() {
+        progressJob?.cancel() //先停掉旧的计时器
+        progressJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (true) {
+                //每隔 200 毫秒执行一次
+                delay(200)
+
+                //获取当前播放的时间
+                val currentPos = mediaControllerHelper?.getCurrentPosition() ?: 0L
+                //获得目标行
+                val targetLine = lyricAdapter.updateTime(currentPos)
+
+                //只要拿到的不是 -1，直接在这里执行滚动！
+                if (binding.rvLyrics.visibility == View.VISIBLE && targetLine != -1) {
+
+                    // 强烈推荐用法：smoothScrollToPosition 自带丝滑的滚动动画，视觉体验满分！
+                    binding.rvLyrics.smoothScrollToPosition(targetLine)
+                }
+            }
+        }
+    }
+
+    // 让目标行滚动到屏幕最中间的一个小算法
+    // 修复后的居中算法：不再做时间判断，直接问 Adapter 当前高亮的是哪行！
+    private fun scrollToCurrentLyric() {
+        val targetLine = lyricAdapter.getCurrentLineIndex() // 拿到当前行
+
+        if (targetLine >= 0) {
+            val layoutManager = binding.rvLyrics.layoutManager as LinearLayoutManager
+            // 刚点开的时候，使用带 Offset 的方法瞬间居中，体验最好
+            layoutManager.scrollToPositionWithOffset(targetLine, binding.rvLyrics.height / 2)
+        }
+    }
+
+    private fun stopProgressTicker() {
+        progressJob?.cancel()
+    }
+
+
     /**
      * 显示音质选择对话框
      * 需要用到 context，直接放在 UI 层
@@ -239,6 +374,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         mediaControllerHelper?.disconnect()
         mediaControllerHelper = null
         handler.removeCallbacks(progressUpdater)
+        stopProgressTicker()
     }
 
     // ========== MediaControllerListener 实现 ==========

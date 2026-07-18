@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- 允许网易云音乐 CDN 的明文 HTTP 流量 -->
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">m801.music.126.net</domain>
-    </domain-config>
+    <!-- 🌟 改成 base-config，全局允许 HTTP 明文流量 -->
+    <!-- 这样不管是 m7 还是 m801，或者是别人的接口，都不会再被拦截了 -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
 </network-security-config>

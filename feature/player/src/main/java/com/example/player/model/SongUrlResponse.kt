@@ -14,7 +14,7 @@ data class SongUrlResponse(
  * 歌曲播放链接数据
  */
 data class SongUrlData(
-    val id: Int,
+    val id: Long,
     val url: String?,       // 播放链接
     val time: Int,          // 时长（毫秒）
     val code: Int
