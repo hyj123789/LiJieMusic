@@ -6,6 +6,7 @@ import com.example.login.model.GetQrKeyRes
 import com.example.login.model.GuestLoginRes
 import com.example.login.model.SendCaptchaRes
 import com.example.login.model.loginbyphone.LoginByPhoneRes
+import com.example.model.LoginStatusRes
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -28,4 +29,6 @@ interface LoginApi {
     suspend fun checkQrStatus(@Query("key") key: String) : CheckQrStatusRes
     @GET("/register/anonimous")
     suspend fun guestLogin(): GuestLoginRes
+    @GET("/login/status")
+    suspend fun getLoginStatus() : LoginStatusRes
 }

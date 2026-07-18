@@ -1,7 +1,5 @@
 package com.example.login
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -90,6 +88,7 @@ class LoginViewModel : ViewModel() {
                     _toastMsg.value = "获取二维码失败，检查网络问题"
                     return@launch
                 }
+                Log.d("ljh","key:"+qrKey)
                 val createQr = api.createQr(qrKey.data.unikey)
                 if (createQr.code != 200) {
                     _toastMsg.value = "获取二维码失败，检查网络问题"
@@ -107,10 +106,22 @@ class LoginViewModel : ViewModel() {
 
             try{
                 while (true) {
-                    var checkQrStatus = api.checkQrStatus(qrKey!!.data.unikey)
+                    val checkQrStatus = api.checkQrStatus(qrKey!!.data.unikey)
                     _codeStatus.value = checkQrStatus.message
                     Log.d("ljh", "刷新二维码状态")
-                    if(checkQrStatus.code == 803) break
+                    if(checkQrStatus.code == 803) {
+                        val cookie = checkQrStatus.cookie
+                        val musicU = extractMusicU(cookie)
+                        Log.d("ljh", "提取后的MUSIC_U: ${musicU ?: "null，提取失败"}")
+                        if(musicU==null) return@launch
+                        CookieManager.injectCookie(musicU)
+                        Log.d("ljh", "MUSIC_U已注入CookieManager")
+                        _loginSuccess.value = true
+                        val loginStatus = api.getLoginStatus()
+                        UserManager.profile.value=loginStatus.data.profile
+                        UserManager.account.value=loginStatus.data.account
+                        break
+                    }
                     delay(1000)
                 }
             }catch (e: Exception){

@@ -1,5 +1,6 @@
 package com.example.profile
 
+import com.example.model.LoginStatusRes
 import com.example.profile.model.playlist.GetPlaylistRes
 import retrofit2.http.GET
 import retrofit2.http.Query
