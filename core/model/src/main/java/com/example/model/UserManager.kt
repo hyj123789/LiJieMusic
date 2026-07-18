@@ -7,14 +7,14 @@ object UserManager {
 }
 
 data class Profile(
-    val userId: Long,           // 核心：用户ID
-    val nickname: String,       // 核心：昵称
-    val avatarUrl: String,      // 核心：头像
-    val backgroundUrl: String?, // 核心：背景图
-    val gender: Int,            // 核心：性别
-    val signature: String?,     // 核心：个性签名
-    val followed: Boolean,      // 核心：是否关注
-    val followeds: Int,         // 核心：粉丝数
-    val follows: Int,           // 核心：关注数
-    val vipType: Int            // 核心：VIP状态
+    val userId: Long,
+    val nickname: String,
+    val avatarUrl: String,
+    val backgroundUrl: String?,
+    val gender: Int,
+    val signature: String?,
+    val followed: Boolean,
+    val followeds: Int,
+    val follows: Int,
+    val vipType: Int
 )

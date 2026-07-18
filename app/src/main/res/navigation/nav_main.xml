@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_fragment_home_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_fragment_home_to_fragment_profile"
+            app:destination="@id/fragment_profile" />
 
     </fragment>
     <fragment
@@ -25,6 +28,9 @@
         <action
             android:id="@+id/action_searchFragment_to_fragment_home"
             app:destination="@id/fragment_home" />
+        <action
+            android:id="@+id/action_searchFragment_to_fragment_profile"
+            app:destination="@id/fragment_profile" />
     </fragment>
 
     <fragment
@@ -37,5 +43,17 @@
         android:name="com.example.mv.MVFragment"
         android:label="MVFragment" />
 
+    <fragment
+        android:id="@+id/fragment_profile"
+        android:name="com.example.profile.ProfileFragment"
+        android:label="我的"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_fragment_profile_to_fragment_home"
+            app:destination="@id/fragment_home" />
+        <action
+            android:id="@+id/action_fragment_profile_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
 
 </navigation>

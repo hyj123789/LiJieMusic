@@ -15,7 +15,7 @@
         android:title="MV" />
 
     <item
-        android:id="@+id/fragment_mine"
+        android:id="@+id/fragment_profile"
         android:title="我的" />
 
 </menu>
