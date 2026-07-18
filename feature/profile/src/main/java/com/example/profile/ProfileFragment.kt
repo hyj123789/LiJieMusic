@@ -52,7 +52,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         } ?: return@collect
                     }
                 }
-            }
+        }
         }
     }
 }

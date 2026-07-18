@@ -4,6 +4,7 @@ import com.example.login.model.CheckQrStatusRes
 import com.example.login.model.CreateQrRes
 import com.example.login.model.GetQrKeyRes
 import com.example.login.model.GuestLoginRes
+import com.example.login.model.RefreshLoginRes
 import com.example.login.model.SendCaptchaRes
 import com.example.login.model.loginbyphone.LoginByPhoneRes
 import com.example.model.LoginStatusRes
@@ -31,4 +32,6 @@ interface LoginApi {
     suspend fun guestLogin(): GuestLoginRes
     @GET("/login/status")
     suspend fun getLoginStatus() : LoginStatusRes
+    @GET("/login/refresh")
+    suspend fun refreshLoginStatus() : RefreshLoginRes
 }

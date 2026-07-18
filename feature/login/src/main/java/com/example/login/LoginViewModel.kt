@@ -61,13 +61,15 @@ class LoginViewModel : ViewModel() {
 
     fun loginByGuest() {
         viewModelScope.launch {
+            _toastMsg.value="游客登录中~耗时较长~~耐心等待~~~"
             try {
                 val response = api.guestLogin()
+                val cookie = response.cookie
+                CookieManager.injectCookie(cookie)
             } catch (e: Exception) {
                 Log.e("ljh","游客登录失败"+e.message)
                 return@launch
             }
-            _toastMsg.value="游客登录中~耗时较长~~耐心等待~~~"
             TheRouter.build(RoutePath.MAIN_ACTIVITY).navigation()
         }
     }

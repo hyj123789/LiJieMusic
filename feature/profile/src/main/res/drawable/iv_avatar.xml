@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="88dp"
+    android:height="88dp"
+    android:viewportWidth="88"
+    android:viewportHeight="88">
+    <!-- 圆形灰色背景 -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M44,44m-44,0a44,44 0,1 1,88 0a44,44 0,1 1,-88 0" />
+    <!-- 人形轮廓 -->
+    <path
+        android:fillColor="#BDBDBD"
+        android:pathData="M44,28c-5.5,0 -10,4.5 -10,10s4.5,10 10,10s10,-4.5 10,-10s-4.5,-10 -10,-10zM28,60c0,-5.3 10.7,-8 16,-8s16,2.7 16,8v4H28v-4z" />
+</vector>

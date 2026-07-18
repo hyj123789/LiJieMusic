@@ -56,6 +56,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(project(":core:base"))
     implementation(project(":core:net"))
+    implementation(libs.okhttp)
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
     implementation(project(":core:model"))

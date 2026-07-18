@@ -1,15 +1,61 @@
 package com.example.lijiemusic
 
+import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.base.BaseActivity
+import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.lijiemusic.databinding.ActivityLaunchBinding
+import com.example.login.LoginApi
+import com.example.model.UserManager
+import com.example.net.CookieManager
+import com.example.net.RetrofitClient
+import com.therouter.TheRouter
+import kotlinx.coroutines.launch
 
 class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding::inflate) {
+    private val api = RetrofitClient.createApi(LoginApi::class.java)
 
     override fun initView() {
-        // 获取 NavController，后续用于控制页面跳转
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+    }
+
+    override fun initEvent() {
+        super.initEvent()
+        if (CookieManager.hasCookie()){
+            lifecycleScope.launch {
+                try {
+                    val loginStatus = api.getLoginStatus()
+                    if (loginStatus.data.code == 200) {
+                        UserManager.account.value = loginStatus.data.account
+                        UserManager.profile.value = loginStatus.data.profile
+                    }
+                    // 刷新 cookie
+                    try {
+                        val refresh = api.refreshLoginStatus()
+                        val musicU = extractMusicU(refresh.cookie)
+                        if (musicU != null) {
+                            CookieManager.injectCookie(musicU)
+                        }
+                    } catch (_: Exception) {
+                        Log.d("ljh", "cookie刷新失败，下次启动再试")
+                    }
+                } catch (e: Exception) {
+                    Log.d("ljh", "我了个雷，初始化出问题了捏 ${e.message}")
+                } finally {
+                    // 无论成功失败都跳主页，登录页有 cookie 会过滤
+                    TheRouter.build(RoutePath.MAIN_ACTIVITY).navigation()
+                }
+            }
+        } else {
+            // 无 cookie 不走任何跳转，保留 nav_login 登录导航图
+        }
+    }
+    fun extractMusicU(cookieString: String): String? {
+        // 匹配完整的 MUSIC_U=xxx（带上前缀名），传给 Cookie.parse 才能识别
+        val regex = Regex("MUSIC_U=[^;]+")
+        return regex.find(cookieString)?.value
     }
 }
