@@ -36,10 +36,10 @@ class HomeViewModel : BaseViewModel() {
             val response3 = api.getRv3Playlists()
             val response4 = api.getRv4Playlists()
 
-            Log.d("请求排查", "RV1 接口状态码: ${response1.code}, 数据量: ${response1.playlists?.size}")
-            Log.d("请求排查", "RV2 接口状态码: ${response2.code}, 数据量: ${response2.result?.size}")
-            Log.d("请求排查", "RV3 接口状态码: ${response3.code}, 数据量: ${response3.data?.dailySongs?.size}")
-            Log.d("请求排查", "RV4 接口状态码: ${response4.code}, 数据量: ${response4.result?.size}")
+            Log.d("hyj", "RV1 接口状态码: ${response1.code}, 数据量: ${response1.playlists?.size}")
+            Log.d("hyj", "RV2 接口状态码: ${response2.code}, 数据量: ${response2.result?.size}")
+            Log.d("hyj", "RV3 接口状态码: ${response3.code}, 数据量: ${response3.data?.dailySongs?.size}")
+            Log.d("hyj", "RV4 接口状态码: ${response4.code}, 数据量: ${response4.result?.size}")
 
             //如果成功拿到数据就放进
             if (response2.code == 200) {

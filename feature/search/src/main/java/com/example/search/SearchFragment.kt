@@ -39,14 +39,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         binding.rvHotSearch.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHotSearch.adapter = HotsearcgAdapter
 
-        val gridLayoutManager = GridLayoutManager(
-            requireContext(),
-            5,
-            GridLayoutManager.HORIZONTAL,
-            false
-        )
-
-        binding.rvGuessLike.layoutManager = gridLayoutManager
+        binding.rvGuessLike.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvGuessLike.adapter = guessAdapter
 
         binding.rvSeachResponse.layoutManager = LinearLayoutManager(requireContext())

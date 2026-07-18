@@ -19,6 +19,19 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        //导入GSYVideoPlayer
+//        mavenCentral()
+//        maven("https://jitpack.io")
+//        maven("https://maven.aliyun.com/repository/public") // 阿里云加速
+//        mavenCentral()
+
+        maven(url = "https://jitpack.io")
+
+        // 下面是你原有的其他仓库
+        maven(url = "https://maven.aliyun.com/repository/public")
+        google()
+        mavenCentral()
     }
 }
 
@@ -33,5 +46,5 @@ include(":feature:home")
 include(":feature:login")
 include(":feature:search")
 include(":feature:searchpage")
-include(":feature:profile")
+include(":feature:mv")
 include(":core:model")

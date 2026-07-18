@@ -3,7 +3,7 @@ package com.example.model
 import kotlinx.coroutines.flow.MutableStateFlow
 
 object UserManager {
-    val profile : MutableStateFlow<profile?> = MutableStateFlow(null)
+    val profile : MutableStateFlow<Profile?> = MutableStateFlow(null)
 }
 
 data class Profile(

@@ -34,6 +34,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
         binding.bottomNavView.setupWithNavController(navController)
         val layoutMiniPlayer = findViewById<ConstraintLayout>(R.id.layout_mini_player)
 

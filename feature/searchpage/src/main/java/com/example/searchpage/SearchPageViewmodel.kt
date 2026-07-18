@@ -19,7 +19,7 @@ class SearchPageViewmodel : BaseViewModel() {
             //发起请求拿数据
             val response = api.getRvPlaylist()
 
-            Log.d("请求排查", "searchpageRV1 接口状态码: ${response.code}, 数据量: ${response.playlists?.size}")
+            Log.d("hyj", "searchpageRV1 接口状态码: ${response.code}, 数据量: ${response.playlists?.size}")
 
             //如果成功拿到数据就放进
             if (response.code == 200) {

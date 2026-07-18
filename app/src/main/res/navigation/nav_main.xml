@@ -32,5 +32,10 @@
         android:name="com.example.searchpage.SearchPageFragment"
         android:label="SearchPageFragment" />
 
+    <fragment
+        android:id="@+id/fragment_mv"
+        android:name="com.example.mv.MVFragment"
+        android:label="MVFragment" />
+
 
 </navigation>

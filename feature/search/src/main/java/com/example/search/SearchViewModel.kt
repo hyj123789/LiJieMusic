@@ -33,8 +33,8 @@ class SearchViewModel : BaseViewModel() {
 
 
 
-            Log.d("请求排查", "Guess 接口状态码: ${response1.code}, 数据量: ${response1.result?.hots?.size}")
-            Log.d("请求排查", "Hotsearch 接口状态码: ${response2.code}, 数据量: ${response2.data?.size}")
+            Log.d("hyj", "Guess 接口状态码: ${response1.code}, 数据量: ${response1.result?.hots?.size}")
+            Log.d("hyj", "Hotsearch 接口状态码: ${response2.code}, 数据量: ${response2.data?.size}")
 
             //如果成功拿到数据就放进
             if (response2.code == 200) {

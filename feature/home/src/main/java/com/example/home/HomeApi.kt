@@ -8,7 +8,7 @@ import retrofit2.http.GET
 
 
 interface HomeApi {
-    @GET("personalized?limit=6")
+    @GET("personalized?limit=10")
     suspend fun getRv2Playlist(): Rv2Data
 
     @GET("top/playlist")
