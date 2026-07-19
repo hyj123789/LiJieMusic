@@ -7,7 +7,7 @@
     android:background="@color/player_background"
     tools:context=".PlayerFragment">
 
-    <!-- 顶部栏 -->
+    <!-- ================= 顶部栏 ================= -->
     <LinearLayout
         android:id="@+id/ll_top_bar"
         android:layout_width="0dp"
@@ -24,17 +24,18 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
+            android:src="@drawable/back"
             app:tint="@color/text_primary" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
-            android:text="我喜欢"
             android:textColor="@color/text_primary"
             android:textSize="16sp"
-            android:layout_weight="1" />
+            tools:text="我喜欢" />
 
         <ImageView
             android:id="@+id/btn_share"
@@ -49,27 +50,30 @@
         android:id="@+id/fl_center_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingHorizontal="32dp"
+        android:layout_marginHorizontal="36dp"
         app:layout_constraintBottom_toTopOf="@id/ll_bottom_controls"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ll_top_bar"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.4">
 
         <ImageView
             android:id="@+id/iv_album_cover"
-            android:layout_width="342dp"
-            android:layout_height="341dp"
-            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/album" />
-<!--        歌词控件，来展示歌词-->
+            android:visibility="visible"
+            tools:src="@drawable/album" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_lyrics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
     </FrameLayout>
 
+    <!-- ================= 底部控制栏 ================= -->
     <LinearLayout
         android:id="@+id/ll_bottom_controls"
         android:layout_width="0dp"
@@ -80,28 +84,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
         <!-- 歌手和音质 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/tv_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="林俊杰"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="林俊杰" />
+
+            <!-- 音质标签默认隐藏，等代码获取到数据再显示 -->
             <TextView
                 android:id="@+id/tv_quality"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_quality_tag"
-                android:text="标准"
                 android:textColor="@color/text_primary"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="标准"
+                tools:visibility="visible" />
 
             <View
                 android:layout_width="0dp"
@@ -124,14 +134,16 @@
             android:layout_marginTop="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/tv_song"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="裂缝中的阳光"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:text="裂缝中的阳光" />
+
             <ImageView
                 android:id="@+id/btn_comments"
                 android:layout_width="36dp"
@@ -141,16 +153,17 @@
                 app:tint="@color/text_secondary" />
         </LinearLayout>
 
-        <!-- 进度条 -->
+        <!-- 进度条（真机初始为0，预览为30） -->
         <SeekBar
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:max="100"
-            android:progress="30"
+            android:progress="0"
             android:progressTint="@color/accent_green"
-            android:thumbTint="@color/accent_green" />
+            android:thumbTint="@color/accent_green"
+            tools:progress="30" />
 
         <!-- 时间显示 -->
         <LinearLayout
@@ -163,20 +176,22 @@
                 android:id="@+id/tv_current_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="02:15"
+                android:layout_weight="1"
+                android:text="00:00"
                 android:textColor="@color/text_tertiary"
                 android:textSize="12sp"
-                android:layout_weight="1" />
+                tools:text="02:15" />
 
             <TextView
                 android:id="@+id/tv_total_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="end"
-                android:text="04:30"
+                android:text="00:00"
                 android:textColor="@color/text_tertiary"
                 android:textSize="12sp"
-                android:layout_weight="1" />
+                tools:text="04:30" />
         </LinearLayout>
 
         <!-- 控制按钮行 -->

@@ -1,7 +1,9 @@
 package com.example.player
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
 import com.example.player.model.SongUrlData
@@ -9,6 +11,7 @@ import com.example.player.model.SongUrlResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * 播放器 ViewModel
@@ -56,6 +59,7 @@ class PlayerViewModel : BaseViewModel() {
     private val _coverUrl = MutableLiveData<String?>()
     val coverUrl: LiveData<String?> = _coverUrl
 
+
     /** 歌手名 */
     private val _artistName = MutableLiveData("未知歌手")
     val artistName: LiveData<String> = _artistName
@@ -63,6 +67,11 @@ class PlayerViewModel : BaseViewModel() {
     /** 歌曲名 */
     private val _songName = MutableLiveData("未知歌曲")
     val songName: LiveData<String> = _songName
+
+
+    // 在 ViewModel 里定义一个 LiveData 用来装歌词字符串
+    private val _lyricData = MutableLiveData<String>()
+    val lyricData: LiveData<String> = _lyricData
 
     // ========== 播放控制 ==========
 
@@ -184,5 +193,20 @@ class PlayerViewModel : BaseViewModel() {
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+
+    fun fetchLyric(songId: String) {
+        viewModelScope.launch {
+            try {
+                val api = RetrofitClient.createApi(PlayerApi::class.java)
+                val response = api.getlyric(songId)
+                Log.d("hyj","返回的歌词："+response.toString())
+                _lyricData.value = response.lrc?.lyric ?: ""
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _lyricData.value = ""
+            }
+        }
     }
 }

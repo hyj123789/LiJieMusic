@@ -1,5 +1,12 @@
 [
   {
+    "path": "/player/main",
+    "className": "com.example.player.PlayerFragment",
+    "action": "",
+    "description": "",
+    "params": {}
+  },
+  {
     "path": "/app/main",
     "className": "com.example.lijiemusic.MainActivity",
     "action": "",

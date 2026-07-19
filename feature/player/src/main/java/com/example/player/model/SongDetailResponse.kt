@@ -36,5 +36,5 @@ data class Artist(
 data class Album(
     val id: Long,
     val name: String,
-    val picUrl: String  // 封面图片 URL
+    val picUrl: String  //封面图片 URL
 )

@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.media3.common.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.material)
@@ -54,6 +55,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    implementation (libs.glide)
     implementation(project(":core:base"))
     implementation(project(":core:net"))
     implementation(libs.okhttp)
@@ -66,4 +68,5 @@ dependencies {
     implementation(project(":feature:search"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:mv"))
+    implementation(project(":feature:player"))
 }

@@ -44,6 +44,11 @@
         android:label="MVFragment" />
 
     <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.player.PlayerFragment"
+        tools:layout="@layout/fragment_player" />
+
+    <fragment
         android:id="@+id/fragment_profile"
         android:name="com.example.profile.ProfileFragment"
         android:label="我的"
