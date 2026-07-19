@@ -15,6 +15,7 @@ import com.example.home.Adapter.Rv1Adapter
 import com.example.home.Adapter.Rv2Adapter
 import com.example.home.Adapter.Rv3Adapte
 import com.example.home.databinding.FragmentHomeBinding
+import com.example.util.DrawerUtil
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -75,6 +76,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
             findNavController().navigate(request)
 
+        }
+    }
+
+    override fun initEvent() {
+        super.initEvent()
+        binding.btnDrawer.setOnClickListener {
+            (activity as? DrawerUtil)?.openDrawer()
         }
     }
 

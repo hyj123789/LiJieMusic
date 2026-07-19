@@ -4,4 +4,8 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+    <style name="ShapeAppearanceOverlay.App.DrawerActionItem" parent="">
+        <!-- 50% 表示把矩形的左右两边完全削成半圆形，变成胶囊状 -->
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

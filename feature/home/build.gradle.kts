@@ -52,6 +52,8 @@ dependencies {
 
     implementation(project(":core:net"))
     implementation(project(":core:therouter"))
+    implementation(project(":core:util"))
+
 
     //导入therouter
     implementation(libs.therouter.router)

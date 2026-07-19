@@ -17,30 +17,54 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseActivity
 import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.lijiemusic.databinding.ActivityMainBinding
+import com.example.lijiemusic.databinding.HeadLayoutBinding
+import com.example.model.UserManager
 import com.example.player.MediaControllerHelper
 import com.example.player.PlayerViewModel
+import com.example.util.DrawerUtil
+import com.example.util.ToastUtil
 import com.therouter.router.Route
 import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.MAIN_ACTIVITY)
-class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
+class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate), DrawerUtil{
 
     //调用大播放器的viewmodel
     private val viewModel: PlayerViewModel by viewModels()
+    private var _headBinding : HeadLayoutBinding? =null
+    private val headBinding get() = _headBinding!!
 
     //声明一个用来控制底层播放的 Helper
     private var mediaControllerHelper: MediaControllerHelper? = null
 
-    @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun initView() {
+        super.initView()
+        initNav()
+        val headerView = binding.navDrawer.getHeaderView(0)
+        _headBinding = HeadLayoutBinding.bind(headerView)
 
+        headBinding.ivDrawerAvatar
+        lifecycleScope.launch{
+            UserManager.profile.collect { profile ->
+                profile?.apply {
+                    Glide.with(this@MainActivity).load(profile.avatarUrl).into(headBinding.ivDrawerAvatar)
+                    headBinding.tvDrawerUsername.text=profile.nickname
+                }
+            }
+        }
+    }
+
+    override fun initEvent() {
+        super.initEvent()
+        binding.navDrawer.setNavigationItemSelectedListener { menuItem ->
+            ToastUtil.popToast("后端没给接口哇~~~呜呜呜",this)
+            menuItem.isChecked = true
+            binding.drawerlayout.closeDrawers()
+            true
+        }
+    }
+
+    private fun initNav(){
         //navigation的相关配置
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -53,19 +77,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.playerFragment) {
-                //如果当前跳到了播放器全屏页隐藏底部的迷你播放条
                 binding.layoutMiniPlayer.visibility = View.GONE
-                //底部导航栏也一起隐藏掉
                 binding.bottomNavView.visibility = View.GONE
             } else {
-                //如果是主页或其他页面显示迷你播放条
                 binding.layoutMiniPlayer.visibility = View.VISIBLE
                 binding.bottomNavView.visibility = View.VISIBLE
             }
         }
-        initMiniPlayer()
-    }
-
+        initMiniPlayer()    }
     private fun initMiniPlayer() {
 
         //初始化 Controller 并连接服务
@@ -114,5 +133,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         super.onDestroy()
         mediaControllerHelper?.disconnect()
         mediaControllerHelper = null
+    }
+    override fun openDrawer(){
+        binding.drawerlayout.openDrawer(binding.navDrawer)
+    }
+
+    override fun closeDrawer() {
+        binding.drawerlayout.closeDrawer(binding.navDrawer)
     }
 }

@@ -16,4 +16,8 @@
         <item name="android:textSize">18sp</item> <!-- 选中时稍微变大，产生动态效果 -->
         <item name="android:textStyle">bold</item> <!-- 选中时字体加粗！ -->
     </style>
+    <style name="ShapeAppearanceOverlay.App.DrawerActionItem" parent="">
+        <!-- 50% 表示把矩形的左右两边完全削成半圆形，变成胶囊状 -->
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
