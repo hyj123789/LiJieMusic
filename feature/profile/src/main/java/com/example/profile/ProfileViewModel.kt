@@ -18,7 +18,7 @@ class ProfileViewModel : ViewModel(){
         viewModelScope.launch {
             try {
                 val playList = api.getPlayList(UserManager.profile.value?.userId.toString())
-                Log.d("ljh",playList.toString())
+                Log.d("ljh","塔台呼叫，这边是viewModel，已经加载歌单数据"+playList.toString())
                 _listData.value = playList.playlist
             } catch (e: Exception) {
                 Log.e("ljh","获取歌单时捕捉到异常"+e.message)

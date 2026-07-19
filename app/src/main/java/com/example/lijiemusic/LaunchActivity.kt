@@ -10,6 +10,7 @@ import com.example.login.LoginApi
 import com.example.model.UserManager
 import com.example.net.CookieManager
 import com.example.net.RetrofitClient
+import com.example.util.ToastUtil
 import com.therouter.TheRouter
 import kotlinx.coroutines.launch
 
@@ -27,10 +28,14 @@ class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding
         if (CookieManager.hasCookie()){
             lifecycleScope.launch {
                 try {
+                    ToastUtil.popToast("获取登录状态中",this@LaunchActivity)
                     val loginStatus = api.getLoginStatus()
                     if (loginStatus.data.code == 200) {
                         UserManager.account.value = loginStatus.data.account
                         UserManager.profile.value = loginStatus.data.profile
+                        ToastUtil.popToastLong("正在登录,跳转主页中",this@LaunchActivity)
+                    } else{
+                        ToastUtil.popToast("登录过期，请重新登录",this@LaunchActivity)
                     }
                     // 刷新 cookie
                     try {

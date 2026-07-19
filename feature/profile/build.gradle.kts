@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -38,9 +39,12 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
     implementation(project(":core:base"))
     implementation(project(":core:net"))
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
     implementation(project(":core:model"))
+    implementation(libs.therouter.router)       // 运行时
+    ksp(libs.therouter.apt)                     // 注解处理器
 }

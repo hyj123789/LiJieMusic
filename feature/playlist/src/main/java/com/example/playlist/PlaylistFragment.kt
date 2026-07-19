@@ -1,59 +1,67 @@
 package com.example.playlist
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.base.BaseFragment
+import com.example.playlist.databinding.FragmentPlaylistBinding
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [PlaylistFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class PlaylistFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistBinding::inflate){
+    private val viewModel : PlaylistViewModel by viewModels()
+    private val mAdapter = SongAdapter()
+    private val playlistId: String by lazy {
+        arguments?.getString("playlistId") ?: ""
+    }
+    override fun initView() {
+        super.initView()
+        binding.rvSongs.apply {
+            adapter=mAdapter
+            layoutManager= LinearLayoutManager(requireContext())
         }
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_playlist, container, false)
+    override fun initEvent() {
+        super.initEvent()
+        viewModel.init(playlistId)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PlaylistFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PlaylistFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun initObservers() {
+        super.initObservers()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                launch {
+                    viewModel.rvList.collect { rvList->
+                        rvList?.apply {
+                            val newList = rvList.toMutableList()
+                            mAdapter.submitList(newList)
+                        } ?: return@collect
+                    }
+                }
+                launch {
+                    viewModel.coverUrl.collect { url->
+                        url?.apply {
+                            Glide.with(requireContext()).load(url).into(binding.ivCover)
+                        } ?: return@collect
+                    }
+                }
+                launch {
+                    viewModel.name.collect { name->
+                        name?.apply {
+                            binding.tvPlaylist.text=name
+                        } ?: return@collect
+                    }
+                }
+                launch {
+                    viewModel.songCounts.collect { counts->
+                        counts?.apply {
+                            binding.tvCounts.text=counts
+                        } ?: return@collect
+                    }
                 }
             }
+        }
     }
 }

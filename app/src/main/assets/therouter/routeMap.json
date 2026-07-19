@@ -1,5 +1,12 @@
 [
   {
+    "path": "/playlist/main",
+    "className": "com.example.playlist.PlaylistFragment",
+    "action": "",
+    "description": "",
+    "params": {}
+  },
+  {
     "path": "/player/main",
     "className": "com.example.player.PlayerFragment",
     "action": "",

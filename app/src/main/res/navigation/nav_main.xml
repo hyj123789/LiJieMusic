@@ -59,6 +59,20 @@
         <action
             android:id="@+id/action_fragment_profile_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_fragment_profile_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlist.PlaylistFragment"
+        android:label="歌单详情"
+        tools:layout="@layout/fragment_playlist">
+        <deepLink app:uri="musicapp://playlist/{playlistId}" />
+        <argument
+            android:name="playlistId"
+            app:argType="string" />
     </fragment>
 
 </navigation>

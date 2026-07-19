@@ -47,8 +47,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         val navController = navHostFragment.navController
         binding.bottomNavView.setupWithNavController(navController)
 
-
-
         binding.layoutMiniPlayer.setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.playerFragment)
         }

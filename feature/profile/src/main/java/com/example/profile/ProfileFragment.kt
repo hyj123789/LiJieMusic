@@ -1,10 +1,12 @@
 package com.example.profile
 
+import android.net.Uri
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.base.BaseFragment
@@ -14,7 +16,10 @@ import kotlinx.coroutines.launch
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate){
     private val viewModel: ProfileViewModel by viewModels()
-    private val adapter = PlaylistAdapter()
+    private val mAdapter = PlaylistAdapter({id->
+        findNavController().navigate(Uri.parse("musicapp://playlist/$id"))
+        Log.d("ljh","DeepLink传歌单ID跳转"+id)
+    })
     override fun initView() {
         super.initView()
         lifecycleScope.launch{
@@ -36,23 +41,40 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
         }
         binding.rvPlaylist.apply {
-            adapter=adapter
+            adapter=mAdapter
             layoutManager= LinearLayoutManager(requireContext())
+            Log.d("ljh","RV初始化成功")
         }
+        viewModel.loadPlaylist()
     }
 
+    override fun initEvent() {
+        super.initEvent()
+        binding.tvCheckAll.setOnClickListener {
+            mAdapter.modifyLimited()
+            if (mAdapter.getLimited()) {
+                binding.tvCheckAll.text = "查看全部"
+            } else {
+                binding.tvCheckAll.text = "查看部分"
+            }
+            mAdapter.notifyDataSetChanged()
+        }
+    }
     override fun initObservers() {
         super.initObservers()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 launch {
-                    viewModel.listData.collect {list->
-                        list?.apply {
-                            adapter.submitList(list)
+                    viewModel.listData.collect {oleList->
+                        oleList?.apply {
+                            val newList = this.toMutableList()
+                            mAdapter.submitList(newList)
+                            binding.tvPlaylistCount.text="${newList.size}个歌单"
+                            Log.d("ljh","塔台呼叫，这边是observer，已经观察到了list变化了，adapter已经提交"+newList.toString())
                         } ?: return@collect
                     }
                 }
-        }
+            }
         }
     }
 }
