@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.base.BaseFragment
 import com.example.comment.databinding.FragmentCommentBinding
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.therouter.router.Route
 import kotlinx.coroutines.launch
 

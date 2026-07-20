@@ -1,5 +1,4 @@
-package com.example.lijiemusic.core.navigation
-
+package com.example.therouter
 /**
  * 应用页面路由表。
  *
@@ -16,6 +15,8 @@ object RoutePath {
     const val SEARCH_MAIN = "/search/main"
     const val PLAYER_MAIN = "/player/main"
     const val PLAYLIST_MAIN = "/playlist/main"
+    const val DYNAMICS_MAIN = "/dynamics/main"
+    const val LAUNCH_MAIN = "/app/launch"
 }
 object RouteParams {
 

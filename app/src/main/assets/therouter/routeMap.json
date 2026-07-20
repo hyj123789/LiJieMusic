@@ -21,6 +21,20 @@
     "params": {}
   },
   {
+    "path": "/app/launch",
+    "className": "com.example.lijiemusic.LaunchActivity",
+    "action": "",
+    "description": "",
+    "params": {}
+  },
+  {
+    "path": "/dynamics/main",
+    "className": "com.example.dynamics.DynamicsActivity",
+    "action": "",
+    "description": "",
+    "params": {}
+  },
+  {
     "path": "/comment/main",
     "className": "com.example.comment.CommentFragment",
     "action": "",

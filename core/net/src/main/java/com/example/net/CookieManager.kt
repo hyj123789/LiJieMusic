@@ -26,6 +26,12 @@ object CookieManager : CookieJar {
             Log.d("ljh", "CookieManager: 从SP恢复了cookie")
         }
     }
+    fun logout(context: Context){
+        sp = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
+        sp.edit().remove(KEY).apply()
+        cookieStore.clear()
+    }
+
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         cookieStore[url.host] = cookies

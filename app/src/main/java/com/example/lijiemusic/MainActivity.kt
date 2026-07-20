@@ -1,11 +1,7 @@
 package com.example.lijiemusic
 
-import android.annotation.SuppressLint
-import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,14 +11,14 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseActivity
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.lijiemusic.databinding.ActivityMainBinding
 import com.example.lijiemusic.databinding.HeadLayoutBinding
 import com.example.model.UserManager
 import com.example.player.MediaControllerHelper
 import com.example.player.PlayerViewModel
+import com.example.therouter.RoutePath
 import com.example.util.DrawerUtil
-import com.example.util.ToastUtil
+import com.therouter.TheRouter
 import com.therouter.router.Route
 import kotlinx.coroutines.launch
 
@@ -57,8 +53,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     override fun initEvent() {
         super.initEvent()
         binding.navDrawer.setNavigationItemSelectedListener { menuItem ->
-            ToastUtil.popToast("后端没给接口哇~~~呜呜呜",this)
-            menuItem.isChecked = true
+            when(menuItem.itemId){
+                R.id.menu_dynamics -> {
+                    TheRouter.build(RoutePath.DYNAMICS_MAIN).navigation()
+                }
+                R.id.menu_logout ->{
+                    showLogoutDialog()
+                }
+            }
             binding.drawerlayout.closeDrawers()
             true
         }
@@ -140,5 +142,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     override fun closeDrawer() {
         binding.drawerlayout.closeDrawer(binding.navDrawer)
+    }
+    private fun showLogoutDialog(){
+        LogoutDialog().show(supportFragmentManager,"logout")
     }
 }

@@ -1,6 +1,5 @@
 package com.example.login.fragment
 
-import android.content.Context
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -8,10 +7,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.base.BaseFragment
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.login.LoginViewModel
 import com.example.login.R
 import com.example.login.databinding.FragmentLoginBinding
+import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import com.therouter.TheRouter
 import kotlinx.coroutines.launch

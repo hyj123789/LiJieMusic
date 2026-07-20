@@ -4,12 +4,12 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.login.model.GetQrKeyRes
 import com.example.model.UserManager
 import com.example.net.CookieManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.example.net.RetrofitClient
+import com.example.therouter.RoutePath
 import com.therouter.TheRouter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow

@@ -16,9 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseFragment
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.player.databinding.FragmentPlayerBinding
 import com.example.player.model.LyricUtil
+import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
 import com.therouter.router.Route
@@ -97,6 +97,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
 
 
+        val id = "2692390754"
         // 核心测试代码：主动让 ViewModel 去请求这首测试歌曲的 URL 和 详情
         viewModel.fetchMusicUrl(id)
         viewModel.fetchSongDetail(id)

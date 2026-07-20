@@ -1,20 +1,14 @@
 package com.example.login.fragment
 
-import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.base.BaseFragment
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.login.LoginViewModel
-import com.example.login.R
 import com.example.login.databinding.FragmentScanBinding
+import com.example.therouter.RoutePath
 import com.therouter.TheRouter
 import kotlinx.coroutines.launch
 

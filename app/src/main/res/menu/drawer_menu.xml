@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_message"
         android:title="消息" />
     <item
+        android:id="@+id/menu_dynamics"
+        android:title="动态"
+        android:icon="@drawable/ic_dynamics"/>
+    <item
         android:id="@+id/menu_custume"
         android:icon="@drawable/ic_custume"
         android:title="装扮" />
@@ -28,4 +32,8 @@
         android:id="@+id/menu_server"
         android:icon="@drawable/ic_server"
         android:title="客服"/>
+    <item
+        android:id="@+id/menu_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="退出"/>
 </menu>

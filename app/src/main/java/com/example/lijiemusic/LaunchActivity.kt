@@ -4,16 +4,17 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.base.BaseActivity
-import com.example.lijiemusic.core.navigation.RoutePath
 import com.example.lijiemusic.databinding.ActivityLaunchBinding
 import com.example.login.LoginApi
 import com.example.model.UserManager
 import com.example.net.CookieManager
 import com.example.net.RetrofitClient
+import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import com.therouter.TheRouter
+import com.therouter.router.Route
 import kotlinx.coroutines.launch
-
+@Route(path = RoutePath.LAUNCH_MAIN)
 class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding::inflate) {
     private val api = RetrofitClient.createApi(LoginApi::class.java)
 
