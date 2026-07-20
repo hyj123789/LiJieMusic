@@ -19,5 +19,12 @@
     "action": "",
     "description": "",
     "params": {}
+  },
+  {
+    "path": "/comment/main",
+    "className": "com.example.comment.CommentFragment",
+    "action": "",
+    "description": "",
+    "params": {}
   }
 ]

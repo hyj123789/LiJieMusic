@@ -1,16 +1,17 @@
 package com.example.player
 
 import android.app.AlertDialog
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -45,6 +46,12 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
     private val qualityOptions = arrayOf("标准", "高品质", "无损")
     private var currentQualityIndex = 0
+
+    //要传输的数据歌曲的id
+    var id = "2692390754"
+    var songname  = ""
+    var coverurl = ""
+
 
     private val lyricAdapter = LyricAdapter()
 
@@ -90,7 +97,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
 
 
-        val id = "2692390754"
         // 核心测试代码：主动让 ViewModel 去请求这首测试歌曲的 URL 和 详情
         viewModel.fetchMusicUrl(id)
         viewModel.fetchSongDetail(id)
@@ -154,8 +160,24 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         // 评论按钮
         binding.btnComments.setOnClickListener {
-            // TODO: 跳转到评论页面
-            ToastUtil.popToast("评论功能开发中", requireContext())
+//            TheRouter.build(RoutePath.COMMENT_FRAGMENT) //跳往评论
+//                .withString("songId", id.toString())
+//                .withString("songName", viewModel.songName.value)
+//                .withString("coverUrl", viewModel.coverUrl.value)
+//                .navigation(requireContext())
+//            ToastUtil.popToast("正在跳往评论曲", requireContext())
+
+            //利用DeepLink深层链接跳转
+            val songId = id
+            val songName = songname
+            // 注意：如果是图片网址，里面有斜杠等特殊字符，最好 Encode 一下防止解析错误
+            val coverUrl = Uri.encode(coverurl )
+
+            //拼出我们定义的那个网址暗号
+            val uriString = "lijiemusic://comment?songId=$songId&songName=$songName&coverUrl=$coverUrl"
+
+            //Navigation会自动跨模块找到它！
+            findNavController().navigate(Uri.parse(uriString))
         }
 
         // 分享按钮
@@ -183,9 +205,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
     }
 
     override fun initObservers() {
-
-
-
+        super.initObservers()
 
         viewModel.currentSong.observe(viewLifecycleOwner) { songData ->
             if (songData != null && !songData.url.isNullOrEmpty()) {
@@ -210,6 +230,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                     .load(url)
                     .transform(RoundedCorners(30))
                     .into(binding.ivAlbumCover)
+
+                coverurl = url
+
             } else {
                 Log.d("hyj", "播放器封面链接还是空的！")
             }
@@ -227,12 +250,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                 stopProgressTicker()
             }
         }
-
-
-
-
-
-        super.initObservers()
 
         // 观察播放状态
         viewLifecycleOwner.lifecycleScope.launch {
@@ -273,11 +290,13 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         // 观察歌手名
         viewModel.artistName.observe(viewLifecycleOwner) { artist ->
             binding.tvArtist.text = artist
+
         }
 
         // 观察歌曲名
         viewModel.songName.observe(viewLifecycleOwner) { songName ->
             binding.tvSong.text = songName
+            songname = songName
         }
 
         // 观察错误信息

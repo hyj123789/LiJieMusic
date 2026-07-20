@@ -22,7 +22,6 @@
         android:name="com.example.search.SearchFragment"
         android:label="SearchFragment" >
 
-        <!-- 贴上暗号标签 -->
         <deepLink app:uri="musicapp://search_page" />
 
         <action
@@ -73,6 +72,15 @@
         <argument
             android:name="playlistId"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/commentFragment"
+        android:name="com.example.comment.CommentFragment"
+        android:label="CommentFragment">
+
+        <deepLink app:uri="lijiemusic://comment?songId={songId}&amp;songName={songName}&amp;coverUrl={coverUrl}" />
+
     </fragment>
 
 </navigation>

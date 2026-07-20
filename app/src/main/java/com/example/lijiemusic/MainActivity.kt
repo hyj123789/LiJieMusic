@@ -76,7 +76,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.playerFragment) {
+            if (destination.id == R.id.playerFragment || destination.id == R.id.commentFragment) {
                 binding.layoutMiniPlayer.visibility = View.GONE
                 binding.bottomNavView.visibility = View.GONE
             } else {

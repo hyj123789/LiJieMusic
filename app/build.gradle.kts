@@ -70,4 +70,5 @@ dependencies {
     implementation(project(":feature:playlist"))
     implementation(project(":feature:mv"))
     implementation(project(":feature:player"))
+    implementation(project(":feature:comment"))
 }
