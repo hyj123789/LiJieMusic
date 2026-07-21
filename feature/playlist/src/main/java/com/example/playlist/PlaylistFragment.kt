@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.base.BaseFragment
+import com.example.base.PlayerManager
 import com.example.playlist.databinding.FragmentPlaylistBinding
 import kotlinx.coroutines.launch
 
@@ -26,6 +27,27 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
         val callback = ItemTouchHelperCallback(mAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(binding.rvSongs)
+
+        mAdapter.OnSongClickListener(object : SongAdapter.OnSongClickListener {
+            override fun onSongPlayClick(
+                id: String,
+                songName: String,
+                artistName: String
+            ) {
+                PlayerManager.playSong(id,songName,artistName)
+            }
+            override fun onSongNextPlayClick(
+                id: String,
+                songName: String,
+                artistName: String
+            ) {
+                PlayerManager.addSongToPlaylist(id,songName,artistName)
+            }
+        })
+
+
+
+
     }
     override fun initEvent() {
         super.initEvent()

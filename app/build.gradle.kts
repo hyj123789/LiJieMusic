@@ -48,6 +48,10 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.material)
 
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
+    implementation(libs.media3.ui)
+
     // TheRouter
     implementation(libs.therouter.router)
     ksp(libs.therouter.apt)

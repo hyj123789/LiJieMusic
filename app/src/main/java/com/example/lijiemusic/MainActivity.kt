@@ -23,6 +23,7 @@ import com.example.player.PlayerViewModel
 import com.example.therouter.RoutePath
 import com.example.util.DrawerUtil
 import com.example.util.ToastUtil
+import com.therouter.TheRouter
 import com.therouter.router.Route
 import kotlinx.coroutines.launch
 
@@ -59,8 +60,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     override fun initEvent() {
         super.initEvent()
         binding.navDrawer.setNavigationItemSelectedListener { menuItem ->
-            ToastUtil.popToast("后端没给接口哇~~~呜呜呜", this)
-            menuItem.isChecked = true
+            when(menuItem.itemId){
+                R.id.menu_dynamics -> {
+                    TheRouter.build(RoutePath.DYNAMICS_MAIN).navigation()
+                }
+                R.id.menu_logout ->{
+                    showLogoutDialog()
+                }
+            }
             binding.drawerlayout.closeDrawers()
             true
         }
@@ -114,7 +121,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         mediaControllerHelper?.connect()
 
         //监听歌曲歌名
-        viewModel.artistName.observe(this) { name ->
+        viewModel.songName.observe(this) { name ->
             if (name != null) {
                 binding.tvMiniSong.text = name
             }
@@ -178,5 +185,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     override fun closeDrawer() {
         binding.drawerlayout.closeDrawer(binding.navDrawer)
+    }
+
+    private fun showLogoutDialog(){
+        LogoutDialog().show(supportFragmentManager,"logout")
     }
 }

@@ -322,7 +322,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         // 观察歌曲名
         viewModel.songName.observe(viewLifecycleOwner) { songName ->
             binding.tvSong.text = songName
-            songname = songName
         }
 
         // 观察错误信息
@@ -371,8 +370,14 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                 binding.tvQuality.text = qualityOptions[which]
                 dialog.dismiss()
                 ToastUtil.popToastLong("已切换到${qualityOptions[which]}", requireContext())
-                // TODO: 通知 ViewModel 切换音质，重新获取播放链接
-                // viewModel.fetchMusicUrl(currentSongId, qualityLevels[which])
+
+                // 🚀 解封这段代码：真正触发网络请求去拿新的音质链接！
+                if (id.isNotEmpty()) {
+                    // qualityLevels[which] 会取出你在底部定义的 "standard", "higher", "exhigh" 等对应英文参数
+                    viewModel.fetchMusicUrl(id, qualityLevels[which])
+                } else {
+                    ToastUtil.popToast("当前没有正在播放的歌曲", requireContext())
+                }
             }
             .setNegativeButton("取消", null)
             .show()

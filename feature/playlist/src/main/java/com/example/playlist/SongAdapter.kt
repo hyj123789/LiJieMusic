@@ -13,6 +13,13 @@ import com.example.playlist.databinding.ItemSongBinding
 import com.example.playlist.model.Track
 
 class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback()){
+
+    private var listener: SongAdapter.OnSongClickListener? = null
+
+    //暴露一个给外部调用的设置方法
+    fun OnSongClickListener(listener: OnSongClickListener) {
+        this.listener = listener
+    }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -25,7 +32,19 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
         holder: ViewHolder,
         position: Int
     ) {
-        holder.bind(getItem(position))
+
+        val song = getItem(position)
+        holder.bind(song)
+
+        val artistName = song.artists?.joinToString(separator = "|") { it.name } ?: "未知歌手"
+
+        holder.binding.ivCover.setOnClickListener {
+            listener?.onSongNextPlayClick(song.id.toString(), song.name, artistName)
+        }
+
+        holder.binding.btnPlay.setOnClickListener {
+            listener?.onSongPlayClick(song.id.toString(), song.name, artistName)
+        }
     }
     fun moveItem(from : Int,to : Int){
         val list = currentList.toMutableList()
@@ -38,7 +57,7 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
         list.removeAt(position)
         submitList(list)
     }
-    class ViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root){
+    class ViewHolder(val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(item: Track){
             binding.apply {
                 Glide.with(binding.root.context).load(item.album?.picUrl).into(ivCover)
@@ -59,6 +78,11 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
                 }
             }
         }
+    }
+
+    interface OnSongClickListener {
+        fun onSongPlayClick(id: String, songName: String, artistName: String)
+        fun onSongNextPlayClick(id: String, songName: String, artistName: String)
     }
 }
 
