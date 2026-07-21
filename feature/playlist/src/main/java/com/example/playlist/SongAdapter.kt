@@ -2,10 +2,12 @@ package com.example.playlist
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.example.playlist.databinding.ItemSongBinding
 import com.example.playlist.model.Track
@@ -15,7 +17,6 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        Log.d("ljh","onCreateViewHolder方法执行了")
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return ViewHolder(binding)
     }
@@ -24,16 +25,38 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
         holder: ViewHolder,
         position: Int
     ) {
-        Log.d("ljh","onBindViewHolder方法执行了")
         holder.bind(getItem(position))
     }
-
+    fun moveItem(from : Int,to : Int){
+        val list = currentList.toMutableList()
+        val track = list.removeAt(from)
+        list.add(to,track)
+        submitList(list)
+    }
+    fun removeItem(position: Int){
+        val list = currentList.toMutableList()
+        list.removeAt(position)
+        submitList(list)
+    }
     class ViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(item: Track){
             binding.apply {
                 Glide.with(binding.root.context).load(item.album?.picUrl).into(ivCover)
                 tvSongName.text=item.name
                 tvArtistName.text=item.artists?.joinToString(separator = "|") { it.name }
+                when(item.fee){
+                    0 -> ivVip.visibility = View.GONE
+                    1 -> {
+                        ivVip.visibility = View.VISIBLE
+                        ivVip.setImageResource(R.drawable.ic_vip)
+                    }
+                    8 -> {
+                        ivVip.visibility = View.VISIBLE
+                        ivVip.setImageResource(R.drawable.ic_fee)
+                        val paddingPx = (5 * binding.root.context.resources.displayMetrics.density + 0.5f).toInt()
+                        ivVip.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
+                    }
+                }
             }
         }
     }

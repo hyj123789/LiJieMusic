@@ -24,11 +24,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     //获取viewmodel
     private val viewModel: HomeViewModel by viewModels()
-    //获取Rv2的Adapter
-    private val RV1Adapter = Rv1Adapter()
+    //获取Rv1的Adapter
+    private val RV1Adapter = Rv1Adapter { playlistId ->
+        navigateToPlaylist(playlistId)
+    }
 
     //获取Rv2的Adapter
-    private val RV2Adapter = Rv2Adapter()
+    private val RV2Adapter = Rv2Adapter { playlistId ->
+        navigateToPlaylist(playlistId)
+    }
     //获取Rv3的Adapter
     private val Rv3Adapte = Rv3Adapte()
 
@@ -127,4 +131,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
          }
     }
 
+    private fun navigateToPlaylist(playlistId: Long) {
+        val request = NavDeepLinkRequest.Builder
+            .fromUri(Uri.parse("musicapp://playlist/$playlistId"))
+            .build()
+        findNavController().navigate(request)
+    }
 }

@@ -20,7 +20,9 @@ import kotlin.getValue
 class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearchPageBinding::inflate){
 
     private val viewModel: SearchPageViewmodel by viewModels()
-    private val Adapter = PlaylistAdapter()
+    private val Adapter = PlaylistAdapter { playlistId ->
+        navigateToPlaylist(playlistId)
+    }
 
     override fun initView() {
         binding.rvgedan.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -49,4 +51,12 @@ class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearc
             }
         }
     }
+
+    private fun navigateToPlaylist(playlistId: Long) {
+        val request = NavDeepLinkRequest.Builder
+            .fromUri(Uri.parse("musicapp://playlist/$playlistId"))
+            .build()
+        findNavController().navigate(request)
+    }
+
 }

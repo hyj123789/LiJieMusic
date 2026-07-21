@@ -34,8 +34,13 @@ object CookieManager : CookieJar {
 
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-        cookieStore[url.host] = cookies
-        Log.d("ljh", "CookieJar.saveFromResponse: host=${url.host}, cookies=$cookies")
+        val existing = cookieStore[url.host]?.toMutableList() ?: mutableListOf()
+        for (newCookie in cookies) {
+            existing.removeAll { it.name == newCookie.name }
+            existing.add(newCookie)
+        }
+        cookieStore[url.host] = existing
+        Log.d("ljh", "CookieJar.saveFromResponse: host=${url.host}, 合并后共${existing.size}个cookie")
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
@@ -52,8 +57,12 @@ object CookieManager : CookieJar {
             Log.e("ljh", "CookieManager.injectCookie: Cookie.parse失败，格式不对: $cookieStr")
             return
         }
-        cookieStore[BASE_HOST] = listOf(cookie)
-        Log.d("ljh", "CookieManager.injectCookie: 成功注入 name=${cookie.name}, value=${cookie.value.take(30)}...")
+        // 合并到已有 cookie 列表，而不是替换
+        val existing = cookieStore[BASE_HOST]?.toMutableList() ?: mutableListOf()
+        existing.removeAll { it.name == cookie.name }
+        existing.add(cookie)
+        cookieStore[BASE_HOST] = existing
+        Log.d("ljh", "CookieManager.injectCookie: 成功注入 name=${cookie.name}, value=${cookie.value.take(30)}..., 共${existing.size}个cookie")
         if (::sp.isInitialized) {
             sp.edit().putString(KEY, cookieStr).apply()
         }

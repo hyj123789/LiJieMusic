@@ -44,6 +44,7 @@ class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding
                         val musicU = extractMusicU(refresh.cookie)
                         if (musicU != null) {
                             CookieManager.injectCookie(musicU)
+                            Log.d("MUSIC_U",musicU)
                         }
                     } catch (_: Exception) {
                         Log.d("ljh", "cookie刷新失败，下次启动再试")
@@ -60,8 +61,9 @@ class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding
         }
     }
     fun extractMusicU(cookieString: String): String? {
-        // 匹配完整的 MUSIC_U=xxx（带上前缀名），传给 Cookie.parse 才能识别
-        val regex = Regex("MUSIC_U=[^;]+")
+        // 匹配 MUSIC_U 及其所有 cookie 属性（path, max-age, domain 等），
+        // 遇到下一个大写开头的 cookie 名或字符串结束就停
+        val regex = Regex("MUSIC_U=[^;]+(; [a-z-]+(=[^;]*)?)*")
         return regex.find(cookieString)?.value
     }
 }

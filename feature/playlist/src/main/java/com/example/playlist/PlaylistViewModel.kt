@@ -30,6 +30,7 @@ class PlaylistViewModel: ViewModel() {
                 _coverUrl.value=playlistRes.playlist.coverImgUrl
                 _name.value=playlistRes.playlist.name
                 _songCounts.value= "${playlistRes.playlist.trackCount}首"
+                Log.d("ljh","歌曲信息"+playlistRes.playlist.toString())
             } catch (e: Exception) {
                 Log.d("ljh","歌单初始化出错"+e.message)
             }

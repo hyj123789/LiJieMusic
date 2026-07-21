@@ -1,5 +1,6 @@
 package com.example.home.Adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,21 @@ import com.bumptech.glide.Glide
 import com.example.home.R
 import com.example.home.model.PlaylistInfo1
 
-class Rv1Adapter : ListAdapter<PlaylistInfo1, Rv1Adapter.ViewHolder>(PlaylistInfo1DiffCallback()) {
+class Rv1Adapter(
+    private val onItemClick: (Long) -> Unit = {}
+) : ListAdapter<PlaylistInfo1, Rv1Adapter.ViewHolder>(PlaylistInfo1DiffCallback()) {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        init {
+            itemView.setOnClickListener {
+                try {
+                    onItemClick.invoke(currentId!!)
+                } catch (e: Exception) {
+                    Log.d("ljh","rv点击异常"+e.message)
+                }
+            }
+        }
+        var currentId : Long? = null
         val ivCover: ImageView = itemView.findViewById(R.id.iv1)
         val tv1Title: TextView = itemView.findViewById(R.id.tv1MainTitle)
         val tv1dc : TextView = itemView.findViewById(R.id.tv1SubTitle)
@@ -35,6 +48,10 @@ class Rv1Adapter : ListAdapter<PlaylistInfo1, Rv1Adapter.ViewHolder>(PlaylistInf
         Glide.with(holder.itemView.context)
             .load(item.coverImgUrl)
             .into(holder.ivCover)
+
+        holder.itemView.setOnClickListener {
+            onItemClick(item.id)
+        }
     }
 
     class PlaylistInfo1DiffCallback : DiffUtil.ItemCallback<PlaylistInfo1>() {

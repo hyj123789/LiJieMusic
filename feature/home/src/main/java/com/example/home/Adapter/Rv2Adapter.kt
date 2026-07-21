@@ -12,7 +12,9 @@ import com.bumptech.glide.Glide
 import com.example.home.R
 import com.example.home.model.PlaylistInfo2
 
-class Rv2Adapter : ListAdapter<PlaylistInfo2, Rv2Adapter.ViewHolder>(PlaylistInfo2DiffCallback()) {
+class Rv2Adapter(
+    private val onItemClick: (Long) -> Unit = {}
+) : ListAdapter<PlaylistInfo2, Rv2Adapter.ViewHolder>(PlaylistInfo2DiffCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -31,6 +33,10 @@ class Rv2Adapter : ListAdapter<PlaylistInfo2, Rv2Adapter.ViewHolder>(PlaylistInf
         Glide.with(holder.itemView.context)
             .load(item.picUrl)
             .into(holder.img2)
+
+        holder.itemView.setOnClickListener {
+            onItemClick(item.id)
+        }
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

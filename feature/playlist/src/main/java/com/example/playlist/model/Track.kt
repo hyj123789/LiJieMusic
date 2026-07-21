@@ -10,5 +10,6 @@ data class Track(
     @SerializedName("dt")
     val duration: Int,
     val id: Long,
-    val name: String
+    val name: String,
+    val fee: Int
 )

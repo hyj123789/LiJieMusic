@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class PlaylistAdapter : ListAdapter<PlaylistItem, PlaylistAdapter.ViewHolder>(PlaylistDiffCallback()) {
+class PlaylistAdapter(
+    private val onItemClick: (Long) -> Unit = {}
+) : ListAdapter<PlaylistItem, PlaylistAdapter.ViewHolder>(PlaylistDiffCallback()) {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivCover: ImageView = itemView.findViewById(R.id.img)
@@ -41,6 +43,10 @@ class PlaylistAdapter : ListAdapter<PlaylistItem, PlaylistAdapter.ViewHolder>(Pl
         Glide.with(holder.itemView.context)
             .load(playlist.coverImgUrl)
             .into(holder.ivCover)
+
+        holder.itemView.setOnClickListener {
+            onItemClick(playlist.id)
+        }
     }
 
     class PlaylistDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {

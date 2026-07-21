@@ -36,8 +36,13 @@ class LoginViewModel : ViewModel() {
                     Log.d("ljh", "手机登录原始cookie: $cookie")
                     val musicU = extractMusicU(cookie)
                     Log.d("ljh", "提取后的MUSIC_U: ${musicU ?: "null，提取失败"}")
-                    if(musicU==null) return@launch
-                    CookieManager.injectCookie(musicU)
+                    if(musicU != null) {
+                        CookieManager.injectCookie(musicU)
+                    } else {
+                        // fallback: 直接注入原始 cookie 字符串
+                        Log.d("ljh", "MUSIC_U提取失败，尝试注入原始cookie")
+                        CookieManager.injectCookie(cookie)
+                    }
                     Log.d("ljh", "MUSIC_U已注入CookieManager")
                     _loginSuccess.value = true
                     UserManager.profile.value=loginByPhone.profile
@@ -65,7 +70,14 @@ class LoginViewModel : ViewModel() {
             try {
                 val response = api.guestLogin()
                 val cookie = response.cookie
-                CookieManager.injectCookie(cookie)
+                val musicU = extractMusicU(cookie)
+                Log.d("ljh", "游客登录提取MUSIC_U: ${musicU ?: "null"}")
+                if (musicU != null) {
+                    CookieManager.injectCookie(musicU)
+                } else {
+                    // fallback: 直接注入原始cookie
+                    CookieManager.injectCookie(cookie)
+                }
             } catch (e: Exception) {
                 Log.e("ljh","游客登录失败"+e.message)
                 return@launch
@@ -115,8 +127,12 @@ class LoginViewModel : ViewModel() {
                         val cookie = checkQrStatus.cookie
                         val musicU = extractMusicU(cookie)
                         Log.d("ljh", "提取后的MUSIC_U: ${musicU ?: "null，提取失败"}")
-                        if(musicU==null) return@launch
-                        CookieManager.injectCookie(musicU)
+                        if(musicU != null) {
+                            CookieManager.injectCookie(musicU)
+                        } else {
+                            Log.d("ljh", "MUSIC_U提取失败，尝试注入原始cookie")
+                            CookieManager.injectCookie(cookie)
+                        }
                         Log.d("ljh", "MUSIC_U已注入CookieManager")
                         _loginSuccess.value = true
                         val loginStatus = api.getLoginStatus()
@@ -132,8 +148,9 @@ class LoginViewModel : ViewModel() {
         }
     }
     fun extractMusicU(cookieString: String): String? {
-        // 匹配完整的 MUSIC_U=xxx（带上前缀名），传给 Cookie.parse 才能识别
-        val regex = Regex("MUSIC_U=[^;]+")
+        // 匹配 MUSIC_U 及其所有 cookie 属性（path, max-age, domain 等），
+        // 遇到下一个大写开头的 cookie 名或字符串结束就停
+        val regex = Regex("MUSIC_U=[^;]+(; [a-z-]+(=[^;]*)?)*")
         return regex.find(cookieString)?.value
     }
 }
