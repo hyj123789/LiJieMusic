@@ -207,8 +207,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="12dp"
-                android:src="@drawable/ic_favorite"
-                app:tint="@color/text_primary" />
+                android:src="@drawable/ic_favorite" />
 
             <View
                 android:layout_width="0dp"

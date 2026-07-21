@@ -1,10 +1,13 @@
 package com.example.lijiemusic
 
+import PlaylistBottomSheet
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.media3.common.MediaItem
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -14,21 +17,23 @@ import com.example.base.BaseActivity
 import com.example.lijiemusic.databinding.ActivityMainBinding
 import com.example.lijiemusic.databinding.HeadLayoutBinding
 import com.example.model.UserManager
-import com.example.player.MediaControllerHelper
+import com.example.base.MediaControllerHelper
+import com.example.base.PlayerManager
 import com.example.player.PlayerViewModel
 import com.example.therouter.RoutePath
 import com.example.util.DrawerUtil
-import com.therouter.TheRouter
+import com.example.util.ToastUtil
 import com.therouter.router.Route
 import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.MAIN_ACTIVITY)
-class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate), DrawerUtil{
+class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate), DrawerUtil {
 
     //调用大播放器的viewmodel
     private val viewModel: PlayerViewModel by viewModels()
-    private var _headBinding : HeadLayoutBinding? =null
+    private var _headBinding: HeadLayoutBinding? = null
     private val headBinding get() = _headBinding!!
+
 
     //声明一个用来控制底层播放的 Helper
     private var mediaControllerHelper: MediaControllerHelper? = null
@@ -40,11 +45,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         _headBinding = HeadLayoutBinding.bind(headerView)
 
         headBinding.ivDrawerAvatar
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             UserManager.profile.collect { profile ->
                 profile?.apply {
-                    Glide.with(this@MainActivity).load(profile.avatarUrl).into(headBinding.ivDrawerAvatar)
-                    headBinding.tvDrawerUsername.text=profile.nickname
+                    Glide.with(this@MainActivity).load(profile.avatarUrl)
+                        .into(headBinding.ivDrawerAvatar)
+                    headBinding.tvDrawerUsername.text = profile.nickname
                 }
             }
         }
@@ -53,28 +59,30 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     override fun initEvent() {
         super.initEvent()
         binding.navDrawer.setNavigationItemSelectedListener { menuItem ->
-            when(menuItem.itemId){
-                R.id.menu_dynamics -> {
-                    TheRouter.build(RoutePath.DYNAMICS_MAIN).navigation()
-                }
-                R.id.menu_logout ->{
-                    showLogoutDialog()
-                }
-            }
+            ToastUtil.popToast("后端没给接口哇~~~呜呜呜", this)
+            menuItem.isChecked = true
             binding.drawerlayout.closeDrawers()
             true
         }
     }
 
-    private fun initNav(){
+    private fun initNav() {
         //navigation的相关配置
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavView.setupWithNavController(navController)
 
-        binding.layoutMiniPlayer.setOnClickListener {
+        binding.ivMiniCover.setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.playerFragment)
+        }
+
+        binding.ivMiniPlaylist.setOnClickListener {
+            val playlistDialog = PlaylistBottomSheet()
+            playlistDialog.show(supportFragmentManager, "PlaylistDialogTag")
+        }
+        binding.ivMiniPlay.setOnClickListener {
+            PlayerManager.togglePlayPause()
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -86,18 +94,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 binding.bottomNavView.visibility = View.VISIBLE
             }
         }
-        initMiniPlayer()    }
+        initMiniPlayer()
+        //初始化播放器
+        PlayerManager.initPlayer(this)
+    }
+
     private fun initMiniPlayer() {
 
         //初始化 Controller 并连接服务
-        mediaControllerHelper = MediaControllerHelper(this, object : MediaControllerHelper.MediaControllerListener {
-            override fun onConnected() {}
-            override fun onPlayingStateChanged(isPlaying: Boolean) {}
-            override fun onDurationChanged(duration: Long) {}
-            override fun onPositionChanged(position: Long) {}
-            override fun onMediaItemChanged(mediaItem: androidx.media3.common.MediaItem) {}
-            override fun onPlaybackEnded() {}
-        })
+        mediaControllerHelper =
+            MediaControllerHelper(this, object : MediaControllerHelper.MediaControllerListener {
+                override fun onConnected() {}
+                override fun onPlayingStateChanged(isPlaying: Boolean) {}
+                override fun onDurationChanged(duration: Long) {}
+                override fun onPositionChanged(position: Long) {}
+                override fun onMediaItemChanged(mediaItem: MediaItem) {}
+                override fun onPlaybackEnded() {}
+            })
         mediaControllerHelper?.connect()
 
         //监听歌曲歌名
@@ -108,7 +121,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
 
         //监听封面
-        viewModel.coverUrl.observe(this){ cover ->
+        viewModel.coverUrl.observe(this) { cover ->
             Glide.with(this)
                 .load(cover)
                 .transform(RoundedCorners(16)) //小封面圆角给小一点
@@ -119,15 +132,38 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         //监听播放状态变化（更新播放/暂停按钮的图标）
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isPlaying.collect { isPlaying ->
+                PlayerManager.isPlaying.collect { isPlaying ->
                     if (isPlaying) {
                         binding.ivMiniPlay.setImageResource(R.drawable.play)
                     } else {
-                        binding.ivMiniPlay.setImageResource(R.drawable.puse)
+                        binding.ivMiniPlay.setImageResource(R.drawable.pause)
                     }
                 }
             }
         }
+
+        //全局监听器：大管家切歌 -> 发起网络请求
+        lifecycleScope.launch {
+            PlayerManager.currentSong.collect { song ->
+                if (song != null) {
+                    Log.d("hyj", "【全局】大管家切歌了！指派ViewModel去请求！ID: ${song.id}")
+                    viewModel.fetchMusicUrl(song.id.toString())
+                    viewModel.fetchSongDetail(song.id.toString())
+                    viewModel.fetchLyric(song.id.toString())
+                    viewModel.checkSongIsLiked(song.id.toString())
+                }
+            }
+        }
+
+        //全局监听器：拿到 URL -> 启动底层播放器发声
+        viewModel.currentSong.observe(this) { songData ->
+            if (songData != null && !songData.url.isNullOrEmpty()) {
+                val url = songData?.url
+                Log.d("hyj", "【全局】拿到歌曲URL，准备出声: ${songData.url}")
+                PlayerManager.startPlayEngine(songData.id.toString(), url.toString())
+            }
+        }
+
     }
 
     //新增：页面销毁时，断开连接，防止内存泄漏
@@ -142,8 +178,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     override fun closeDrawer() {
         binding.drawerlayout.closeDrawer(binding.navDrawer)
-    }
-    private fun showLogoutDialog(){
-        LogoutDialog().show(supportFragmentManager,"logout")
     }
 }

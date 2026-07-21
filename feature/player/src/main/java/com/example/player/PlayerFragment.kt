@@ -1,28 +1,30 @@
 package com.example.player
 
+import PlaylistBottomSheet
 import android.app.AlertDialog
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.media3.common.MediaItem
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.base.Album
+import com.example.base.Artist
 import com.example.base.BaseFragment
+import com.example.base.PlayerManager
+import com.example.base.SongDetail
+import com.example.model.UserManager
 import com.example.player.databinding.FragmentPlayerBinding
 import com.example.player.model.LyricUtil
 import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
 import com.therouter.router.Route
-import kotlinx.coroutines.delay
 
 /**
  * 播放器 Fragment
@@ -35,50 +37,35 @@ import kotlinx.coroutines.delay
  */
 
 @Route(path = RoutePath.PLAYER_MAIN)
-class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate),
-    MediaControllerHelper.MediaControllerListener {
-        //定时器
-    private var progressJob: kotlinx.coroutines.Job? = null
+class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate) {
+    //获取用户id
+    val currentUid = UserManager.profile.value?.userId.toString()
 
     //让外面的小播放器也可以使用大播放器的viewmodel
     private val viewModel: PlayerViewModel by activityViewModels()
-    private var mediaControllerHelper: MediaControllerHelper? = null
 
     private val qualityOptions = arrayOf("标准", "高品质", "无损")
     private var currentQualityIndex = 0
 
     //要传输的数据歌曲的id
-    var id = "2692390754"
+    var id = ""
+    //歌曲名字
     var songname  = ""
+    //封面
     var coverurl = ""
 
+    //判断是否喜欢
+    var Islike : Boolean  = false
+    //是否拖动
+    private var isUserSeeking = false
 
+    //初始化歌词adpter
     private val lyricAdapter = LyricAdapter()
-
-    /** 进度更新定时器 */
-    private val handler = Handler(Looper.getMainLooper())
-    private val progressUpdater = object : Runnable {
-        override fun run() {
-            // 从 MediaController 获取实际播放进度
-            mediaControllerHelper?.let {
-                val position = it.getCurrentPosition()
-                val duration = it.getDuration()
-                viewModel.updateProgress(position, duration)
-            }
-            handler.postDelayed(this, 1000)
-        }
-    }
 
     override fun initView() {
         super.initView()
         // 初始化 UI 状态
         binding.tvQuality.text = qualityOptions[currentQualityIndex]
-
-        // 初始化 MediaController 连接
-        mediaControllerHelper = MediaControllerHelper(requireContext(), this)
-        mediaControllerHelper?.connect()
-
-
         // 初始化歌词的 RecyclerView
         binding.rvLyrics.adapter = lyricAdapter
         binding.rvLyrics.layoutManager = LinearLayoutManager(requireContext())
@@ -95,15 +82,18 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             }
         }
 
-
-
-        val id = "2692390754"
-        // 核心测试代码：主动让 ViewModel 去请求这首测试歌曲的 URL 和 详情
-        viewModel.fetchMusicUrl(id)
-        viewModel.fetchSongDetail(id)
-        viewModel.fetchLyric(id)
-
-
+//        if (id.isNotEmpty()) {
+//            // 核心测试代码：主动让 ViewModel 去请求这首测试歌曲的 URL 和 详情
+//            viewModel.fetchMusicUrl(id)
+//            viewModel.fetchSongDetail(id)
+//            //获取歌词
+//            viewModel.fetchLyric(id)
+//            //获取是否喜欢
+//            viewModel.checkSongIsLiked(id)
+//
+//        }else{
+//            Log.d("hyj","没有歌曲要播放")
+//        }
     }
 
     override fun initEvent() {
@@ -116,51 +106,62 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         // 播放/暂停按钮
         binding.btnPlay.setOnClickListener {
-            mediaControllerHelper?.togglePlayPause()
+            PlayerManager.togglePlayPause()
         }
 
         // 上一曲
         binding.btnPrevious.setOnClickListener {
-            mediaControllerHelper?.previous()
-            viewModel.previousSong()
+            PlayerManager.previous()
         }
 
         // 下一曲
         binding.btnNext.setOnClickListener {
-            mediaControllerHelper?.next()
-            viewModel.nextSong()
+            PlayerManager.next()
         }
 
-        // 进度条拖动
         binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+                //如果是用户在拖动，实时更新左边的文字时间，让用户知道拖到哪了
                 if (fromUser) {
-                    viewModel.seekTo(progress)
-                    // 计算实际跳转位置
-                    val seekPosition = (viewModel.duration.value * progress) / 100
-                    mediaControllerHelper?.seekTo(seekPosition)
+                    val duration = PlayerManager.duration.value
+                    val seekPosition = (duration * progress) / 100
+                    binding.tvCurrentTime.text = viewModel.formatTime(seekPosition)
                 }
             }
 
             override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {
-                // 用户开始拖动，暂停进度更新
-                handler.removeCallbacks(progressUpdater)
+                //正在拖动就不刷新UI
+                isUserSeeking = true
             }
 
             override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
-                // 用户停止拖动，恢复进度更新
-                handler.post(progressUpdater)
+                //手指松开正式指挥播放器跳转到松开的位置
+                seekBar?.let {
+                    val duration = PlayerManager.duration.value
+                    val seekPosition = (duration * it.progress) / 100
+                    PlayerManager.seekTo(seekPosition)
+                }
+                //恢复manager的自动刷新
+                isUserSeeking = false
             }
         })
 
-        // 收藏按钮
+        //收藏按钮
         binding.btnFavorite.setOnClickListener {
-            // TODO: 实现收藏功能
-            ToastUtil.popToast("收藏功能开发中", requireContext())
+//            if (Islike) {
+//                binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
+//                ToastUtil.popToast("凭什么不喜欢我了", requireContext())
+//            } else {
+//                binding.btnFavorite.setImageResource(R.drawable.like1)
+//                ToastUtil.popToast("谢谢你的喜欢", requireContext())
+//            }
+            //设置喜欢状态
+            viewModel.toggleLike(id, currentUid)
         }
 
         // 评论按钮
         binding.btnComments.setOnClickListener {
+            //Therouter无法在fragment里面跳转
 //            TheRouter.build(RoutePath.COMMENT_FRAGMENT) //跳往评论
 //                .withString("songId", id.toString())
 //                .withString("songName", viewModel.songName.value)
@@ -173,12 +174,11 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             val songName = songname
             // 注意：如果是图片网址，里面有斜杠等特殊字符，最好 Encode 一下防止解析错误
             val coverUrl = Uri.encode(coverurl )
-
             //拼出我们定义的那个网址暗号
             val uriString = "lijiemusic://comment?songId=$songId&songName=$songName&coverUrl=$coverUrl"
-
             //Navigation会自动跨模块找到它！
             findNavController().navigate(Uri.parse(uriString))
+
         }
 
         // 分享按钮
@@ -200,30 +200,51 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         // 播放列表按钮
         binding.btnPlaylist.setOnClickListener {
-            // TODO: 显示播放列表
-            ToastUtil.popToast("播放列表功能开发中", requireContext())
+            //实例化底部菜单
+            val playlistDialog = PlaylistBottomSheet()
+            playlistDialog.show(childFragmentManager, "PlaylistDialogTag")
+            ToastUtil.popToast("播放列表功能加载中", requireContext())
         }
     }
 
     override fun initObservers() {
         super.initObservers()
 
+        //播放音乐
         viewModel.currentSong.observe(viewLifecycleOwner) { songData ->
             if (songData != null && !songData.url.isNullOrEmpty()) {
-                //调用ljh封装好的方法开始播放
-                mediaControllerHelper?.playSingleSong(songData.id.toString(), songData.url)
-            }
-            if (songData != null) {
-                Log.d("hyj", "拿到的歌曲URL是: ${songData.url}")
-
-                if (!songData.url.isNullOrEmpty()) {
-                    mediaControllerHelper?.playSingleSong(songData.id.toString(), songData.url)
-                } else {
-                    Log.d("hyj", "糟糕，URL是空的！没法播！")
-                }
+//
+//                Log.d("hyj", "网络请求大功告成，拿到了歌曲URL，准备出声: ${songData.url}")
+//
+//                PlayerManager.startPlayEngine(songData.id.toString(), songData.url)
+                id = songData.id.toString()
             }
         }
+//
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//
+//                PlayerManager.currentSong.collect { song ->
+//                    if (song != null) {
+//
+//                        Log.d("hyj", "大管家切歌了！马上指派ViewModel去请求！ID: ${song.id}")
+//                        viewModel.fetchMusicUrl(song.id.toString())
+//                        //获取歌曲详情
+//                        viewModel.fetchSongDetail(song.id.toString())
+//                        //获取歌词
+//                        viewModel.fetchLyric(song.id.toString())
+//                        //获取是否喜欢
+//                        viewModel.checkSongIsLiked(song.id.toString())
+//
+//                    } else {
+//                        Log.d("hyj", "没有歌曲要播放")
+//                    }
+//                }
+//
+//            }
+//        }
 
+        //封面
         viewModel.coverUrl.observe(viewLifecycleOwner) { url ->
             //当网络请求成功url有值的时候，这里的代码才会被触发！
             if (!url.isNullOrEmpty()) {
@@ -239,42 +260,47 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             }
         }
 
+        //获取歌词
         viewModel.lyricData.observe(viewLifecycleOwner) { lrcString ->
             if (!lrcString.isNullOrEmpty()) {
                 //不是空音乐
                 val parsedList = LyricUtil.parseLyric(lrcString)
                 lyricAdapter.submitList(parsedList)
-                startProgressTicker()
+
             } else {
                 //如果是空音乐
                 lyricAdapter.submitList(emptyList())
-                stopProgressTicker()
             }
         }
 
         // 观察播放状态
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isPlaying.collect { isPlaying ->
-                    updatePlayButtonIcon()
+                PlayerManager.isPlaying.collect { isPlaying ->
+                    // 更新播放/暂停图标
+                    binding.btnPlay.setImageResource(
+                        if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                    )
                 }
             }
         }
-
-        // 观察进度变化
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.progress.collect { progress ->
-                    binding.seekBar.progress = progress
-                }
-            }
-        }
-
         // 观察当前播放时间
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currentPosition.collect { position ->
+                PlayerManager.currentPosition.collect { position ->
                     binding.tvCurrentTime.text = viewModel.formatTime(position)
+                    //监听进度条
+                    val duration = PlayerManager.duration.value
+                    if (duration > 0) {
+                        binding.seekBar.progress = ((position.toFloat() / duration) * 100).toInt()
+                    }
+                    //获取目标行
+                    val targetLine = lyricAdapter.updateTime(position)
+                    //只要不为-1
+                    if (binding.rvLyrics.visibility == View.VISIBLE && targetLine != -1) {
+                        //开始滚动
+                        binding.rvLyrics.smoothScrollToPosition(targetLine)
+                    }
                 }
             }
         }
@@ -282,7 +308,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         // 观察总时长
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.duration.collect { duration ->
+                PlayerManager.duration.collect { duration ->
                     binding.tvTotalTime.text = viewModel.formatTime(duration)
                 }
             }
@@ -291,7 +317,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         // 观察歌手名
         viewModel.artistName.observe(viewLifecycleOwner) { artist ->
             binding.tvArtist.text = artist
-
         }
 
         // 观察歌曲名
@@ -302,46 +327,27 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         // 观察错误信息
         handleApiError(viewModel)
-    }
 
-    /**
-     * 更新播放按钮图标
-     */
-    private fun updatePlayButtonIcon() {
-        val isPlaying = viewModel.isPlaying.value
-        binding.btnPlay.setImageResource(
-            if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
-        )
-    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                //要用launch单独包裹不然会被阻塞
+                launch {
+                    viewModel.isLiked.collect { isLike ->
+                        //为是否喜欢赋值
+                        Islike = isLike
+                        if (isLike) {
+                            binding.btnFavorite.setImageResource(R.drawable.like1)
+                        } else {
+                            binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
+                        }
 
-
-
-    //时间引擎：利用生命周期安全的协程定时器
-// 时间引擎：利用生命周期安全的协程定时器
-    private fun startProgressTicker() {
-        progressJob?.cancel() //先停掉旧的计时器
-        progressJob = viewLifecycleOwner.lifecycleScope.launch {
-            while (true) {
-                //每隔 200 毫秒执行一次
-                delay(200)
-
-                //获取当前播放的时间
-                val currentPos = mediaControllerHelper?.getCurrentPosition() ?: 0L
-                //获得目标行
-                val targetLine = lyricAdapter.updateTime(currentPos)
-
-                //只要拿到的不是 -1，直接在这里执行滚动！
-                if (binding.rvLyrics.visibility == View.VISIBLE && targetLine != -1) {
-
-                    // 强烈推荐用法：smoothScrollToPosition 自带丝滑的滚动动画，视觉体验满分！
-                    binding.rvLyrics.smoothScrollToPosition(targetLine)
+                    }
                 }
             }
         }
     }
 
-    // 让目标行滚动到屏幕最中间的一个小算法
-    // 修复后的居中算法：不再做时间判断，直接问 Adapter 当前高亮的是哪行！
+
     private fun scrollToCurrentLyric() {
         val targetLine = lyricAdapter.getCurrentLineIndex() // 拿到当前行
 
@@ -350,10 +356,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             // 刚点开的时候，使用带 Offset 的方法瞬间居中，体验最好
             layoutManager.scrollToPositionWithOffset(targetLine, binding.rvLyrics.height / 2)
         }
-    }
-
-    private fun stopProgressTicker() {
-        progressJob?.cancel()
     }
 
 
@@ -376,61 +378,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             .show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        // 开始进度更新
-        handler.post(progressUpdater)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // 停止进度更新
-        handler.removeCallbacks(progressUpdater)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        // 断开 MediaController 连接
-        mediaControllerHelper?.disconnect()
-        mediaControllerHelper = null
-        handler.removeCallbacks(progressUpdater)
-        stopProgressTicker()
-    }
-
-    // ========== MediaControllerListener 实现 ==========
-
-    override fun onConnected() {
-        // MediaController 连接成功
-        // 可以在这里加载歌曲列表并开始播放
-        ToastUtil.popToast("播放器已连接", requireContext())
-    }
-
-    override fun onPlayingStateChanged(isPlaying: Boolean) {
-        // 播放状态变化
-        viewModel.setPlaying(isPlaying)
-        updatePlayButtonIcon()
-    }
-
-    override fun onDurationChanged(duration: Long) {
-        // 总时长变化
-        viewModel.updateProgress(viewModel.currentPosition.value, duration)
-    }
-
-    override fun onPositionChanged(position: Long) {
-        // 播放位置变化
-        viewModel.updateProgress(position, viewModel.duration.value)
-    }
-
-    override fun onMediaItemChanged(mediaItem: MediaItem) {
-        // 歌曲切换
-        // 这里可以从 mediaItem 获取歌曲信息并更新 UI
-        // 实际项目中可能需要查询歌曲详情 API
-    }
-
-    override fun onPlaybackEnded() {
-        // 播放结束
-        viewModel.setPlaying(false)
-        updatePlayButtonIcon()
     }
 
     companion object {

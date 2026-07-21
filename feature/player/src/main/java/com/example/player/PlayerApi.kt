@@ -1,10 +1,13 @@
 package com.example.player
 
+import com.example.player.model.CheckLikeResponse
+import com.example.player.model.LikeResponse
 import com.example.player.model.LyricResponse
 import com.example.player.model.MusicAvailableResponse
 import com.example.player.model.SongDetailResponse
 import com.example.player.model.SongUrlResponse
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface PlayerApi {
@@ -22,4 +25,18 @@ interface PlayerApi {
 
     @GET("/lyric")
     suspend fun getlyric(@Query("id") id: String): LyricResponse
+
+    @GET("/song/like/check")
+    suspend fun checkSongLike(
+        @Query("ids") ids: String
+    ): CheckLikeResponse
+
+
+    @POST("/song/like")
+    suspend fun toggleLikeSong(
+        @Query("id") id: String,
+        @Query("uid") uid: String,
+        @Query("like") like: Boolean,
+        @Query("timestamp") timestamp: Long = System.currentTimeMillis()
+    ): LikeResponse
 }

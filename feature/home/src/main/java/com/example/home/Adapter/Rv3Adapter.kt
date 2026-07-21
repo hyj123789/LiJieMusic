@@ -35,6 +35,10 @@ class Rv3Adapte : ListAdapter<SongItem, Rv3Adapte.ViewHolder>(SongDiffCallback()
         Glide.with(holder.itemView.context)
             .load(item.al.picUrl)
             .into(holder.img3)
+
+        holder.img3.setOnClickListener {
+
+        }
     }
 
     class SongDiffCallback : DiffUtil.ItemCallback<SongItem>() {
@@ -47,4 +51,9 @@ class Rv3Adapte : ListAdapter<SongItem, Rv3Adapte.ViewHolder>(SongDiffCallback()
             return oldItem == newItem
         }
     }
+}
+
+interface OnSongClickListener {
+    fun onSongPlayClick(id: String, songName: String, artistName: String)
+    fun onSongNextPlayClick(id: String, songName: String, artistName: String)
 }

@@ -67,6 +67,7 @@ dependencies {
     implementation(project(":core:net"))
     implementation(project(":core:util"))
     implementation(project(":core:therouter"))
+    implementation(project(":core:model"))
 
     //navigation
     implementation(libs.androidx.navigation.fragment.ktx)

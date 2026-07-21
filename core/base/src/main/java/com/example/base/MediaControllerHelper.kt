@@ -1,7 +1,8 @@
-package com.example.player
+package com.example.base
 
 import android.content.ComponentName
 import android.content.Context
+import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -32,7 +33,7 @@ class MediaControllerHelper(
     fun connect() {
         val sessionToken = SessionToken(
             context,
-            ComponentName(context, MusicService::class.java)
+            ComponentName(context, "com.example.player.MusicService")
         )
 
         controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
@@ -78,6 +79,7 @@ class MediaControllerHelper(
                         listener.onDurationChanged(it.duration)
                     }
                 }
+                //监听如果是停止播放就调用循环播放，实际就是下一首
                 Player.STATE_ENDED -> {
                     listener.onPlaybackEnded()
                 }
@@ -241,7 +243,7 @@ class MediaControllerHelper(
             val metadata = MediaMetadata.Builder()
                 .setTitle(title)
                 .setArtist(artist)
-                .setArtworkUri(coverUrl?.let { url -> android.net.Uri.parse(url) })
+                .setArtworkUri(coverUrl?.let { url -> Uri.parse(url) })
                 .build()
 
             val currentItem = it.currentMediaItem

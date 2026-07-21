@@ -1,6 +1,8 @@
 package com.example.player
 
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -8,6 +10,7 @@ import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
 import com.example.player.model.SongUrlData
 import com.example.player.model.SongUrlResponse
+import com.example.util.ToastUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,31 +28,19 @@ class PlayerViewModel : BaseViewModel() {
 
     // ========== 播放状态 ==========
 
-    /** 是否正在播放 */
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
-
     /** 当前播放进度 (0-100) */
     private val _progress = MutableStateFlow(0)
     val progress: StateFlow<Int> = _progress.asStateFlow()
 
-    /** 当前播放时间 (毫秒) */
-    private val _currentPosition = MutableStateFlow(0L)
-    val currentPosition: StateFlow<Long> = _currentPosition.asStateFlow()
-
-    /** 总时长 (毫秒) */
-    private val _duration = MutableStateFlow(0L)
-    val duration: StateFlow<Long> = _duration.asStateFlow()
+    //判断该歌曲是否喜欢
+    private val _isLiked = MutableStateFlow(false)
+    val isLiked: StateFlow<Boolean> = _isLiked
 
     // ========== 歌曲信息 ==========
 
     /** 当前播放的歌曲 */
     private val _currentSong = MutableLiveData<SongUrlData?>()
     val currentSong: LiveData<SongUrlData?> = _currentSong
-
-    /** 歌曲列表 */
-    private val _songList = MutableLiveData<List<SongUrlData>>(emptyList())
-    val songList: LiveData<List<SongUrlData>> = _songList
 
     /** 当前歌曲索引 */
     private val _currentIndex = MutableLiveData(0)
@@ -73,74 +64,7 @@ class PlayerViewModel : BaseViewModel() {
     private val _lyricData = MutableLiveData<String>()
     val lyricData: LiveData<String> = _lyricData
 
-    // ========== 播放控制 ==========
 
-    /** 切换播放/暂停 */
-    fun togglePlayPause() {
-        _isPlaying.value = !_isPlaying.value
-    }
-
-    /** 设置播放状态 */
-    fun setPlaying(playing: Boolean) {
-        _isPlaying.value = playing
-    }
-
-    /** 更新播放进度 */
-    fun updateProgress(position: Long, total: Long) {
-        _currentPosition.value = position
-        _duration.value = total
-        _progress.value = if (total > 0) ((position * 100) / total).toInt() else 0
-    }
-
-    /** 拖动进度条跳转 */
-    fun seekTo(progress: Int) {
-        _progress.value = progress
-    }
-
-    // ========== 歌曲列表管理 ==========
-
-    /** 设置歌曲列表 */
-    fun setSongList(songs: List<SongUrlData>) {
-        _songList.value = songs
-        if (songs.isNotEmpty()) {
-            setCurrentSong(songs[0], 0)
-        }
-    }
-
-    /** 设置当前播放的歌曲 */
-    fun setCurrentSong(song: SongUrlData, index: Int) {
-        _currentSong.value = song
-        _currentIndex.value = index
-        // 注意：这里需要从外部获取歌曲详情（封面、歌手名等）
-        // 因为 SongUrlData 只包含播放链接信息，不含元数据
-    }
-
-    /** 更新歌曲元数据（封面、歌手名、歌曲名） */
-    fun updateSongMetadata(coverUrl: String?, artistName: String, songName: String) {
-        _coverUrl.value = coverUrl
-        _artistName.value = artistName
-        _songName.value = songName
-    }
-
-    /** 下一曲 */
-    fun nextSong() {
-        val songs = _songList.value ?: return
-        val currentIdx = _currentIndex.value ?: 0
-        if (songs.isNotEmpty()) {
-            val nextIdx = (currentIdx + 1) % songs.size
-            setCurrentSong(songs[nextIdx], nextIdx)
-        }
-    }
-
-    /** 上一曲 */
-    fun previousSong() {
-        val songs = _songList.value ?: return
-        val currentIdx = _currentIndex.value ?: 0
-        if (songs.isNotEmpty()) {
-            val prevIdx = if (currentIdx > 0) currentIdx - 1 else songs.size - 1
-            setCurrentSong(songs[prevIdx], prevIdx)
-        }
-    }
 
     // ========== 网络请求 ==========
 
@@ -164,10 +88,8 @@ class PlayerViewModel : BaseViewModel() {
             if (result.code == 200 && result.data.isNotEmpty()) {
                 val songData = result.data[0]
                 if (songData.url != null) {
-                    // 更新当前歌曲信息
+                    //更新当前歌曲信息
                     _currentSong.value = songData
-                    // 通知 Fragment 播放歌曲
-                    // 实际播放逻辑应该通过 MediaControllerHelper 处理
                 }
             }
         }
@@ -206,6 +128,48 @@ class PlayerViewModel : BaseViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 _lyricData.value = ""
+            }
+        }
+    }
+
+    fun checkSongIsLiked(songId: String) {
+        viewModelScope.launch {
+            try {
+                val api = RetrofitClient.createApi(PlayerApi::class.java)
+                val response = api.checkSongLike("[$songId]")
+                Log.d("hyj","是否喜欢的的返回码：${response.code},返回的喜欢的歌曲id${response.ids}")
+                if (response.code == 200) {
+                    val likedIds = response.ids ?: emptyList()
+                    _isLiked.value = likedIds.contains(songId.toLong())
+                    Log.d("hyj", "【红心检测】当前播放歌曲ID: $songId")
+                    Log.d("hyj", "【红心检测】服务器返回的喜欢列表: $likedIds")
+                    Log.d("hyj", "【红心检测】最终匹配结果: ${isLiked.value}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun toggleLike(songId: String, uid: String) {
+
+        val currentStatus = _isLiked.value
+        val targetStatus = !currentStatus
+        _isLiked.value = targetStatus
+
+        viewModelScope.launch {
+            try {
+                val api = RetrofitClient.createApi(PlayerApi::class.java)
+                val response = api.toggleLikeSong(songId, uid, targetStatus)
+
+                Log.d("hyj","喜欢返回码：${response.code}")
+                if (response.code != 200) {
+                    _isLiked.value = currentStatus
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("hyj", "点赞接口发生异常了！原因: ${e.message}", e)
+                _isLiked.value = currentStatus
             }
         }
     }
