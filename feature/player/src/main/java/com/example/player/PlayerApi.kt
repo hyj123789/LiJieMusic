@@ -23,14 +23,13 @@ interface PlayerApi {
     @GET("/song/detail")
     suspend fun getSongDetail(@Query("ids") ids: String): SongDetailResponse
 
-    @GET("/lyric")
+    @GET("/lyric/new")
     suspend fun getlyric(@Query("id") id: String): LyricResponse
 
     @GET("/song/like/check")
     suspend fun checkSongLike(
         @Query("ids") ids: String
     ): CheckLikeResponse
-
 
     @POST("/song/like")
     suspend fun toggleLikeSong(

@@ -1,13 +1,13 @@
 package com.example.player
 
 import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
+import com.example.player.model.Lyric
+import com.example.player.model.LyricParser
 import com.example.player.model.SongUrlData
 import com.example.player.model.SongUrlResponse
 import com.example.util.ToastUtil
@@ -60,9 +60,13 @@ class PlayerViewModel : BaseViewModel() {
     val songName: LiveData<String> = _songName
 
 
-    // 在 ViewModel 里定义一个 LiveData 用来装歌词字符串
-    private val _lyricData = MutableLiveData<String>()
-    val lyricData: LiveData<String> = _lyricData
+    // 解析后的歌词列表（含逐字/逐句）
+    private val _lyricList = MutableLiveData<List<Lyric>>()
+    val lyricList: LiveData<List<Lyric>> = _lyricList
+
+    /** 歌词加载状态 */
+    private val _lyricLoading = MutableLiveData(false)
+    val lyricLoading: LiveData<Boolean> = _lyricLoading
 
 
 
@@ -120,14 +124,22 @@ class PlayerViewModel : BaseViewModel() {
 
     fun fetchLyric(songId: String) {
         viewModelScope.launch {
+            _lyricLoading.value = true
+            // 切歌时先清空旧歌词，避免 UI 闪烁残留
+            _lyricList.value = emptyList()
             try {
                 val api = RetrofitClient.createApi(PlayerApi::class.java)
                 val response = api.getlyric(songId)
                 Log.d("hyj","返回的歌词："+response.toString())
-                _lyricData.value = response.lrc?.lyric ?: ""
+                val lrc = response.lineLyric?.lyric ?: ""
+                val yrc = response.wordLyric?.lyric ?: ""
+                val parsed = LyricParser.parseLyric(lrc, yrc)
+                _lyricList.value = parsed
             } catch (e: Exception) {
                 e.printStackTrace()
-                _lyricData.value = ""
+                _lyricList.value = emptyList()
+            } finally {
+                _lyricLoading.value = false
             }
         }
     }
