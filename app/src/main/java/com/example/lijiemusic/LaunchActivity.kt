@@ -1,6 +1,7 @@
 package com.example.lijiemusic
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.base.BaseActivity
@@ -13,6 +14,7 @@ import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import com.therouter.TheRouter
 import com.therouter.router.Route
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 @Route(path = RoutePath.LAUNCH_MAIN)
 class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding::inflate) {
@@ -22,6 +24,11 @@ class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
+        lifecycleScope.launch {
+            delay(5000)
+            binding.ivSplashCover.visibility = View.GONE
+        }
     }
 
     override fun initEvent() {

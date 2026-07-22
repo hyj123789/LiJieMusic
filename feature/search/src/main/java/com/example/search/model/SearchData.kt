@@ -12,14 +12,13 @@ data class SearchResultData(
 data class SongItem(
     val id: Long,
     val name: String,         // 歌曲名
-    val artists: List<Artist>?, // 歌手列表
-    val album: Album?         // 专辑信息
+    val ar: List<Artist>?, // 歌手列表
+    val al: Album?         // 专辑信息
 )
 
 data class Artist(
     val id: Long,
     val name: String,
-    val img1v1Url: String?
 )
 
 data class Album(

@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.base.PlayMode
 import com.example.model.UserManager
 import com.example.base.PlayerManager
 import com.example.player.databinding.DialogPlaylistBinding
@@ -47,6 +48,12 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
         binding.ivdelect.setOnClickListener {
             PlayerManager.clearPlaylist()
         }
+
+
+        binding.tvModel.setOnClickListener {
+            PlayerManager.togglePlayMode()
+        }
+
         initObservers()
 
     }
@@ -77,6 +84,14 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
                     PlayerManager.playlist.collect { songs ->
                         playlistAdapter.submitList(songs)
 
+                    }
+                }
+
+                launch {
+                    PlayerManager.playMode.collect { model ->
+                        if (model == PlayMode.SEQUENTIAL)
+                            binding.tvModel.text = "顺序"
+                        else binding.tvModel.text = "随机"
                     }
                 }
             }

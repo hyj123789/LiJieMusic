@@ -43,6 +43,10 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
     private val _duration = MutableStateFlow(0L)
     val duration: StateFlow<Long> = _duration
 
+    //播放模式
+    private val _playMode = MutableStateFlow(PlayMode.SEQUENTIAL)
+    val playMode: StateFlow<PlayMode> = _playMode
+
     //初始化播放器
     fun initPlayer(context: Context) {
         if (mediaControllerHelper == null) {
@@ -93,11 +97,28 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
             return
         }
 
-        //查找当前歌曲在列表里的索引
         val currentIndex = currentList.indexOfFirst { it.id == current.id }
 
-        //计算下一首的索引（使用取模运算 %，实现列表循环播放）
-        val nextIndex = if (currentIndex == -1) 0 else (currentIndex + 1) % currentList.size
+        //根据当前播放模式计算下一首的索引
+        val nextIndex = when (_playMode.value) {
+            PlayMode.SHUFFLE -> {
+                //如果列表只有1首歌，就还是播放它自己
+                if (currentList.size <= 1) {
+                    currentIndex
+                } else {
+                    //随机找一首并且保证和当前这首不一样
+                    var randomIndex = currentList.indices.random()
+                    while (randomIndex == currentIndex) {
+                        randomIndex = currentList.indices.random()
+                    }
+                    randomIndex
+                }
+            }
+            PlayMode.SEQUENTIAL -> {
+                //顺序播放：使用取模运算%，实现列表循环
+                if (currentIndex == -1) 0 else (currentIndex + 1) % currentList.size
+            }
+        }
 
         Log.d("hyj", "准备切换下一首，当前索引: $currentIndex，下一首索引: $nextIndex")
         _currentSong.value = currentList[nextIndex]
@@ -115,10 +136,25 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
 
         val currentIndex = currentList.indexOfFirst { it.id == current.id }
 
-        //计算上一首的索引如果已经是第一首，就跳到最后一首
-        val previousIndex = if (currentIndex <= 0) currentList.size - 1 else currentIndex - 1
-
-        Log.d("hyj", "准备切换上一首，下一首索引: $previousIndex")
+        //计算上一首的索引如果已经是第一首就跳到最后一首
+        val previousIndex = when (_playMode.value) {
+            //随机播放
+            PlayMode.SHUFFLE -> {
+                if (currentList.size <= 1) {
+                    currentIndex
+                } else {
+                    var randomIndex = currentList.indices.random()
+                    while (randomIndex == currentIndex) {
+                        randomIndex = currentList.indices.random()
+                    }
+                    randomIndex
+                }
+            }
+            PlayMode.SEQUENTIAL -> {
+                //顺序播放：如果是第一首就跳到最后一首
+                if (currentIndex <= 0) currentList.size - 1 else currentIndex - 1
+            }
+        }
 
         //改变歌曲状态
         _currentSong.value = currentList[previousIndex]
@@ -210,7 +246,25 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
 
         val currentList = _playlist.value.toMutableList()
         if (currentList.none { it.id == newSong.id }) {
-            currentList.add(newSong)
+
+            //添加在则会正在播放歌的后面
+            val currentPlayingSong = _currentSong.value
+
+            //找到当前播放歌曲在列表中的索引位置
+            val currentIndex = if (currentPlayingSong != null) {
+                currentList.indexOfFirst { it.id == currentPlayingSong.id }
+            } else {
+                -1
+            }
+
+            //决定插入的位置
+            if (currentIndex != -1) {
+                //如果找到了当前正在播放的歌，就把新歌插到它后面
+                currentList.add(currentIndex + 1, newSong)
+            } else {
+                //其他情况加最后就默认追加到列表末尾
+                currentList.add(newSong)
+            }
             _playlist.value = currentList
         }
     }
@@ -222,4 +276,17 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
         _playlist.value = newList
     }
 
+    fun togglePlayMode() {
+        _playMode.value = if (_playMode.value == PlayMode.SEQUENTIAL) {
+            PlayMode.SHUFFLE
+        } else {
+            PlayMode.SEQUENTIAL
+        }
+    }
+
+}
+
+enum class PlayMode {
+    SEQUENTIAL, //顺序播放
+    SHUFFLE     //随机播放
 }

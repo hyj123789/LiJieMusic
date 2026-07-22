@@ -23,15 +23,6 @@ import kotlinx.coroutines.launch
 import com.therouter.router.Route
 import androidx.core.graphics.toColorInt
 
-/**
- * 播放器 Fragment
- *
- * 职责：
- * 1. 展示播放器 UI
- * 2. 处理用户交互（播放/暂停、上下曲、进度拖动）
- * 3. 观察 ViewModel 状态并更新 UI
- * 4. 连接 MediaController 控制 MusicService
- */
 
 @Route(path = RoutePath.PLAYER_MAIN)
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate) {
@@ -72,9 +63,11 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             if (binding.rvLyrics.visibility == View.VISIBLE) {
                 binding.rvLyrics.visibility = View.GONE
                 binding.ivAlbumCover.visibility = View.VISIBLE
+                binding.LayoutSong.visibility = View.VISIBLE
             } else {
                 binding.rvLyrics.visibility = View.VISIBLE
                 binding.ivAlbumCover.visibility = View.GONE
+                binding.LayoutSong.visibility = View.GONE
                 scrollToCurrentLyric()
             }
         }
