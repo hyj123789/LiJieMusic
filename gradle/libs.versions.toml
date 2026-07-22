@@ -1,5 +1,6 @@
 [versions]
 agp = "9.2.1"
+gsonVersion = "2.10.1"
 kotlin = "2.1.0"
 ksp = "2.1.0-1.0.29"
 theRouter = "1.4.0-rc1"
@@ -36,6 +37,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 
 # AppCompat & Material
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+gson-v2101 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 # Activity & Fragment

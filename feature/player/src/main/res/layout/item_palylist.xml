@@ -15,6 +15,9 @@
         android:textStyle="bold"
         android:textSize="16dp"
         android:padding="3dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:maxEms="5"
         android:layout_marginLeft="8dp"/>
     <TextView
         android:id="@+id/songer"
@@ -23,6 +26,9 @@
         android:text="歌手"
         android:textSize="16dp"
         android:padding="3dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:maxEms="5"
         android:layout_marginLeft="8dp"/>
     <View
         android:layout_width="0dp"

@@ -4,6 +4,7 @@ import PlaylistBottomSheet
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseActivity
+import com.example.base.LocalPlaylistManager
 import com.example.lijiemusic.databinding.ActivityMainBinding
 import com.example.lijiemusic.databinding.HeadLayoutBinding
 import com.example.model.UserManager
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.MAIN_ACTIVITY)
 class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate), DrawerUtil {
+
 
     //调用大播放器的viewmodel
     private val viewModel: PlayerViewModel by viewModels()
@@ -55,6 +58,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 }
             }
         }
+        //取出本地歌单
+        val savedPlaylist = LocalPlaylistManager.getPlaylist(this)
+        PlayerManager.updatePlaylist(savedPlaylist)
     }
 
     override fun initEvent() {
@@ -189,5 +195,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     private fun showLogoutDialog(){
         LogoutDialog().show(supportFragmentManager,"logout")
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        Log.d("hyj_debug", "==== 触发了 onStop 生命周期 ====")
+        val currentPlaylist = PlayerManager.playlist.value
+
+        Log.d("hyj_debug", "准备保存，当前列表歌曲数量: ${currentPlaylist.size}")
+
+        if (currentPlaylist.isNotEmpty()) {
+            LocalPlaylistManager.savePlaylist(this, currentPlaylist)
+            Log.d("hyj_debug", "==== 保存成功！ ====")
+        } else {
+            Log.d("hyj_debug", "==== 列表是空的，放弃保存！ ====")
+        }
     }
 }

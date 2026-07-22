@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -5,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,12 +44,12 @@ class PlaylistAdapter(
 
         fun bind(song: SongDetail) {
             tvSongName.text = song.name
-            tvSinger.text = " - ${song.al.name}"
-            Log.d("hyj","绑定的数据${song.name},${song.al.name}")
+            tvSinger.text = " - ${song.ar.get(0).name}"
+            Log.d("hyj","绑定的数据${song.name},${song.ar.get(0).name}")
 
             if (song.id == currentPlayingId) {
-                //当前播放标红
-                tvSongName.setTextColor(Color.RED)
+                //当前播放标绿
+                tvSongName.setTextColor("#A5D6A7".toColorInt())
             } else {
                 //其他播放标黑
                 tvSongName.setTextColor(Color.BLACK)

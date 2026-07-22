@@ -25,7 +25,7 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
 
     //歌单
     private val _playlist = MutableStateFlow<List<SongDetail>>(emptyList())
-    val playlist: StateFlow<List<SongDetail>> = _playlist
+    var playlist: StateFlow<List<SongDetail>> = _playlist
 
     //当前歌曲
     private val _currentSong = MutableStateFlow<SongDetail?>(null)
@@ -217,6 +217,9 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
 
     fun startPlayEngine(id: String, songUrl: String) {
         mediaControllerHelper?.playSingleSong(id, songUrl)
+    }
+    fun updatePlaylist(newList: List<SongDetail>) {
+        _playlist.value = newList
     }
 
 }

@@ -21,7 +21,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/item_hq"
+            android:id="@+id/item_biaozhun"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -30,12 +30,72 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="HQ 高品质 4.92Mb"
+                android:text="臻品母带"
                 android:textColor="#FFFFFF" />
 
+            <ImageView
+                android:id="@+id/biaozhun"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/uncheck" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/item_high"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="臻品全景音"
+                    android:textColor="#FFFFFF" />
+
+                <ImageView
+                    android:id="@+id/high"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/uncheck" />
+            </LinearLayout>
+        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_wushun"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/item_hq"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="臻品音质"
+                        android:textColor="#FFFFFF" />
+
+                    <ImageView
+                        android:id="@+id/wushun"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/uncheck" />
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-
     </LinearLayout>
-</LinearLayout>

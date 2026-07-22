@@ -1,7 +1,6 @@
 package com.example.player
 
 import PlaylistBottomSheet
-import android.app.AlertDialog
 import android.net.Uri
 import android.util.Log
 import android.view.View
@@ -13,11 +12,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.base.Album
-import com.example.base.Artist
 import com.example.base.BaseFragment
 import com.example.base.PlayerManager
-import com.example.base.SongDetail
 import com.example.model.UserManager
 import com.example.player.databinding.FragmentPlayerBinding
 import com.example.player.model.LyricUtil
@@ -25,6 +21,7 @@ import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
 import com.therouter.router.Route
+import androidx.core.graphics.toColorInt
 
 /**
  * 播放器 Fragment
@@ -44,7 +41,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
     //让外面的小播放器也可以使用大播放器的viewmodel
     private val viewModel: PlayerViewModel by activityViewModels()
 
-    private val qualityOptions = arrayOf("标准", "高品质", "无损")
+    private val qualityOptions = arrayOf("臻品母带", "臻品全景音", "臻品音质")
     private var currentQualityIndex = 0
 
     //要传输的数据歌曲的id
@@ -322,6 +319,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         // 观察歌曲名
         viewModel.songName.observe(viewLifecycleOwner) { songName ->
             binding.tvSong.text = songName
+            songname = songName
         }
 
         // 观察错误信息
@@ -362,33 +360,47 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
      * 显示音质选择对话框
      * 需要用到 context，直接放在 UI 层
      */
-    private fun showQualityDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("选择音质")
-            .setSingleChoiceItems(qualityOptions, currentQualityIndex) { dialog, which ->
-                currentQualityIndex = which
-                binding.tvQuality.text = qualityOptions[which]
-                dialog.dismiss()
-                ToastUtil.popToastLong("已切换到${qualityOptions[which]}", requireContext())
-
-                // 🚀 解封这段代码：真正触发网络请求去拿新的音质链接！
-                if (id.isNotEmpty()) {
-                    // qualityLevels[which] 会取出你在底部定义的 "standard", "higher", "exhigh" 等对应英文参数
-                    viewModel.fetchMusicUrl(id, qualityLevels[which])
-                } else {
-                    ToastUtil.popToast("当前没有正在播放的歌曲", requireContext())
-                }
-            }
-            .setNegativeButton("取消", null)
-            .show()
-    }
+//    private fun showQualityDialog() {
+//        AlertDialog.Builder(requireContext())
+//            .setTitle("选择音质")
+//            .setSingleChoiceItems(qualityOptions, currentQualityIndex) { dialog, which ->
+//                currentQualityIndex = which
+//                binding.tvQuality.text = qualityOptions[which]
+//                dialog.dismiss()
+//                ToastUtil.popToastLong("已切换到${qualityOptions[which]}", requireContext())
+//
+//                //解封这段代码：真正触发网络请求去拿新的音质链接！
+//                if (id.isNotEmpty()) {
+//                    // qualityLevels[which] 会取出你在底部定义的 "standard", "higher", "exhigh" 等对应英文参数
+//                    viewModel.fetchMusicUrl(id, qualityLevels[which])
+//                } else {
+//                    ToastUtil.popToast("当前没有正在播放的歌曲", requireContext())
+//                }
+//            }
+//            .setNegativeButton("取消", null)
+//            .show()
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
     }
 
-    companion object {
-        /** 音质等级映射 */
-        private val qualityLevels = arrayOf("standard", "higher", "exhigh")
+    private fun showQualityDialog() {
+        val qualityDialog = QualityBottomSheet()
+        //接收用户从弹窗里选好的音质
+        qualityDialog.onQualitySelected = { level, name ->
+            //更新 UI 上的文字
+            binding.tvQuality.text = name
+            if(name == "臻品音质") binding.tvQuality.setTextColor("#BDE39F".toColorInt())
+            else binding.tvQuality.setTextColor("#1C1C1E".toColorInt())
+            ToastUtil.popToastLong("已切换到 $name", requireContext())
+
+            //重新请求播放链接
+            if (id.isNotEmpty()) {
+                viewModel.fetchMusicUrl(id, level)
+            }
+        }
+        //显示弹窗
+        qualityDialog.show(childFragmentManager, "QualityDialogTag")
     }
 }

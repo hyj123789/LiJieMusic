@@ -98,19 +98,21 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:maxEms="5"
                 tools:text="林俊杰" />
-
-            <!-- 音质标签默认隐藏，等代码获取到数据再显示 -->
             <TextView
                 android:id="@+id/tv_quality"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
                 android:background="@drawable/bg_quality_tag"
                 android:textColor="@color/text_primary"
                 android:textSize="12sp"
-                android:visibility="visible"
-                tools:text="标准" />
+                android:text="标准" />
 
             <View
                 android:layout_width="0dp"
