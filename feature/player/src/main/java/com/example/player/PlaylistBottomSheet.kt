@@ -1,3 +1,5 @@
+package com.example.player
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,7 +37,7 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
 
         playlistAdapter = PlaylistAdapter(
             onItemClick = { song ->
-                PlayerManager.playSong(song.id.toString(),song.name,song.al.name)
+                PlayerManager.playSong(song.id.toString(), song.name, song.al.name)
             },
             onDeleteClick = { song ->
                 PlayerManager.removeSong(song)

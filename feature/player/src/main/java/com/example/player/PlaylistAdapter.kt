@@ -1,4 +1,5 @@
-import android.annotation.SuppressLint
+package com.example.player
+
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.base.SongDetail
-import com.example.player.R
 
 class PlaylistAdapter(
     private val onItemClick: (SongDetail) -> Unit,

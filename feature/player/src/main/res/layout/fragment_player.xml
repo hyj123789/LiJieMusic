@@ -66,8 +66,8 @@
             android:visibility="visible"
             tools:src="@drawable/album" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_lyrics"
+        <com.example.player.LyricView
+            android:id="@+id/lv_lyrics"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
@@ -100,8 +100,8 @@
                 android:textSize="16sp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:maxEms="5"
-                tools:text="林俊杰" />
+                android:maxEms="8"
+                tools:text="裂缝中的阳光" />
             <TextView
                 android:id="@+id/tv_quality"
                 android:layout_width="wrap_content"
@@ -143,7 +143,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp"
-                tools:text="裂缝中的阳光" />
+                tools:text="林俊杰" />
 
             <ImageView
                 android:id="@+id/btn_comments"
@@ -154,7 +154,6 @@
                 app:tint="@color/text_secondary" />
         </LinearLayout>
 
-        <!-- 进度条（真机初始为0，预览为30） -->
         <SeekBar
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"

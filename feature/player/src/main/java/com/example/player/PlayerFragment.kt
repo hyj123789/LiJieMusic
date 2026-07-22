@@ -1,6 +1,5 @@
 package com.example.player
 
-import PlaylistBottomSheet
 import android.net.Uri
 import android.util.Log
 import android.view.View
@@ -9,74 +8,56 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseFragment
 import com.example.base.PlayerManager
 import com.example.model.UserManager
 import com.example.player.databinding.FragmentPlayerBinding
-import com.example.player.model.LyricUtil
 import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
 import com.therouter.router.Route
 import androidx.core.graphics.toColorInt
 
-/**
- * 播放器 Fragment
- *
- * 职责：
- * 1. 展示播放器 UI
- * 2. 处理用户交互（播放/暂停、上下曲、进度拖动）
- * 3. 观察 ViewModel 状态并更新 UI
- * 4. 连接 MediaController 控制 MusicService
- */
 
 @Route(path = RoutePath.PLAYER_MAIN)
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate) {
-    //获取用户id
     val currentUid = UserManager.profile.value?.userId.toString()
 
-    //让外面的小播放器也可以使用大播放器的viewmodel
     private val viewModel: PlayerViewModel by activityViewModels()
 
     private val qualityOptions = arrayOf("臻品母带", "臻品全景音", "臻品音质")
     private var currentQualityIndex = 0
 
-    //要传输的数据歌曲的id
     var id = ""
-    //歌曲名字
     var songname  = ""
     //封面
     var coverurl = ""
 
-    //判断是否喜欢
     var Islike : Boolean  = false
     //是否拖动
     private var isUserSeeking = false
-
-    //初始化歌词adpter
-    private val lyricAdapter = LyricAdapter()
 
     override fun initView() {
         super.initView()
         // 初始化 UI 状态
         binding.tvQuality.text = qualityOptions[currentQualityIndex]
-        // 初始化歌词的 RecyclerView
-        binding.rvLyrics.adapter = lyricAdapter
-        binding.rvLyrics.layoutManager = LinearLayoutManager(requireContext())
 
         //点击中间区域，切换封面和歌词的显示
         binding.flCenterContent.setOnClickListener {
-            if (binding.rvLyrics.visibility == View.VISIBLE) {
-                binding.rvLyrics.visibility = View.GONE
+            if (binding.lvLyrics.visibility == View.VISIBLE) {
+                binding.lvLyrics.visibility = View.GONE
                 binding.ivAlbumCover.visibility = View.VISIBLE
             } else {
-                binding.rvLyrics.visibility = View.VISIBLE
+                binding.lvLyrics.visibility = View.VISIBLE
                 binding.ivAlbumCover.visibility = View.GONE
-                scrollToCurrentLyric()
             }
+        }
+
+        // LyricView 拖动浏览后点击确认 → 跳转到选中的歌词时间
+        binding.lvLyrics.setOnSeekListener { position ->
+            PlayerManager.seekTo(position)
         }
 
 //        if (id.isNotEmpty()) {
@@ -118,7 +99,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                //如果是用户在拖动，实时更新左边的文字时间，让用户知道拖到哪了
                 if (fromUser) {
                     val duration = PlayerManager.duration.value
                     val seekPosition = (duration * progress) / 100
@@ -168,6 +148,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
             //利用DeepLink深层链接跳转
             val songId = id
+            Log.d("test_lyric", "当前歌曲ID: $id")
             val songName = songname
             // 注意：如果是图片网址，里面有斜杠等特殊字符，最好 Encode 一下防止解析错误
             val coverUrl = Uri.encode(coverurl )
@@ -175,7 +156,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             val uriString = "lijiemusic://comment?songId=$songId&songName=$songName&coverUrl=$coverUrl"
             //Navigation会自动跨模块找到它！
             findNavController().navigate(Uri.parse(uriString))
-
         }
 
         // 分享按钮
@@ -215,6 +195,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 //
 //                PlayerManager.startPlayEngine(songData.id.toString(), songData.url)
                 id = songData.id.toString()
+                Log.d("Ben", "当前歌曲ID: $id")
             }
         }
 //
@@ -257,17 +238,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             }
         }
 
-        //获取歌词
-        viewModel.lyricData.observe(viewLifecycleOwner) { lrcString ->
-            if (!lrcString.isNullOrEmpty()) {
-                //不是空音乐
-                val parsedList = LyricUtil.parseLyric(lrcString)
-                lyricAdapter.submitList(parsedList)
-
-            } else {
-                //如果是空音乐
-                lyricAdapter.submitList(emptyList())
-            }
+        //获取歌词 —— 解析后传给 LyricView
+        viewModel.lyricList.observe(viewLifecycleOwner) { lyrics ->
+            binding.lvLyrics.setLyrics(lyrics)
         }
 
         // 观察播放状态
@@ -291,13 +264,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                     if (duration > 0) {
                         binding.seekBar.progress = ((position.toFloat() / duration) * 100).toInt()
                     }
-                    //获取目标行
-                    val targetLine = lyricAdapter.updateTime(position)
-                    //只要不为-1
-                    if (binding.rvLyrics.visibility == View.VISIBLE && targetLine != -1) {
-                        //开始滚动
-                        binding.rvLyrics.smoothScrollToPosition(targetLine)
-                    }
+                    // 更新 LyricView 的进度 —— 它会自动高亮当前行
+                    binding.lvLyrics.updateProgress(position)
                 }
             }
         }
@@ -341,17 +309,6 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                     }
                 }
             }
-        }
-    }
-
-
-    private fun scrollToCurrentLyric() {
-        val targetLine = lyricAdapter.getCurrentLineIndex() // 拿到当前行
-
-        if (targetLine >= 0) {
-            val layoutManager = binding.rvLyrics.layoutManager as LinearLayoutManager
-            // 刚点开的时候，使用带 Offset 的方法瞬间居中，体验最好
-            layoutManager.scrollToPositionWithOffset(targetLine, binding.rvLyrics.height / 2)
         }
     }
 
