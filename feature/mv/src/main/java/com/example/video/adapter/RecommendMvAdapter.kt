@@ -1,4 +1,4 @@
-package com.example.mv
+package com.example.video.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.video.R
+import com.example.video.model.VideoItemWrapper
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 
-class VideoAdapter : ListAdapter<VideoItemWrapper, VideoAdapter.VideoViewHolder>(VideoDiffCallback()) {
+class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.VideoViewHolder>(VideoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_mv, parent, false)

@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/fragment_mv"
-        android:name="com.example.mv.MVFragment"
+        android:name="com.example.video.fragment.VideoFragment"
         android:label="MVFragment" />
 
     <fragment

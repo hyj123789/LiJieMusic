@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mv"
+    namespace = "com.example.video"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -38,6 +38,9 @@ dependencies {
     //导入base
     implementation(project(":core:base"))
     implementation(project(":core:net"))
+    implementation(project(":core:therouter"))
+    implementation(project(":core:model"))
+    implementation(project(":core:util"))
 
     //viewmodel
     implementation(libs.lifecycle.viewmodel.ktx)
@@ -68,5 +71,5 @@ dependencies {
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v9.0.0-release-jitpack")
     implementation("com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2:v9.0.0-release-jitpack")
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v9.0.0-release-jitpack")
-
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
 }

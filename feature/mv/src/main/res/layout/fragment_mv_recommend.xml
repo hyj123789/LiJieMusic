@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 🌟 1. 去掉 NestedScrollView，直接用 LinearLayout 当根布局 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MvRecommendFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="16dp"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false" />
+
+    <!-- 加载文字 -->
+    <TextView
+        android:id="@+id/jiazai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="嗷嗷~ 正在拼命加载更多~"
+        android:textStyle="bold"
+        android:textColor="#999999"
+        android:visibility="gone"
+        android:gravity="center"
+        android:padding="12dp"
+        android:textSize="16sp"/>
+
+</LinearLayout>

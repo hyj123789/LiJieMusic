@@ -52,6 +52,9 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
     override fun initEvent() {
         super.initEvent()
         viewModel.init(playlistId)
+        binding.ivBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     override fun initObservers() {

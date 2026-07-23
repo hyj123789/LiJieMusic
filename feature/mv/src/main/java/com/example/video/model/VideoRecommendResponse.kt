@@ -1,4 +1,4 @@
-package com.example.mv
+package com.example.video.model
 
 data class VideoRecommendResponse(
     val code : Int,

@@ -1,10 +1,6 @@
-package com.example.mv
+package com.example.video.fragment
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,17 +8,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.base.BaseFragment
-import com.example.mv.databinding.FragmentMvBinding
+import com.example.video.VideoViewModel
+import com.example.video.adapter.RecommendMvAdapter
+import com.example.video.databinding.FragmentMvRecommendBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlin.getValue
 
+class MvRecommendFragment : BaseFragment<FragmentMvRecommendBinding>(FragmentMvRecommendBinding::inflate) {
 
-class MVFragment :BaseFragment<FragmentMvBinding>(FragmentMvBinding::inflate) {
-
-    private val viewModel : MVViewModel by viewModels()
-    private val MvAdapter = VideoAdapter()
+    private val viewModel : VideoViewModel by viewModels()
+    private val MvAdapter = RecommendMvAdapter()
 
     //定义一个全局变量记录当前的Offset
     var currentOffset = 0
@@ -35,7 +31,7 @@ class MVFragment :BaseFragment<FragmentMvBinding>(FragmentMvBinding::inflate) {
         binding.rv.layoutManager = LinearLayoutManager(requireContext())
         binding.rv.adapter = MvAdapter
 
-        viewModel.fetchRecommendPlaylists(currentOffset)
+        viewModel.fetchRecommendMv(currentOffset)
 
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             //触底监听
@@ -53,7 +49,7 @@ class MVFragment :BaseFragment<FragmentMvBinding>(FragmentMvBinding::inflate) {
                             isLoading = true
                             binding.jiazai.visibility = View.VISIBLE
                             //currentOffset+1保证多次请求
-                            viewModel.fetchRecommendPlaylists(currentOffset)
+                            viewModel.fetchRecommendMv(currentOffset)
                         }
                     }
                 }
@@ -68,7 +64,7 @@ class MVFragment :BaseFragment<FragmentMvBinding>(FragmentMvBinding::inflate) {
             //只有在页面可见时才监听，不可见就没有必要监听
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModel.MVFlow
+                viewModel.recommendMvRes
                     .onEach { realData ->
                         if (realData.isNotEmpty()) {
                             //解开限制，允许下一次触底滑动

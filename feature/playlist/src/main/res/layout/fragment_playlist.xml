@@ -10,6 +10,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="5dp"
+        android:padding="5dp"/>
+    <ImageView
         android:id="@+id/iv_cover"
         android:layout_width="0dp"
         android:layout_height="0dp"
