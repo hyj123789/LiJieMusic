@@ -1,13 +1,19 @@
 package com.example.player
 
+import SongWikiData
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
+import com.example.player.model.Artist
+import com.example.player.model.ArtistData
 import com.example.player.model.Lyric
 import com.example.player.model.LyricParser
+import com.example.player.model.SimilarArtist
+import com.example.player.model.Song
+import com.example.player.model.SongData
 import com.example.player.model.SongUrlData
 import com.example.player.model.SongUrlResponse
 import com.example.util.ToastUtil
@@ -15,6 +21,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * 播放器 ViewModel
@@ -26,7 +35,10 @@ import kotlinx.coroutines.launch
  */
 class PlayerViewModel : BaseViewModel() {
 
-    // ========== 播放状态 ==========
+
+    //用户id监听
+    private val _currentSongId = MutableStateFlow<Long?>(null)
+    val currentSongId: StateFlow<Long?> = _currentSongId.asStateFlow()
 
     /** 当前播放进度 (0-100) */
     private val _progress = MutableStateFlow(0)
@@ -60,13 +72,37 @@ class PlayerViewModel : BaseViewModel() {
     val songName: LiveData<String> = _songName
 
 
-    // 解析后的歌词列表（含逐字/逐句）
+    //解析后的歌词列表（含逐字/逐句）
     private val _lyricList = MutableLiveData<List<Lyric>>()
     val lyricList: LiveData<List<Lyric>> = _lyricList
 
-    /** 歌词加载状态 */
+   //歌词加载状态
     private val _lyricLoading = MutableLiveData(false)
     val lyricLoading: LiveData<Boolean> = _lyricLoading
+
+    //历史听歌
+    private val _wikiData = MutableStateFlow<SongWikiData?>(null)
+    val wikiData: StateFlow<SongWikiData?> = _wikiData
+
+    //歌曲详情
+    private val _songDetail = MutableStateFlow<SongData?>(null)
+    val songDetail: StateFlow<SongData?> = _songDetail
+
+    //歌手
+    private val _songer = MutableStateFlow<ArtistData?>(null)
+    val songer: StateFlow<ArtistData?> = _songer
+
+    //相似歌词
+    private val _similarSong = MutableStateFlow<List<Song>?>(null)
+    val similarSong: StateFlow<List<Song>?> = _similarSong
+
+    //相似歌手
+    private val _similarSonger = MutableStateFlow<List<SimilarArtist>?>(null)
+    val similarSonger : StateFlow<List<SimilarArtist>?> = _similarSonger
+
+    fun updateSongId(id: Long) {
+        _currentSongId.value = id
+    }
 
 
 
@@ -109,6 +145,7 @@ class PlayerViewModel : BaseViewModel() {
                 _songName.value = song.name
                 _artistName.value = song.ar.joinToString(", ") { it.name }
                 _coverUrl.value = song.al.picUrl
+                updateSongId(song.id)
             }
         }
     }
@@ -182,6 +219,76 @@ class PlayerViewModel : BaseViewModel() {
                 e.printStackTrace()
                 Log.e("hyj", "点赞接口发生异常了！原因: ${e.message}", e)
                 _isLiked.value = currentStatus
+            }
+        }
+    }
+
+    fun loadWikiData(songId: Long) {
+        viewModelScope.launch {
+            try {
+                val api = RetrofitClient.createApi(PlayerApi::class.java)
+                val response = api.getSongListenHistory(songId)
+                Log.d("hyj","历史听歌的返回码：${response.code},返回的数据${response.data}")
+                if (response.code == 200 && response.data != null) {
+                    _wikiData.value = response.data
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("hyj", "请求出错了，崩溃原因: ${e.message}", e)
+            }
+        }
+    }
+
+    //取出歌词详情
+    fun fetchSongDetail2(songId: String) {
+        launchRequest {
+            val api = RetrofitClient.createApi(PlayerApi::class.java)
+            val result = api.getSongDetail2(songId.toLong())
+            if (result.code == 200 ) {
+                _songDetail.value = result.data
+            }
+        }
+    }
+
+    fun formatTimestampToDate(timestamp: Long): String {
+        //定义需要的日期格式："yyyy" 代表年，"MM" 代表月，"dd" 代表日
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        //将时间戳转为 Date 对象，并进行格式化
+        return sdf.format(Date(timestamp))
+    }
+
+    //取出歌手详情
+    fun fetchSongerDetail(songId: String) {
+        launchRequest {
+            val api = RetrofitClient.createApi(PlayerApi::class.java)
+            val result = api.getSongerDetail(songId.toLong())
+            if (result.code == 200 ) {
+                _songer.value = result.data
+            }
+        }
+    }
+
+    //请求相似歌曲
+    fun fetchSimilarSongDetail(songId: String) {
+        launchRequest {
+            val api = RetrofitClient.createApi(PlayerApi::class.java)
+            val result = api.getSimilarSongDetail(songId.toLong())
+            if (result.code == 200 ) {
+                _similarSong.value = result.songs
+            }
+        }
+    }
+
+    //取出相似的歌手
+    fun fetchSimilarSongerDetail(songId: String) {
+        launchRequest {
+            val api = RetrofitClient.createApi(PlayerApi::class.java)
+            val result = api.getSimilarSongerDetail(songId.toLong())
+            Log.d("hyj","请求相似歌手返回的请求码:${result.code}，数据为${result.artists}")
+            if (result.code == 200 ) {
+                _similarSonger.value = result.artists
+            }else{
+                Log.e("hyj","请求相似歌手发生错误了")
             }
         }
     }

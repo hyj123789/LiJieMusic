@@ -1,8 +1,10 @@
-package com.example.player
+package com.example.player.fragment
 
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import android.widget.SeekBar
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,13 +15,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseFragment
 import com.example.base.PlayerManager
 import com.example.model.UserManager
+import com.example.player.PlayerViewModel
+import com.example.player.R
 import com.example.player.databinding.FragmentPlayerBinding
 import com.example.therouter.RoutePath
 import com.example.util.ToastUtil
-import kotlinx.coroutines.launch
 import com.therouter.router.Route
-import androidx.core.graphics.toColorInt
-
+import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.PLAYER_MAIN)
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate) {
@@ -49,9 +51,11 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             if (binding.lvLyrics.visibility == View.VISIBLE) {
                 binding.lvLyrics.visibility = View.GONE
                 binding.ivAlbumCover.visibility = View.VISIBLE
+                binding.layoutSong.visibility = View.VISIBLE
             } else {
                 binding.lvLyrics.visibility = View.VISIBLE
                 binding.ivAlbumCover.visibility = View.GONE
+                binding.layoutSong.visibility = View.GONE
             }
         }
 
@@ -97,8 +101,8 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             PlayerManager.next()
         }
 
-        binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     val duration = PlayerManager.duration.value
                     val seekPosition = (duration * progress) / 100
@@ -106,12 +110,12 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 //正在拖动就不刷新UI
                 isUserSeeking = true
             }
 
-            override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 //手指松开正式指挥播放器跳转到松开的位置
                 seekBar?.let {
                     val duration = PlayerManager.duration.value
@@ -156,6 +160,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             val uriString = "lijiemusic://comment?songId=$songId&songName=$songName&coverUrl=$coverUrl"
             //Navigation会自动跨模块找到它！
             findNavController().navigate(Uri.parse(uriString))
+
         }
 
         // 分享按钮

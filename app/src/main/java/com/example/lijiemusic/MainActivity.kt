@@ -1,6 +1,6 @@
 package com.example.lijiemusic
 
-import com.example.player.PlaylistBottomSheet
+import com.example.player.fragment.PlaylistBottomSheet
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -85,7 +85,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         binding.bottomNavView.setupWithNavController(navController)
 
         binding.ivMiniCover.setOnClickListener {
-            findNavController(R.id.nav_host_fragment).navigate(R.id.playerFragment)
+            findNavController(R.id.nav_host_fragment).navigate(R.id.playerContainerFragment)
         }
 
         binding.ivMiniPlaylist.setOnClickListener {
@@ -97,7 +97,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.playerFragment || destination.id == R.id.commentFragment) {
+            if (destination.id == R.id.playerContainerFragment || destination.id == R.id.commentFragment) {
                 binding.layoutMiniPlayer.visibility = View.GONE
                 binding.bottomNavView.visibility = View.GONE
             } else {

@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/playerFragment"
-        android:name="com.example.player.PlayerFragment"
+        android:name="com.example.player.fragment.PlayerFragment"
         tools:layout="@layout/fragment_player" />
 
     <fragment
@@ -82,5 +82,9 @@
         <deepLink app:uri="lijiemusic://comment?songId={songId}&amp;songName={songName}&amp;coverUrl={coverUrl}" />
 
     </fragment>
+    <fragment
+        android:id="@+id/playerContainerFragment"
+        android:name="com.example.player.fragment.PlayerContainerFragment"
+        android:label="PlayerContainerFragment" />
 
 </navigation>

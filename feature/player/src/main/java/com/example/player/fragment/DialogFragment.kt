@@ -1,9 +1,10 @@
-package com.example.player
+package com.example.player.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.player.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.player.databinding.DialogQualityBottomSheetBinding
 

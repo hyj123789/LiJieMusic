@@ -1,4 +1,4 @@
-package com.example.player
+package com.example.player.adapter
 
 import android.graphics.Color
 import android.util.Log
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.base.SongDetail
+import com.example.player.R
 
 class PlaylistAdapter(
     private val onItemClick: (SongDetail) -> Unit,

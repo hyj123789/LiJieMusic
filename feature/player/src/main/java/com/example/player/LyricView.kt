@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.toColorInt
 import com.example.player.model.Lyric
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -23,7 +24,7 @@ class LyricView @JvmOverloads constructor(
     private val normalTextSize = 60f
     private val highlightTextSize = 70f
     private val normalTextColor = Color.GRAY
-    private val highlightTextColor = Color.GREEN
+    private val highlightTextColor = "#BDE39F"//浅绿
     private val lineSpacing = 120f
 
     private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -35,14 +36,14 @@ class LyricView @JvmOverloads constructor(
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
         textSize = highlightTextSize
-        color = highlightTextColor
+        color = highlightTextColor.toColorInt()
         typeface = android.graphics.Typeface.DEFAULT_BOLD
     }
 
     private val karaokeHighlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.LEFT
         textSize = normalTextSize
-        color = highlightTextColor
+        color = highlightTextColor.toColorInt()
     }
 
     private val karaokeNormalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

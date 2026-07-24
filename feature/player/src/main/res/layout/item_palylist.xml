@@ -17,14 +17,14 @@
         android:padding="3dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:maxEms="5"
+        android:maxEms="8"
         android:layout_marginLeft="8dp"/>
     <TextView
         android:id="@+id/songer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="歌手"
-        android:textSize="16dp"
+        android:textSize="12dp"
         android:padding="3dp"
         android:maxLines="1"
         android:ellipsize="end"

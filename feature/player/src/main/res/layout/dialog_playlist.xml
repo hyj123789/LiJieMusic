@@ -22,17 +22,13 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_model"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="2dp"
-            android:background="@drawable/bg_quality_tag"
-            android:textColor="@color/text_primary"
-            android:textSize="12sp"
-            android:text="顺序" />
+        <ImageView
+            android:id="@+id/btn_play_mode"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_shunxun"
+            app:tint="@color/text_primary" />
         <View
             android:layout_width="16dp"
             android:layout_height="1dp"/>

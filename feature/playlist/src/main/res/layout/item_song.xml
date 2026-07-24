@@ -4,53 +4,59 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="8dp">
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="10dp"
+    android:background="?attr/selectableItemBackground">
 
-    <!-- 封面图片 -->
     <ImageView
         android:id="@+id/iv_cover"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:scaleType="centerCrop"
         android:contentDescription="歌曲封面" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-        <TextView
-            android:id="@+id/tv_song_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="songname"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:layout_gravity="center"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_song_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="songname"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
             <ImageView
-                android:scaleType="fitCenter"
                 android:id="@+id/iv_vip"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"/>
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="6dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/tv_artist_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="artist"
-            android:textSize="14sp"
-            android:textColor="#666666"
+            android:textSize="12sp"
+            android:textColor="#999999"
             android:maxLines="1"
             android:ellipsize="end"
             android:layout_marginTop="4dp" />
@@ -58,18 +64,23 @@
 
     <ImageButton
         android:id="@+id/btn_play"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:scaleType="centerCrop"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:padding="10dp"
         android:src="@drawable/ic_play_next"
         android:contentDescription="播放" />
 
     <ImageButton
         android:id="@+id/btn_more"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:padding="10dp"
         android:src="@drawable/ic_more"
-        android:scaleType="centerCrop"
         android:contentDescription="更多选项" />
 
 </LinearLayout>

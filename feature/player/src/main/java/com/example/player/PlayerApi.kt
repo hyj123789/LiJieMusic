@@ -1,9 +1,14 @@
 package com.example.player
 
+import SongHistoryWikiResponse
+import com.example.player.model.ArtistResponse
 import com.example.player.model.CheckLikeResponse
 import com.example.player.model.LikeResponse
 import com.example.player.model.LyricResponse
 import com.example.player.model.MusicAvailableResponse
+import com.example.player.model.SimilarArtistResponse
+import com.example.player.model.SimilarSongsResponse
+import com.example.player.model.SongApiResponse
 import com.example.player.model.SongDetailResponse
 import com.example.player.model.SongUrlResponse
 import retrofit2.http.GET
@@ -38,4 +43,38 @@ interface PlayerApi {
         @Query("like") like: Boolean,
         @Query("timestamp") timestamp: Long = System.currentTimeMillis()
     ): LikeResponse
+
+    //历史听歌记录
+    @GET("/music/first/listen/info")
+    suspend fun getSongListenHistory(
+        @Query("id") songId: Long
+    ): SongHistoryWikiResponse
+
+    //歌曲详情
+    @GET("/ugc/song/get")
+    suspend fun getSongDetail2(
+        @Query("id") songId: Long
+    ): SongApiResponse
+
+    //歌手的介绍/ugc/artist/get
+    @GET("/ugc/artist/get")
+    suspend fun getSongerDetail(
+        @Query("id") songId: Long
+    ): ArtistResponse
+
+    //访问相似歌曲
+    @GET("/simi/song")
+    suspend fun getSimilarSongDetail(
+        @Query("id") songId: Long
+    ): SimilarSongsResponse
+
+
+    //访问相似歌手
+    @GET("/simi/artist")
+    suspend fun getSimilarSongerDetail(
+        @Query("id") songId: Long
+    ): SimilarArtistResponse
+
+
+
 }

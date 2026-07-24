@@ -118,6 +118,10 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
                 //顺序播放：使用取模运算%，实现列表循环
                 if (currentIndex == -1) 0 else (currentIndex + 1) % currentList.size
             }
+            PlayMode.SINGLE_LOOP -> {
+                seekTo(0)
+                currentIndex
+            }
         }
 
         Log.d("hyj", "准备切换下一首，当前索引: $currentIndex，下一首索引: $nextIndex")
@@ -153,6 +157,10 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
             PlayMode.SEQUENTIAL -> {
                 //顺序播放：如果是第一首就跳到最后一首
                 if (currentIndex <= 0) currentList.size - 1 else currentIndex - 1
+            }
+            PlayMode.SINGLE_LOOP -> {
+                seekTo(0)
+                currentIndex
             }
         }
 
@@ -277,16 +285,16 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
     }
 
     fun togglePlayMode() {
-        _playMode.value = if (_playMode.value == PlayMode.SEQUENTIAL) {
-            PlayMode.SHUFFLE
-        } else {
-            PlayMode.SEQUENTIAL
+        _playMode.value = when(_playMode.value){
+            PlayMode.SEQUENTIAL -> PlayMode.SHUFFLE
+            PlayMode.SHUFFLE -> PlayMode.SINGLE_LOOP
+            PlayMode.SINGLE_LOOP -> PlayMode.SEQUENTIAL
         }
     }
-
 }
 
 enum class PlayMode {
     SEQUENTIAL, //顺序播放
-    SHUFFLE     //随机播放
+    SHUFFLE ,
+    SINGLE_LOOP
 }

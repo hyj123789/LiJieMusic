@@ -1,4 +1,4 @@
-package com.example.player
+package com.example.player.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,12 +9,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.PlayMode
-import com.example.model.UserManager
 import com.example.base.PlayerManager
+import com.example.model.UserManager
+import com.example.player.adapter.PlaylistAdapter
+import com.example.player.R
 import com.example.player.databinding.DialogPlaylistBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
-
 
 class PlaylistBottomSheet : BottomSheetDialogFragment() {
 
@@ -52,7 +53,7 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
         }
 
 
-        binding.tvModel.setOnClickListener {
+        binding.btnPlayMode.setOnClickListener {
             PlayerManager.togglePlayMode()
         }
 
@@ -91,9 +92,11 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
 
                 launch {
                     PlayerManager.playMode.collect { model ->
-                        if (model == PlayMode.SEQUENTIAL)
-                            binding.tvModel.text = "顺序"
-                        else binding.tvModel.text = "随机"
+                        when(model){
+                            PlayMode.SEQUENTIAL-> binding.btnPlayMode.setImageResource(R.drawable.ic_shunxun)
+                            PlayMode.SHUFFLE -> binding.btnPlayMode.setImageResource(R.drawable.ic_shuiji)
+                            PlayMode.SINGLE_LOOP -> binding.btnPlayMode.setImageResource(R.drawable.ic_danqu)
+                        }
                     }
                 }
             }
