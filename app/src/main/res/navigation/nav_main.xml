@@ -11,14 +11,14 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_fragment_home_to_searchFragment"
-            app:destination="@id/searchFragment" />
+            app:destination="@id/fragment_search" />
         <action
             android:id="@+id/action_fragment_home_to_fragment_profile"
             app:destination="@id/fragment_profile" />
 
     </fragment>
     <fragment
-        android:id="@+id/searchFragment"
+        android:id="@+id/fragment_search"
         android:name="com.example.search.SearchFragment"
         android:label="SearchFragment" >
 
@@ -33,17 +33,17 @@
     </fragment>
 
     <fragment
-        android:id="@+id/fragment_search"
+        android:id="@+id/fragment_search_page"
         android:name="com.example.searchpage.SearchPageFragment"
         android:label="SearchPageFragment" />
 
     <fragment
-        android:id="@+id/fragment_mv"
+        android:id="@+id/fragment_video"
         android:name="com.example.video.fragment.VideoFragment"
         android:label="MVFragment" />
 
     <fragment
-        android:id="@+id/playerFragment"
+        android:id="@+id/fragment_player"
         android:name="com.example.player.fragment.PlayerFragment"
         tools:layout="@layout/fragment_player" />
 
@@ -57,14 +57,14 @@
             app:destination="@id/fragment_home" />
         <action
             android:id="@+id/action_fragment_profile_to_searchFragment"
-            app:destination="@id/searchFragment" />
+            app:destination="@id/fragment_search_page" />
         <action
             android:id="@+id/action_fragment_profile_to_playlistFragment"
-            app:destination="@id/playlistFragment" />
+            app:destination="@id/fragment_playlist" />
     </fragment>
 
     <fragment
-        android:id="@+id/playlistFragment"
+        android:id="@+id/fragment_playlist"
         android:name="com.example.playlist.PlaylistFragment"
         android:label="歌单详情"
         tools:layout="@layout/fragment_playlist">
@@ -75,7 +75,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/commentFragment"
+        android:id="@+id/fragment_comment"
         android:name="com.example.comment.CommentFragment"
         android:label="CommentFragment">
 
@@ -83,8 +83,15 @@
 
     </fragment>
     <fragment
-        android:id="@+id/playerContainerFragment"
+        android:id="@+id/fragment_player_container"
         android:name="com.example.player.fragment.PlayerContainerFragment"
-        android:label="PlayerContainerFragment" />
+        android:label="cover">
 
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_mv_play"
+        android:name="com.example.video.fragment.MvPlayFragment"
+        android:label="播放MV">
+        <deepLink app:uri="musicapp://mvPlay/id/{mvId}" />
+    </fragment>
 </navigation>

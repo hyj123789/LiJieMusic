@@ -18,7 +18,7 @@ data class DataX(
     val artistId: Int,
     val artistName: String,
     val artists: List<Artist>,
-    val briefDesc: String,
+    val briefDesc: String?,
     val cover: String,
     val duration: Int,
     val id: Int,

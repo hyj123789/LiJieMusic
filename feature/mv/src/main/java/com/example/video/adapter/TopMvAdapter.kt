@@ -11,7 +11,7 @@ import com.example.video.databinding.ItemAllMvBinding
 import com.example.video.model.DataTop
 import com.example.video.model.DataX
 
-class TopMvAdapter : ListAdapter<DataTop, TopMvAdapter.ViewHolder>(DataTopDiffCallback()) {
+class TopMvAdapter(private val onItemClick : (Long) -> Unit) : ListAdapter<DataTop, TopMvAdapter.ViewHolder>(DataTopDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -25,10 +25,16 @@ class TopMvAdapter : ListAdapter<DataTop, TopMvAdapter.ViewHolder>(DataTopDiffCa
         position: Int
     ) {
         holder.bind(getItem(position))
+        holder.currentId = getItem(position).id.toLong()
     }
 
-    inner class ViewHolder(private val binding: ItemAllMvBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemAllMvBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                onItemClick.invoke(currentId)
+            }
+        }
+        var currentId = 0L
         fun bind(item: DataTop) {
             Glide.with(binding.root.context).load(item.cover).into(binding.ivItemAllMvCover)
             if (item.briefDesc.isNullOrEmpty()) {
@@ -38,7 +44,6 @@ class TopMvAdapter : ListAdapter<DataTop, TopMvAdapter.ViewHolder>(DataTopDiffCa
                 artist.name
             }
             binding.tvItemMvCounts.text = "${ item.playCount }次播放"
-                Log.d("hhh", "绑定数据了捏，不是我的锅 ")
         }
     }
 }

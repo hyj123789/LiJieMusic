@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="退出应用"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
             android:textColor="?android:attr/textColorPrimary"
             android:layout_marginBottom="16dp" />
 
@@ -28,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="你要退出账号还是仅退出应用？请点击下方对应按钮"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginBottom="24dp" />
 
@@ -40,21 +38,18 @@
 
             <Button
                 android:id="@+id/btn_cancel"
-                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="取消" />
 
             <Button
                 android:id="@+id/btn_account"
-                style="@style/Widget.Material3.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="账号"
                 android:layout_marginStart="8dp" />
             <Button
                 android:id="@+id/btn_application"
-                style="@style/Widget.Material3.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="应用"

@@ -1,23 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.LiJieMusic" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.LiJieMusic" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Theme.LiJieMusic" parent="Base.Theme.LiJieMusic" />
 
     <style name="BottomNavTextNormal">
-        <item name="android:textSize">16sp</item> <!-- 默认稍微小一点 -->
-        <item name="android:textStyle">normal</item> <!-- 正常粗细 -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="BottomNavTextActive">
-        <item name="android:textSize">18sp</item> <!-- 选中时稍微变大，产生动态效果 -->
-        <item name="android:textStyle">bold</item> <!-- 选中时字体加粗！ -->
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="ShapeAppearanceOverlay.App.DrawerActionItem" parent="">
-        <!-- 50% 表示把矩形的左右两边完全削成半圆形，变成胶囊状 -->
         <item name="cornerSize">50%</item>
     </style>
 </resources>

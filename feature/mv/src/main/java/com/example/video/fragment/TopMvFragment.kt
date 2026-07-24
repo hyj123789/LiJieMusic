@@ -2,6 +2,7 @@ package com.example.video.fragment
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.BaseFragment
 import com.example.video.VideoViewModel
@@ -23,7 +26,12 @@ import kotlin.getValue
 
 class TopMvFragment : BaseFragment<FragmentTopMvBinding>(FragmentTopMvBinding::inflate) {
     private val viewModel: VideoViewModel by viewModels()
-    private val mAdapter = TopMvAdapter()
+    private val mAdapter = TopMvAdapter{ id ->
+        val request = NavDeepLinkRequest.Builder
+            .fromUri(Uri.parse("musicapp://mvPlay/id/$id"))
+            .build()
+        findNavController().navigate(request)
+    }
     private var _popBinding: PopContentBinding? = null
     private val popBinding get() = _popBinding!!
 

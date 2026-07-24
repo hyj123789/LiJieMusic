@@ -1,9 +1,13 @@
 package com.example.lijiemusic
 
+import android.graphics.Color
+import android.os.Bundle
+import android.os.PersistableBundle
 import com.example.player.fragment.PlaylistBottomSheet
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -35,7 +39,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     private val viewModel: PlayerViewModel by viewModels()
     private var _headBinding: HeadLayoutBinding? = null
     private val headBinding get() = _headBinding!!
-
+    private val originalConstraintSet by lazy {
+        ConstraintSet().apply {
+            clone(binding.main)
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+    }
 
     //声明一个用来控制底层播放的 Helper
     private var mediaControllerHelper: MediaControllerHelper? = null
@@ -46,7 +57,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         val headerView = binding.navDrawer.getHeaderView(0)
         _headBinding = HeadLayoutBinding.bind(headerView)
 
-        headBinding.ivDrawerAvatar
         lifecycleScope.launch {
             UserManager.profile.collect { profile ->
                 profile?.apply {
@@ -59,6 +69,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         //取出本地歌单
         val savedPlaylist = LocalPlaylistManager.getPlaylist(this)
         PlayerManager.updatePlaylist(savedPlaylist)
+        binding.drawerlayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
     }
 
     override fun initEvent() {
@@ -85,7 +96,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         binding.bottomNavView.setupWithNavController(navController)
 
         binding.ivMiniCover.setOnClickListener {
-            findNavController(R.id.nav_host_fragment).navigate(R.id.playerContainerFragment)
+            findNavController(R.id.nav_host_fragment).navigate(R.id.fragment_player_container)
         }
 
         binding.ivMiniPlaylist.setOnClickListener {
@@ -97,16 +108,30 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.playerContainerFragment || destination.id == R.id.commentFragment) {
+            if (destination.id == R.id.fragment_player_container || destination.id == R.id.fragment_comment) {
                 binding.layoutMiniPlayer.visibility = View.GONE
                 binding.bottomNavView.visibility = View.GONE
             } else {
                 binding.layoutMiniPlayer.visibility = View.VISIBLE
                 binding.bottomNavView.visibility = View.VISIBLE
             }
+            if(destination.id!=R.id.fragment_home&&destination.id!=R.id.fragment_search_page&&destination.id!=R.id.fragment_video&&destination.id!=R.id.fragment_profile){
+                binding.bottomNavView.visibility = View.GONE
+                binding.layoutMiniPlayer
+                val constraintSet = ConstraintSet()
+                constraintSet.clone(binding.main)
+                constraintSet.connect(
+                    R.id.layout_mini_player,
+                    ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM,
+                    5
+                )
+                constraintSet.applyTo(binding.main)
+            } else {
+                originalConstraintSet.applyTo(binding.main)
+            }
         }
         initMiniPlayer()
-        //初始化播放器
         PlayerManager.initPlayer(this)
     }
 

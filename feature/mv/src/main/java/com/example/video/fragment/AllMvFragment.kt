@@ -1,19 +1,18 @@
 package com.example.video.fragment
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.PopupWindow
 import androidx.core.graphics.drawable.toDrawable
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.base.BaseFragment
 import com.example.util.ToastUtil
@@ -26,15 +25,20 @@ import kotlinx.coroutines.launch
 
 class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::inflate) {
     private val viewModel: VideoViewModel by viewModels()
-    private val mAdapter = AllMvAdapter()
-    private var _popBinding : PopContentBinding?= null
+    private val mAdapter = AllMvAdapter { id ->
+        val request = NavDeepLinkRequest.Builder
+            .fromUri(Uri.parse("musicapp://mvPlay/id/$id"))
+            .build()
+        findNavController().navigate(request)
+    }
+    private var _popBinding: PopContentBinding? = null
     private val popBinding get() = _popBinding!!
     override fun initView() {
         super.initView()
         binding.rvMvAll.apply {
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = mAdapter
-        }
+    }
         viewModel.fetchAllMv()
     }
 
@@ -47,26 +51,28 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
             ViewGroup.LayoutParams.WRAP_CONTENT,
             true
         )
-        popBinding.btnTypeAll.isSelected=true
-        popBinding.btnAreaAll.isSelected=true
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popBinding.btnTypeAll.isSelected = true
+        popBinding.btnAreaAll.isSelected = true
+        popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         binding.tvFilter.setOnClickListener {
             popupWindow.showAsDropDown(binding.tvFilter)
         }
         popBinding.apply {
-            val areaButtons = listOf(btnAreaAll, btnAreaCn, btnAreaHt, btnAreaWestern, btnAreaJapan, btnAreaKorea)
-            val typeButtons = listOf(btnTypeAll, btnTypeOfficial, btnTypeOrigin, btnTypeLive, btnTypeNetEase)
-            for(areaButton in areaButtons){
+            val areaButtons =
+                listOf(btnAreaAll, btnAreaCn, btnAreaHt, btnAreaWestern, btnAreaJapan, btnAreaKorea)
+            val typeButtons =
+                listOf(btnTypeAll, btnTypeOfficial, btnTypeOrigin, btnTypeLive, btnTypeNetEase)
+            for (areaButton in areaButtons) {
                 areaButton.setOnClickListener {
-                    setButtonSelected(areaButtons,areaButton)
+                    setButtonSelected(areaButtons, areaButton)
                     viewModel.updateAllArea(areaButton.text.toString())
                     viewModel.fetchAllMv()
                 }
 
             }
-            for (typeButton in typeButtons){
+            for (typeButton in typeButtons) {
                 typeButton.setOnClickListener {
-                    setButtonSelected(typeButtons,typeButton)
+                    setButtonSelected(typeButtons, typeButton)
                     viewModel.updateAllType(typeButton.text.toString())
                     viewModel.fetchAllMv()
                 }
@@ -77,17 +83,17 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
     override fun initObservers() {
         super.initObservers()
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.toastMsg.collect { msg->
-                        if (msg.isNullOrEmpty()){
+                    viewModel.toastMsg.collect { msg ->
+                        if (msg.isNullOrEmpty()) {
                             return@collect
                         }
-                        ToastUtil.popToast(msg,requireContext())
+                        ToastUtil.popToast(msg, requireContext())
                     }
                 }
                 launch {
-                    viewModel.allMvList.collect { list->
+                    viewModel.allMvList.collect { list ->
                         val newList = list?.toMutableList() ?: return@collect
                         mAdapter.submitList(newList)
                     }
@@ -95,11 +101,12 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
             }
         }
     }
-    private fun setButtonSelected(buttons: List<Button>,button: Button){
-        for (btn in buttons){
-            btn.isSelected=false
+
+    private fun setButtonSelected(buttons: List<Button>, button: Button) {
+        for (btn in buttons) {
+            btn.isSelected = false
         }
-        button.isSelected=true
+        button.isSelected = true
     }
 
     override fun onDestroy() {

@@ -3,31 +3,32 @@ package com.example.base
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseActivity<VB : ViewBinding>(
     private val inflate : (LayoutInflater)->VB
 ) : AppCompatActivity(){
-    //延迟赋值，activity销毁的时候会一起销毁不用担心内存泄露
     protected lateinit var binding: VB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //初始化 ViewBinding
         binding = inflate(layoutInflater)
         setContentView(binding.root)
 
-        //开启沉浸式状态栏 (让内容延伸到状态栏底部)
         setupImmersiveStatusBar()
 
-        //执行子类的初始化
         initView()
         initEvent()
         initObservers()
@@ -38,13 +39,19 @@ abstract class BaseActivity<VB : ViewBinding>(
 
     open fun initObservers() {}
 
-    private fun setupImmersiveStatusBar(){
-        // 让内容顶到状态栏下面
+    private fun setupImmersiveStatusBar() {
+        val window = this.window
+        val decorView = window.decorView
+
+        // 这是 Android 做了兼容的 Compat 包
+        // 注意，使用了下面这个方法后，状态栏不会再有东西占位，
+        // 可以给根布局加上 android:fitsSystemWindows=true
+        // 不同布局该属性效果不同，请给合适的布局添加
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        // 将状态栏背景设为透明
-        window.statusBarColor = Color.TRANSPARENT
-        // 默认状态栏字体为黑色 (如果是深色模式可以写逻辑切成白色)
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
+        val windowInsetsController = WindowCompat.getInsetsController(window, decorView)
+        // 如果你要白色的状态栏字体，请在你直接的 Activity 中单独设置 isAppearanceLightStatusBars，这里不提供方法
+        //windowInsetsController.isAppearanceLightStatusBars = isDaytimeMode()
+        window.statusBarColor = Color.TRANSPARENT //把状态栏颜色设置成透明
     }
 
     @SuppressLint("ServiceCast")
