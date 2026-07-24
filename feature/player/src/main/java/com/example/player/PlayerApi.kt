@@ -5,6 +5,7 @@ import com.example.player.model.ArtistResponse
 import com.example.player.model.CheckLikeResponse
 import com.example.player.model.LikeResponse
 import com.example.player.model.LyricResponse
+import com.example.player.model.MoreSongResponse
 import com.example.player.model.MusicAvailableResponse
 import com.example.player.model.SimilarArtistResponse
 import com.example.player.model.SimilarSongsResponse
@@ -76,5 +77,13 @@ interface PlayerApi {
     ): SimilarArtistResponse
 
 
+    //歌手更多歌曲请求
+    @GET("/artist/songs")
+    suspend fun getMoreSongs(
+        @Query("id") id: Long,
+        @Query("order") order: String = "hot",
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0
+    ): MoreSongResponse
 
 }

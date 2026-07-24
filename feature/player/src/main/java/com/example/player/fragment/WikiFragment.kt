@@ -18,6 +18,7 @@ import com.example.base.BaseFragment
 import com.example.base.PlayerManager
 import com.example.model.UserManager
 import com.example.player.PlayerViewModel
+import com.example.player.adapter.MoreSongAdapter
 import com.example.player.adapter.SimilarArtistAdapter
 import com.example.player.adapter.SimilarSongAdapter
 import com.example.player.databinding.FragmentWikiBinding
@@ -39,6 +40,11 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
     }
 
+    private val moreSongAdapter = MoreSongAdapter{ songItem ->
+        PlayerManager.playSong(songItem.id.toString(),songItem.name?:"未知歌名",songItem.ar?.get(0)?.name?:"未知歌手")
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         super.initView()
 
@@ -51,6 +57,9 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
         binding.rvSamesonger.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         binding.rvSamesonger.adapter = similarArtistAdapter
+
+        binding.rvMoresong.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvMoresong.adapter = moreSongAdapter
 
         val snapHelper = LinearSnapHelper()
         binding.rvSamesonger.onFlingListener = null // 防止重复绑定报错
@@ -120,6 +129,46 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
             override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
         })
+
+
+        //处理歌手歌曲的滑动冲突
+        var lastY = 0f
+        binding.rvMoresong.setOnTouchListener { view, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    //手指按下时记录下位置
+                    view.parent.requestDisallowInterceptTouchEvent(true)
+                    lastY = event.y
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val currentY = event.y
+                    //记录下移动y大于0往下滑动。小于0代表往上滑动
+                    val dy = currentY - lastY
+
+                    //canScrollVertically(-1)判断能否往上滑查看是否到顶
+                    //canScrollVertically(1)判断能否往下滑查看到底没有
+                    val canScrollUp = view.canScrollVertically(-1)
+                    val canScrollDown = view.canScrollVertically(1)
+
+                    if (dy > 0 && !canScrollUp) {
+                        //手指往下滑，但是列表已经到顶部了，放权给外层 NestedScrollView
+                        view.parent.requestDisallowInterceptTouchEvent(false)
+                    } else if (dy < 0 && !canScrollDown) {
+                        //手指往上滑，但是列表已经到底部了，放权给外层 NestedScrollView
+                        view.parent.requestDisallowInterceptTouchEvent(false)
+                    } else {
+                        //否则就还在列表内部滑动区间，不让父布局抢滑动
+                        view.parent.requestDisallowInterceptTouchEvent(true)
+                    }
+                    lastY = currentY
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    view.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            //表示这个事件并没有消费，还可以给rv消费曲滑动，好让列表可以滚动
+            false
+        }
     }
 
     override fun initObservers() {
@@ -167,6 +216,7 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
                             viewModel.fetchSongerDetail(id.toString())
                             viewModel.fetchSimilarSongerDetail(id.toString())
+                            viewModel.fetchMoreSongerDetail(id.toString())
 
                             binding.language.text = data.language
                             binding.publishtime.text = ""+viewModel.formatTimestampToDate(data.publishTime ?:0)
@@ -226,6 +276,14 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
                     viewModel.similarSonger.collect { songer ->
                         similarArtistAdapter.submitList(songer)
                         Log.d("hyj","相似歌手的数据为：${songer.toString()}")
+                    }
+                }
+
+                //监听歌手
+                launch {
+                    viewModel.moreSongItem.collect { moreSong ->
+                        moreSongAdapter.submitList(moreSong)
+                        Log.d("hyj","相似歌手的数据为：${moreSong.toString()}")
                     }
                 }
 

@@ -11,6 +11,7 @@ import com.example.player.model.Artist
 import com.example.player.model.ArtistData
 import com.example.player.model.Lyric
 import com.example.player.model.LyricParser
+import com.example.player.model.MoreSongItem
 import com.example.player.model.SimilarArtist
 import com.example.player.model.Song
 import com.example.player.model.SongData
@@ -100,6 +101,9 @@ class PlayerViewModel : BaseViewModel() {
     private val _similarSonger = MutableStateFlow<List<SimilarArtist>?>(null)
     val similarSonger : StateFlow<List<SimilarArtist>?> = _similarSonger
 
+    //歌手歌曲
+    private val _moreSong = MutableStateFlow<List<MoreSongItem>?>(null)
+    val moreSongItem : StateFlow<List<MoreSongItem>?> = _moreSong
     fun updateSongId(id: Long) {
         _currentSongId.value = id
     }
@@ -287,6 +291,20 @@ class PlayerViewModel : BaseViewModel() {
             Log.d("hyj","请求相似歌手返回的请求码:${result.code}，数据为${result.artists}")
             if (result.code == 200 ) {
                 _similarSonger.value = result.artists
+            }else{
+                Log.e("hyj","请求相似歌手发生错误了")
+            }
+        }
+    }
+
+    //取出歌手歌曲
+    fun fetchMoreSongerDetail(songId: String) {
+        launchRequest {
+            val api = RetrofitClient.createApi(PlayerApi::class.java)
+            val result = api.getMoreSongs(songId.toLong())
+            Log.d("hyj","请求歌手歌曲返回的请求码:${result.code}，数据为${result.songs}")
+            if (result.code == 200 ) {
+                _moreSong.value = result.songs
             }else{
                 Log.e("hyj","请求相似歌手发生错误了")
             }

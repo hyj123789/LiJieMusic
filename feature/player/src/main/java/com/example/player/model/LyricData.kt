@@ -24,7 +24,8 @@ data class SentenceLyric(
 data class WordLyric(
     val startTime: Long,     // 单词开始时间
     val duration: Int,       // 单词持续时长
-    val content: String      // 单个字
+    val content: String,     // 单个字
+    val endTime: Long
 )
 
 data class Lyric(
@@ -87,7 +88,7 @@ object LyricParser {
                     val wordDuration = wordMatch.groupValues[2].toInt()
                     val content = wordMatch.groupValues[3]
 
-                    words.add(WordLyric(wordStart, wordDuration, content))
+                    words.add(WordLyric(wordStart, wordDuration, content, wordStart + wordDuration))
                 }
 
                 // 如果有字，创建歌词行；如果没有字（空行），跳过
