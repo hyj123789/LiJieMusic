@@ -1,5 +1,6 @@
 package com.example.player.fragment
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.MotionEvent
 import androidx.fragment.app.activityViewModels
