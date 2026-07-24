@@ -6,6 +6,7 @@ import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
 import com.example.video.model.DataTop
 import com.example.video.model.DataX
+import com.example.video.model.GetMvDetailRes
 import com.example.video.model.GetTopMvRes
 import com.example.video.model.VideoItemWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,10 +23,14 @@ class VideoViewModel : BaseViewModel() {
     private val _topMvList = MutableStateFlow<List<DataTop>?>(null)
     private val _recommendMvRes = MutableStateFlow<List<VideoItemWrapper>>(emptyList())
     private val _toastMsg = MutableStateFlow<String?>(null)
+    private val _mvDetail = MutableStateFlow<GetMvDetailRes?>(null)
+    private val _mvUrl = MutableStateFlow<String?>(null)
     val allMvList = _allMvList.asStateFlow()
     val topMvList = _topMvList.asStateFlow()
     val recommendMvRes: StateFlow<List<VideoItemWrapper>> = _recommendMvRes
     val toastMsg = _toastMsg.asStateFlow()
+    val mvDetail = _mvDetail.asStateFlow()
+    val mvUrl = _mvUrl.asStateFlow()
 
     fun fetchAllMv() {
         viewModelScope.launch {
@@ -43,6 +48,41 @@ class VideoViewModel : BaseViewModel() {
         }
     }
 
+    fun fetchMvUrl(id: Long) {
+        if (id==0L) return
+        viewModelScope.launch {
+            try {
+                val urlRes = api.getMvUrl(id)
+                if (urlRes.code != 200) {
+                    Log.d("ljh", "加载MV资源失败")
+                    _toastMsg.value = "网络请求失败"
+                    return@launch
+                }
+                if (urlRes.data.code != 200) {
+                    _toastMsg.value = "网络请求失败${urlRes.data.msg}"
+                } else _mvUrl.value = urlRes.data.url
+            } catch (e: Exception) {
+                Log.e("ljh", "MVURL网络请求失败" + e.message)
+                _toastMsg.value = "网络请求失败"
+            }
+        }
+    }
+
+    fun fetchMvDetail(id: Long) {
+        if (id==0L) return
+        viewModelScope.launch {
+            try {
+                val mvDetail = api.getMvDetail(id)
+                if (mvDetail.code != 200) {
+                    _toastMsg.value = "获取MV详情失败"
+                } else _mvDetail.value = mvDetail
+            } catch (e: Exception) {
+                Log.e("ljh", "MV详情网络请求异常" + e.message)
+                _toastMsg.value = "网络错误"
+            }
+        }
+    }
+
     fun fetchTopMv() {
         viewModelScope.launch {
             try {
@@ -50,25 +90,24 @@ class VideoViewModel : BaseViewModel() {
                     val topMvRes = api.getTopMv()
                     if (topMvRes.code != 200) {
                         _toastMsg.value = "网络请求失败"
-                        Log.d("hhh","请求失败了捏")
+                        Log.d("hhh", "请求失败了捏")
                         return@launch
                     }
-                    Log.d("hhh","拿到数据了捏")
+                    Log.d("hhh", "拿到数据了捏")
+                    _toastMsg.value = "刷新成功"
+                    _topMvList.value = topMvRes.data
+                } else {
+                    val topMvRes = api.getTopMvNormal(area = topArea)
+                    if (topMvRes.code != 200) {
+                        _toastMsg.value = "网络请求失败"
+                        Log.d("hhh", "请求失败了捏")
+                        return@launch
+                    }
+                    Log.d("hhh", "拿到数据了捏")
                     _toastMsg.value = "刷新成功"
                     _topMvList.value = topMvRes.data
                 }
-                else {
-                    val topMvRes = api.getTopMvNormal(area = topArea)
-                if (topMvRes.code != 200) {
-                    _toastMsg.value = "网络请求失败"
-                    Log.d("hhh","请求失败了捏")
-                    return@launch
-                }
-                Log.d("hhh","拿到数据了捏")
-                _toastMsg.value = "刷新成功"
-                _topMvList.value = topMvRes.data
-                }
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.e("ljh", "请求TopMV报错啦" + e.message)
             }
         }
@@ -81,7 +120,8 @@ class VideoViewModel : BaseViewModel() {
     fun updateAllType(type: String) {
         allType = type
     }
-    fun updateTopArea(area: String){
+
+    fun updateTopArea(area: String) {
         topArea = area
     }
 

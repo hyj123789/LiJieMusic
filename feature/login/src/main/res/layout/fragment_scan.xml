@@ -124,7 +124,6 @@
         app:layout_constraintTop_toBottomOf="@id/cv_qrcode" />
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_flush"
-        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"

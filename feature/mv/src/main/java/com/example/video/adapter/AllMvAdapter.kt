@@ -1,5 +1,6 @@
 package com.example.video.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.video.databinding.ItemAllMvBinding
 import com.example.video.model.DataX
 
-class AllMvAdapter : ListAdapter<DataX, AllMvAdapter.ViewHolder>(DataXDiffCallback()) {
+class AllMvAdapter(private val onItemClick :(Long)-> Unit) : ListAdapter<DataX, AllMvAdapter.ViewHolder>(DataXDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -24,9 +25,17 @@ class AllMvAdapter : ListAdapter<DataX, AllMvAdapter.ViewHolder>(DataXDiffCallba
         position: Int
     ) {
         holder.bind(getItem(position))
+        holder.currentId = getItem(position).id.toLong()
+        Log.d("ljh","是我的锅吗?id是" + holder.currentId)
     }
 
     inner class ViewHolder(private val binding: ItemAllMvBinding) : RecyclerView.ViewHolder(binding.root){
+        init {
+            binding.root.setOnClickListener {
+                onItemClick.invoke(currentId)
+            }
+        }
+        var currentId = 0L
         fun bind(item: DataX){
             Glide.with(binding.root.context).load(item.cover).into(binding.ivItemAllMvCover)
             if (item.briefDesc.isNullOrEmpty()){
@@ -37,6 +46,7 @@ class AllMvAdapter : ListAdapter<DataX, AllMvAdapter.ViewHolder>(DataXDiffCallba
         }
     }
 }
+
 class DataXDiffCallback : DiffUtil.ItemCallback<DataX>() {
     override fun areItemsTheSame(
         oldItem: DataX,

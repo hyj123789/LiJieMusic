@@ -244,4 +244,3 @@ class LyricView @JvmOverloads constructor(
         return index
     }
 }
-

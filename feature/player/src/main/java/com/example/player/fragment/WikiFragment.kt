@@ -1,15 +1,11 @@
 package com.example.player.fragment
 
-import android.annotation.SuppressLint
-import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -130,7 +126,16 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
                 launch {
                     viewModel.wikiData.collect { data ->
-                        if (data == null) return@collect
+                        if (data == null) {
+                                binding.tvWikiTitle.text = "歌曲百科"
+
+                                binding.tvFirstListenDate.text = "暂无数据"
+                                binding.tvSeason.text = "暂无数据"
+
+                                binding.tvPlayCount.text = "暂无数据"
+                                binding.tvPlayCompare.text = "暂无数据"
+                            return@collect
+                        }
 
                         data.songInfoDto?.songName?.let { songName ->
                             binding.tvWikiTitle.text = "歌曲百科 · $songName"
@@ -231,7 +236,6 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
             }
         }
-
     }
 
     override fun initEvent() {
