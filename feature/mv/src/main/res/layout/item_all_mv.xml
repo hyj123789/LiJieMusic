@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    android:elevation="10dp"
-    app:cardCornerRadius="5dp"
-    android:paddingBottom="10dp">
+    android:layout_margin="8dp"
+    android:elevation="2dp"
+    app:cardCornerRadius="6dp"
+    android:paddingBottom="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,17 +16,20 @@
         <ImageView
             android:id="@+id/iv_item_all_mv_cover"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
             android:foreground="@drawable/ic_play"
-            android:foregroundGravity="center"
-            android:scaleType="fitCenter" />
-
+            android:foregroundGravity="center" />
 
         <TextView
-            android:gravity="center"
             android:id="@+id/tv_item_all_mv_desc"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="4dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="13sp" />
 
         <LinearLayout
             android:id="@+id/ll_content"

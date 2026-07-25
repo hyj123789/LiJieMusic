@@ -21,6 +21,7 @@ import com.example.video.VideoViewModel
 import com.example.video.adapter.TopMvAdapter
 import com.example.video.databinding.FragmentTopMvBinding
 import com.example.video.databinding.PopContentBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -42,7 +43,6 @@ class TopMvFragment : BaseFragment<FragmentTopMvBinding>(FragmentTopMvBinding::i
             layoutManager = LinearLayoutManager(requireContext())
         }
         Log.d("hhh", "执行初始化捏")
-        viewModel.fetchTopMv()
     }
 
     override fun initEvent() {
@@ -67,7 +67,6 @@ class TopMvFragment : BaseFragment<FragmentTopMvBinding>(FragmentTopMvBinding::i
                 areaButton.setOnClickListener {
                     setButtonSelected(areaButtons, areaButton)
                     viewModel.updateTopArea(areaButton.text.toString())
-                    viewModel.fetchTopMv()
                     binding.tvTopFilter.text = areaButton.text
                 }
             }
@@ -79,10 +78,8 @@ class TopMvFragment : BaseFragment<FragmentTopMvBinding>(FragmentTopMvBinding::i
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.topMvList.collect { list ->
-                        if (list.isNullOrEmpty()) return@collect
-                        val newList = list.toMutableList()
-                        mAdapter.submitList(newList)
+                    viewModel.topMvPagingFlow.collectLatest { pagingData ->
+                        mAdapter.submitData(pagingData)
                     }
                 }
             }

@@ -5,6 +5,7 @@ import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.example.base.MediaControllerHelper
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -37,7 +38,6 @@ class PlayerPlaybackTest {
     private val mainHandler = Handler(Looper.getMainLooper())
     private var mediaControllerHelper: MediaControllerHelper? = null
 
-    // Latches 用于同步异步回调
     private var connectLatch = CountDownLatch(1)
     private var playingLatch = CountDownLatch(1)
     private var pausedLatch = CountDownLatch(1)

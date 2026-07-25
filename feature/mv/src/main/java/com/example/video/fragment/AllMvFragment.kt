@@ -20,6 +20,7 @@ import com.example.video.VideoViewModel
 import com.example.video.adapter.AllMvAdapter
 import com.example.video.databinding.FragmentAllMvBinding
 import com.example.video.databinding.PopContentBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -38,8 +39,7 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
         binding.rvMvAll.apply {
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = mAdapter
-    }
-        viewModel.fetchAllMv()
+        }
     }
 
     override fun initEvent() {
@@ -66,7 +66,6 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
                 areaButton.setOnClickListener {
                     setButtonSelected(areaButtons, areaButton)
                     viewModel.updateAllArea(areaButton.text.toString())
-                    viewModel.fetchAllMv()
                 }
 
             }
@@ -74,7 +73,6 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
                 typeButton.setOnClickListener {
                     setButtonSelected(typeButtons, typeButton)
                     viewModel.updateAllType(typeButton.text.toString())
-                    viewModel.fetchAllMv()
                 }
             }
         }
@@ -93,9 +91,8 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
                     }
                 }
                 launch {
-                    viewModel.allMvList.collect { list ->
-                        val newList = list?.toMutableList() ?: return@collect
-                        mAdapter.submitList(newList)
+                    viewModel.allMvPagingFlow.collectLatest { pagingData ->
+                        mAdapter.submitData(pagingData)
                     }
                 }
             }

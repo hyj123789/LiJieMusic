@@ -33,9 +33,6 @@ import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.MAIN_ACTIVITY)
 class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate), DrawerUtil {
-
-
-    //调用大播放器的viewmodel
     private val viewModel: PlayerViewModel by viewModels()
     private var _headBinding: HeadLayoutBinding? = null
     private val headBinding get() = _headBinding!!
@@ -44,11 +41,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             clone(binding.main)
         }
     }
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-    }
-
-    //声明一个用来控制底层播放的 Helper
     private var mediaControllerHelper: MediaControllerHelper? = null
 
     override fun initView() {
@@ -66,7 +58,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 }
             }
         }
-        //取出本地歌单
         val savedPlaylist = LocalPlaylistManager.getPlaylist(this)
         PlayerManager.updatePlaylist(savedPlaylist)
         binding.drawerlayout.setStatusBarBackgroundColor(Color.TRANSPARENT)

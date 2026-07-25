@@ -2,54 +2,65 @@ package com.example.video
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
 import com.example.video.model.DataTop
 import com.example.video.model.DataX
 import com.example.video.model.GetMvDetailRes
-import com.example.video.model.GetTopMvRes
 import com.example.video.model.VideoItemWrapper
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class VideoViewModel : BaseViewModel() {
-    private var allArea: String = "全部"
-    private var allType: String = "全部"
-    private var topArea: String = "全部"
+    private val _topArea = MutableStateFlow("港台")
     private val api = RetrofitClient.createApi(MvApi::class.java)
-    private val _allMvList = MutableStateFlow<List<DataX>?>(null)
+
+    private val _allArea = MutableStateFlow("全部")
+    private val _allType = MutableStateFlow("全部")
+
     private val _topMvList = MutableStateFlow<List<DataTop>?>(null)
     private val _recommendMvRes = MutableStateFlow<List<VideoItemWrapper>>(emptyList())
     private val _toastMsg = MutableStateFlow<String?>(null)
     private val _mvDetail = MutableStateFlow<GetMvDetailRes?>(null)
     private val _mvUrl = MutableStateFlow<String?>(null)
-    val allMvList = _allMvList.asStateFlow()
-    val topMvList = _topMvList.asStateFlow()
     val recommendMvRes: StateFlow<List<VideoItemWrapper>> = _recommendMvRes
     val toastMsg = _toastMsg.asStateFlow()
     val mvDetail = _mvDetail.asStateFlow()
     val mvUrl = _mvUrl.asStateFlow()
+    val allMvPagingFlow: Flow<PagingData<DataX>> =
+        kotlinx.coroutines.flow.combine(_allArea, _allType) { area, type ->
+            area to type
+        }.flatMapLatest { (area, type) ->//核心概念：当上游数据发生变化时，取消之前正在执行的协程，转而执行新的协程。
+            Pager(PagingConfig(pageSize = 30, initialLoadSize = 30)) {
+                MyPagingSource(api, area, type)
+            }.flow
+        }.cachedIn(viewModelScope)
 
-    fun fetchAllMv() {
-        viewModelScope.launch {
-            try {
-                val allMvRes = api.getAllMv(allArea, allType)
-                if (allMvRes.code != 200) {
-                    _toastMsg.value = "网络请求失败"
-                    return@launch
-                }
-                _toastMsg.value = "刷新成功，共${allMvRes.count}条数据"
-                _allMvList.value = allMvRes.data
-            } catch (e: Exception) {
-                Log.d("ljh", "请求AllMV报错啦" + e.message)
-            }
-        }
+    val topMvPagingFlow: Flow<PagingData<DataTop>> =
+        _topArea.flatMapLatest { area ->
+            Pager(PagingConfig(pageSize = 30)) {
+                TopPagingSource(api, area)
+            }.flow
+        }.cachedIn(viewModelScope)
+
+    fun updateAllArea(area: String) {
+        _allArea.value = area
+    }
+
+    fun updateAllType(type: String) {
+        _allType.value = type
     }
 
     fun fetchMvUrl(id: Long) {
-        if (id==0L) return
+        if (id == 0L) return
         viewModelScope.launch {
             try {
                 val urlRes = api.getMvUrl(id)
@@ -69,7 +80,7 @@ class VideoViewModel : BaseViewModel() {
     }
 
     fun fetchMvDetail(id: Long) {
-        if (id==0L) return
+        if (id == 0L) return
         viewModelScope.launch {
             try {
                 val mvDetail = api.getMvDetail(id)
@@ -83,52 +94,15 @@ class VideoViewModel : BaseViewModel() {
         }
     }
 
-    fun fetchTopMv() {
-        viewModelScope.launch {
-            try {
-                if (topArea == "全部") {
-                    val topMvRes = api.getTopMv()
-                    if (topMvRes.code != 200) {
-                        _toastMsg.value = "网络请求失败"
-                        Log.d("hhh", "请求失败了捏")
-                        return@launch
-                    }
-                    Log.d("hhh", "拿到数据了捏")
-                    _toastMsg.value = "刷新成功"
-                    _topMvList.value = topMvRes.data
-                } else {
-                    val topMvRes = api.getTopMvNormal(area = topArea)
-                    if (topMvRes.code != 200) {
-                        _toastMsg.value = "网络请求失败"
-                        Log.d("hhh", "请求失败了捏")
-                        return@launch
-                    }
-                    Log.d("hhh", "拿到数据了捏")
-                    _toastMsg.value = "刷新成功"
-                    _topMvList.value = topMvRes.data
-                }
-            } catch (e: Exception) {
-                Log.e("ljh", "请求TopMV报错啦" + e.message)
-            }
-        }
-    }
 
-    fun updateAllArea(area: String) {
-        allArea = area
-    }
-
-    fun updateAllType(type: String) {
-        allType = type
-    }
 
     fun updateTopArea(area: String) {
-        topArea = area
+        _topArea.value = area
     }
 
     fun fetchRecommendMv(currentOffset: Int) {
         launchRequest {
             try {
-
                 Log.d("hyj", "开启MV的网络请求，currentOffset = ${currentOffset}")
                 val response1 = api.getRecommendMv(currentOffset)
 

@@ -3,6 +3,7 @@ package com.example.video.adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,7 @@ import com.example.video.databinding.ItemAllMvBinding
 import com.example.video.model.DataTop
 import com.example.video.model.DataX
 
-class TopMvAdapter(private val onItemClick : (Long) -> Unit) : ListAdapter<DataTop, TopMvAdapter.ViewHolder>(DataTopDiffCallback()) {
+class TopMvAdapter(private val onItemClick : (Long) -> Unit) : PagingDataAdapter<DataTop, TopMvAdapter.ViewHolder>(DataTopDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -24,8 +25,9 @@ class TopMvAdapter(private val onItemClick : (Long) -> Unit) : ListAdapter<DataT
         holder: ViewHolder,
         position: Int
     ) {
-        holder.bind(getItem(position))
-        holder.currentId = getItem(position).id.toLong()
+        val item = getItem(position) ?: return
+        holder.bind(item)
+        holder.currentId = item.id.toLong()
     }
 
     inner class ViewHolder(private val binding: ItemAllMvBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -62,5 +64,4 @@ class DataTopDiffCallback : DiffUtil.ItemCallback<DataTop>() {
     ): Boolean {
         return oldItem == newItem
     }
-
 }
