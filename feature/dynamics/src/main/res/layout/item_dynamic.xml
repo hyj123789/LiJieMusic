@@ -80,7 +80,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 歌曲卡片 -->
     <LinearLayout
         android:id="@+id/ll_content2"
         android:layout_width="0dp"

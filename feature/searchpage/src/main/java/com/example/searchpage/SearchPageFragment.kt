@@ -52,6 +52,11 @@ class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearc
         }
     }
 
+    override fun onDestroyView() {
+        _binding?.rvgedan?.adapter = null
+        super.onDestroyView()
+    }
+
     private fun navigateToPlaylist(playlistId: Long) {
         val request = NavDeepLinkRequest.Builder
             .fromUri(Uri.parse("musicapp://playlist/$playlistId"))

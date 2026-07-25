@@ -104,7 +104,8 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.rvPlaylist?.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 }

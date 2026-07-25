@@ -41,11 +41,71 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
         PlayerManager.playSong(songItem.id.toString(),songItem.name?:"未知歌名",songItem.ar?.get(0)?.name?:"未知歌手")
     }
 
+    //保存OnScrollListener引用，用于在onDestroyView中移除
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val childCount = recyclerView.childCount
+            for (i in 0 until childCount) {
+                val child = recyclerView.getChildAt(i) ?: continue
+
+                //获取卡片左边缘相对于屏幕的位置
+                val left = child.left
+
+                if (left < 0) {
+                    //卡片正在向左滑出屏幕
+                    //计算滑出的进度，从 0.0 (刚接触边缘) 到 1.0 (完全滑出)
+                    val progress = min(1f, abs(left).toFloat() / child.width)
+
+                    //逐渐缩小
+                    val scale = 1f - (0.7f * progress)
+                    child.scaleX = scale
+                    child.scaleY = scale
+
+                    //向上移动 (配合列表本身的向左滑动，形成左上角消失的视觉)
+                    //移动的最大距离是卡片自身的高度
+                    child.translationY = -(child.height * progress)
+
+                    //逐渐变透明
+                    child.alpha = 1f - progress
+
+                } else {
+                    //卡片在屏幕内或即将从右侧滑入，重置为正常状态
+                    child.scaleX = 1f
+                    child.scaleY = 1f
+                    child.translationY = 0f
+                    child.alpha = 1f
+                }
+            }
+        }
+    }
+
+    //保存OnItemTouchListener引用，用于在onDestroyView中移除
+    private val itemTouchListener = object : RecyclerView.OnItemTouchListener {
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: android.view.MotionEvent): Boolean {
+            when (e.action) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    rv.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                android.view.MotionEvent.ACTION_UP,
+                android.view.MotionEvent.ACTION_CANCEL -> {
+                    rv.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            return false
+        }
+
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         super.initView()
 
-        Glide.with(requireContext())
+        Glide.with(this)
             .load(userUrl)
             .into(binding.ivUserAvatar)
 
@@ -62,70 +122,13 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
         binding.rvSamesonger.onFlingListener = null // 防止重复绑定报错
         snapHelper.attachToRecyclerView(binding.rvSamesonger)
 
-        //添加滑动监听,实现“缩小并从左上角消失”的特效
-        binding.rvSamesonger.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val childCount = recyclerView.childCount
-                for (i in 0 until childCount) {
-                    val child = recyclerView.getChildAt(i) ?: continue
-
-                    //获取卡片左边缘相对于屏幕的位置
-                    val left = child.left
-
-                    if (left < 0) {
-                        //卡片正在向左滑出屏幕
-                        //计算滑出的进度，从 0.0 (刚接触边缘) 到 1.0 (完全滑出)
-                        val progress = min(1f, abs(left).toFloat() / child.width)
-
-                        //逐渐缩小
-                        val scale = 1f - (0.7f * progress)
-                        child.scaleX = scale
-                        child.scaleY = scale
-
-                        //向上移动 (配合列表本身的向左滑动，形成左上角消失的视觉)
-                        //移动的最大距离是卡片自身的高度
-                        child.translationY = -(child.height * progress)
-
-                        //逐渐变透明
-                        child.alpha = 1f - progress
-
-                    } else {
-                        //卡片在屏幕内或即将从右侧滑入，重置为正常状态
-                        child.scaleX = 1f
-                        child.scaleY = 1f
-                        child.translationY = 0f
-                        child.alpha = 1f
-                    }
-                }
-            }
-        })
+        //添加滑动监听,实现”缩小并从左上角消失”的特效
+        binding.rvSamesonger.addOnScrollListener(scrollListener)
 
 
 
         //滑动冲突
-        binding.rvSamesonger.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: android.view.MotionEvent): Boolean {
-                when (e.action) {
-                    android.view.MotionEvent.ACTION_DOWN -> {
-                        //当手指在当前列表上按下时强行剥夺 ViewPager2 的事件拦截权
-                        rv.parent.requestDisallowInterceptTouchEvent(true)
-                    }
-                    android.view.MotionEvent.ACTION_UP,
-                    android.view.MotionEvent.ACTION_CANCEL -> {
-                        //当手指抬起或取消滑动时把拦截权还给 ViewPager2
-                        rv.parent.requestDisallowInterceptTouchEvent(false)
-                    }
-                }
-                //必须返回 false，表示我们只做通知，不消费这个事件，让RV自己去处理滑动
-                return false
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
-        })
+        binding.rvSamesonger.addOnItemTouchListener(itemTouchListener)
 
 
         //处理歌手歌曲的滑动冲突
@@ -264,7 +267,7 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
                     viewModel.songer.collect { data ->
                         binding.tvSonger.text = data?.artistName
                         binding.describe.text = data?.desc
-                        Glide.with(requireContext())
+                        Glide.with(this@WikiFragment)
                             .load(data?.headPicUrl)
                             .into(binding.ivArtistBg)
                     }
@@ -295,6 +298,16 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding?.rvSamesong?.adapter = null
+        _binding?.rvSamesonger?.removeOnScrollListener(scrollListener)
+        _binding?.rvSamesonger?.removeOnItemTouchListener(itemTouchListener)
+        _binding?.rvSamesonger?.adapter = null
+        _binding?.rvMoresong?.adapter = null
+        _binding?.rvMoresong?.setOnTouchListener(null)
+        super.onDestroyView()
     }
 
     override fun initEvent() {

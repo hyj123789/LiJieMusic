@@ -31,7 +31,7 @@ import kotlin.getValue
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate) {
 
-    private val viewModel : SearchViewModel by viewModels()
+    private val viewModel: SearchViewModel by viewModels()
     private val HotsearcgAdapter = HotSearchWordAdapter()
     private val guessAdapter = GuessAdapter()
     private val searchSuggestAdapter = SuggestAdapter { rawText ->
@@ -51,11 +51,19 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     private val searchResultAdapter = SearchResultAdapter(
-        {   songItem->
-            PlayerManager.addSongToPlaylist(songItem.id.toString(),songItem.name,songItem.ar?.get(0)?.name?:"未知歌手")
+        { songItem ->
+            PlayerManager.addSongToPlaylist(
+                songItem.id.toString(),
+                songItem.name,
+                songItem.ar?.get(0)?.name ?: "未知歌手"
+            )
         },
         { songItem ->
-            PlayerManager.playSong(songItem.id.toString(),songItem.name,songItem.ar?.get(0)?.name?:"未知歌手")
+            PlayerManager.playSong(
+                songItem.id.toString(),
+                songItem.name,
+                songItem.ar?.get(0)?.name ?: "未知歌手"
+            )
         }
     )
 
@@ -79,11 +87,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             //取出搜索结果
             viewModel.searchit(keyword)
 
-            if(keyword.isEmpty()){
+            if (keyword.isEmpty()) {
                 binding.rvSeachResponse.visibility = View.GONE
                 binding.layoutHotSearch.visibility = View.VISIBLE
 
-            }else{
+            } else {
                 binding.rvSeachResponse.visibility = View.VISIBLE
                 binding.layoutHotSearch.visibility = View.GONE
                 //设置adapter
@@ -103,21 +111,21 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private fun showSearchResponse() {
         binding.search.doAfterTextChanged { keyword ->
-                val key = keyword.toString().trim()
-                Log.d("hyj", "👉 输入关键词：$keyword")
-               viewModel.fetchSearchSuggestion(key)
+            val key = keyword.toString().trim()
+            Log.d("hyj", "👉 输入关键词：$keyword")
+            viewModel.fetchSearchSuggestion(key)
 
-                if (key.isNotEmpty()) {
-                    binding.rvSeachResponse.visibility = View.VISIBLE
-                    binding.layoutHotSearch.visibility = View.GONE
-                    binding.rvSeachResponse.adapter = searchSuggestAdapter
+            if (key.isNotEmpty()) {
+                binding.rvSeachResponse.visibility = View.VISIBLE
+                binding.layoutHotSearch.visibility = View.GONE
+                binding.rvSeachResponse.adapter = searchSuggestAdapter
 
-                } else {
-                    binding.rvSeachResponse.visibility = View.GONE
-                    binding.layoutHotSearch.visibility = View.VISIBLE
-                }
+            } else {
+                binding.rvSeachResponse.visibility = View.GONE
+                binding.layoutHotSearch.visibility = View.VISIBLE
             }
         }
+    }
 
     override fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -151,7 +159,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                     .launchIn(this)
 
 
-
                 //搜集建议列表
                 viewModel.SearchFlowSuggest
                     .onEach { realData ->
@@ -163,6 +170,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding?.rvHotSearch?.adapter = null
+        _binding?.rvGuessLike?.adapter = null
+        _binding?.rvSeachResponse?.adapter = null
+        searchResultAdapter.submitList(emptyList())
+        searchSuggestAdapter.submitList(emptyList())
+        super.onDestroyView()
     }
 }
 

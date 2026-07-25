@@ -28,6 +28,30 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
     var sorttype : Int = 1
     var isLoading = false
 
+    //保存OnScrollListener引用，用于在onDestroyView中移除
+    private val scrollListener = object : RecyclerView.OnScrollListener(){
+        //触底监听
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            //代表在向下滑动
+            if (dy > 0){
+                // canScrollVertically(1) 返回 false 说明到底了！
+                if (!recyclerView.canScrollVertically(1)) {
+                    //如果当前没有在加载，才去请求新数据
+                    if (!isLoading && viewModel.hasMore.value) {
+                        //上锁以免多次加载
+                        isLoading = true
+                        binding.jiazai.visibility = View.VISIBLE
+                        binding.jiazai.text = "加载中..."
+                        viewModel.fetchComments(id,true,sorttype)
+                        Log.d("hyj","开始评论的触底自动刷新,本次id为${id}")
+                    }
+                }
+            }
+        }
+    }
+
     override fun initView() {
         super.initView()
         val songId = arguments?.getString("songId") ?: ""
@@ -93,28 +117,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
         }
 
 
-        binding.rvComments.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            //触底监听
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                //代表在向下滑动
-                if (dy > 0){
-                    // canScrollVertically(1) 返回 false 说明到底了！
-                    if (!recyclerView.canScrollVertically(1)) {
-                        //如果当前没有在加载，才去请求新数据
-                        if (!isLoading && viewModel.hasMore.value) {
-                            //上锁以免多次加载
-                            isLoading = true
-                            binding.jiazai.visibility = View.VISIBLE
-                            binding.jiazai.text = "加载中..."
-                            viewModel.fetchComments(id,true,sorttype)
-                            Log.d("hyj","开始评论的触底自动刷新,本次id为${id}")
-                        }
-                    }
-                }
-            }
-        })
+        binding.rvComments.addOnScrollListener(scrollListener)
     }
 
     override fun initObservers() {
@@ -182,4 +185,11 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
         }
     }
 
+    override fun onDestroyView() {
+        _binding?.rvComments?.removeOnScrollListener(scrollListener)
+        _binding?.rvComments?.adapter = null
+        commentAdapter.clearListener()
+        commentAdapter.submitList(emptyList())
+        super.onDestroyView()
+    }
 }

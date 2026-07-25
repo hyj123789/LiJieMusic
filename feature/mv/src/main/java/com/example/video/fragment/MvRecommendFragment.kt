@@ -26,35 +26,39 @@ class MvRecommendFragment : BaseFragment<FragmentMvRecommendBinding>(FragmentMvR
     //加上一个锁防止重复请求
     var isLoading = false
 
+    //保存OnScrollListener引用，用于在onDestroyView中移除
+    private val scrollListener = object : RecyclerView.OnScrollListener(){
+        //触底监听
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            //代表在向下滑动
+            if (dy > 0){
+                // canScrollVertically(1) 返回 false 说明到底了！
+                if (!recyclerView.canScrollVertically(1)) {
+
+                    //如果当前没有在加载，才去请求新数据
+                    if (!isLoading) {
+                        //上锁以免多次加载
+                        isLoading = true
+                        binding.jiazai.visibility = View.VISIBLE
+                        //currentOffset+1保证多次请求
+                        viewModel.fetchRecommendMv(currentOffset)
+                    }
+                }
+            }
+        }
+    }
+
     override fun initView() {
 
         binding.rv.layoutManager = LinearLayoutManager(requireContext())
         binding.rv.adapter = MvAdapter
+        binding.rv.setRecycledViewPool(RecyclerView.RecycledViewPool())
 
         viewModel.fetchRecommendMv(currentOffset)
 
-        binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            //触底监听
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                //代表在向下滑动
-                if (dy > 0){
-                    // canScrollVertically(1) 返回 false 说明到底了！
-                    if (!recyclerView.canScrollVertically(1)) {
-
-                        //如果当前没有在加载，才去请求新数据
-                        if (!isLoading) {
-                            //上锁以免多次加载
-                            isLoading = true
-                            binding.jiazai.visibility = View.VISIBLE
-                            //currentOffset+1保证多次请求
-                            viewModel.fetchRecommendMv(currentOffset)
-                        }
-                    }
-                }
-            }
-        })
+        binding.rv.addOnScrollListener(scrollListener)
 
     }
 
@@ -87,5 +91,12 @@ class MvRecommendFragment : BaseFragment<FragmentMvRecommendBinding>(FragmentMvR
                     .launchIn(this)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding?.rv?.removeOnScrollListener(scrollListener)
+        _binding?.rv?.adapter = null
+        MvAdapter.submitList(emptyList())
+        super.onDestroyView()
     }
 }

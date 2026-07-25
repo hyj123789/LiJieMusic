@@ -380,4 +380,10 @@ class LyricView @JvmOverloads constructor(
         }
         return index
     }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        // 移除Handler的延迟回调，防止View销毁后Runnable仍然持有LyricView引用导致内存泄漏
+        handler.removeCallbacks(autoRecoverRunnable)
+    }
 }

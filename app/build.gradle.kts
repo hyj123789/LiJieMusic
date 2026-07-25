@@ -76,4 +76,6 @@ dependencies {
     implementation(project(":feature:player"))
     implementation(project(":feature:dynamics"))
     implementation(project(":feature:comment"))
+
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 }

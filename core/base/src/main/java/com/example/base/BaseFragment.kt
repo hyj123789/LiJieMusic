@@ -19,7 +19,7 @@ abstract class BaseFragment<VB : ViewBinding>(
 ) : Fragment() {
 
     //初始化的时候默认置空
-    private var _binding: VB? = null
+    protected var _binding: VB? = null
 
     //对外一定不为空
     //暴露给子类使用的binding子类直接调用binding.xxx即可

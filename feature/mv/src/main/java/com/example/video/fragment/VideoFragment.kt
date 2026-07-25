@@ -1,5 +1,6 @@
 package com.example.video.fragment
 
+import androidx.viewpager2.widget.ViewPager2
 import com.example.base.BaseFragment
 import com.example.video.adapter.ViewPagerAdapter
 import com.example.video.databinding.FragmentVideoBinding
@@ -12,8 +13,10 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(FragmentVideoBinding::i
     override fun initView() {
         super.initView()
         binding.apply {
-            viewPager.adapter = ViewPagerAdapter(requireActivity(), list)
-            viewPager.offscreenPageLimit = 3
+            // 关闭 ViewPager2 的状态保存/恢复，防止 Navigation 切 Tab 重建时崩溃
+            viewPager.setSaveEnabled(false)
+            viewPager.adapter = ViewPagerAdapter(this@VideoFragment, list)
+            viewPager.offscreenPageLimit = 1
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 when (position) {
                     0 -> tab.text = "全部"
@@ -22,5 +25,9 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(FragmentVideoBinding::i
                 }
             }.attach()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 }

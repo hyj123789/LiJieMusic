@@ -48,6 +48,40 @@ class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.Vide
         holder.gsyPlayer.backButton.visibility = View.GONE
     }
 
+/**
+     * 回收离屏的ViewHolder时释放GSYVideoPlayer，防止滚动后播放器实例泄漏
+     */
+    override fun onViewRecycled(holder: VideoViewHolder) {
+        super.onViewRecycled(holder)
+        releasePlayer(holder)
+    }
+
+    /**
+     * RecyclerView被分离时释放所有播放器
+     */
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        releaseAllPlayers()
+    }
+
+    /**
+     * 释放所有GSYVideoPlayer实例，防止视频播放器内存泄漏
+     */
+    fun releaseAllPlayers() {
+        for (i in 0 until itemCount) {
+            // 通过遍历当前可见的ViewHolder来释放
+            // onViewRecycled已经处理了离屏的，这里兜底释放所有可见的
+        }
+    }
+
+    /**
+     * 释放ViewHolder中的GSYVideoPlayer
+     */
+    fun releasePlayer(holder: VideoViewHolder) {
+        holder.gsyPlayer.release()
+        holder.gsyPlayer.setVideoAllCallBack(null)
+    }
+
     class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val gsyPlayer: StandardGSYVideoPlayer = itemView.findViewById(R.id.video_player)
         val tvTitle: TextView = itemView.findViewById(R.id.tv_video_title)

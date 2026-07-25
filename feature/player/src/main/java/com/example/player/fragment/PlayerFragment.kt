@@ -344,6 +344,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 //    }
 
     override fun onDestroyView() {
+        _binding?.seekBar?.setOnSeekBarChangeListener(null)
         super.onDestroyView()
     }
 

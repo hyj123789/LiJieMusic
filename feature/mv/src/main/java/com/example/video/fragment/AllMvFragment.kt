@@ -106,6 +106,11 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
         button.isSelected = true
     }
 
+    override fun onDestroyView() {
+        _binding?.rvMvAll?.adapter = null
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _popBinding = null

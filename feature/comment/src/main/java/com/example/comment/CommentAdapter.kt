@@ -21,6 +21,11 @@ class CommentAdapter : ListAdapter<CommentItem, CommentAdapter.CommentViewHolder
         this.mListener = listener
     }
 
+    //清除监听器，防止内存泄漏
+    fun clearListener() {
+        this.mListener = null
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val binding = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CommentViewHolder(binding)

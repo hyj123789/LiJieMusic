@@ -32,7 +32,7 @@
 
             <TextView
                 android:id="@+id/tv_song_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="songname"
@@ -47,7 +47,6 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="6dp"
-                android:adjustViewBounds="true"
                 android:scaleType="fitCenter" />
         </LinearLayout>
 

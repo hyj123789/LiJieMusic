@@ -85,7 +85,7 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 launch {
                     viewModel.coverUrl.collect { url->
                         url?.apply {
-                            Glide.with(requireContext()).load(url).into(binding.ivCover)
+                            Glide.with(this@PlaylistFragment).load(url).into(binding.ivCover)
                         } ?: return@collect
                     }
                 }
@@ -128,5 +128,11 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding?.rvSongs?.adapter = null
+        mAdapter.submitList(emptyList())
+        super.onDestroyView()
     }
 }

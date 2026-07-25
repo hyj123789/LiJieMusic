@@ -2,6 +2,7 @@ package com.example.video.fragment
 
 import android.content.res.Configuration
 import android.util.Log
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -100,6 +101,20 @@ class MvPlayFragment : BaseFragment<FragmentMvPlayBinding>(FragmentMvPlayBinding
         orientationUtils?.let {
             binding.videoPlayer.onConfigurationChanged(requireActivity(), newConfig, it)
         }
+    }
+
+    override fun onDestroyView() {
+        _binding?.videoPlayer?.release()
+        // 释放全屏窗口播放器实例，防止startWindowFullscreen创建的播放器泄漏
+        try {
+            com.shuyu.gsyvideoplayer.GSYVideoManager.instance().releaseMediaPlayer()
+        } catch (e: Exception) {
+            Log.e("ljh", "GSYVideoManager释放异常: ${e.message}")
+        }
+        _binding?.videoPlayer?.let { vp -> (vp.parent as? ViewGroup)?.removeView(vp) }
+        _binding?.rvComment?.adapter = null
+        mvCommentAdapter.submitList(emptyList())
+        super.onDestroyView()
     }
 
     override fun onDestroy() {

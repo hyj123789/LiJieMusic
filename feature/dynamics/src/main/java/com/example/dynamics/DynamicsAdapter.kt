@@ -2,6 +2,7 @@ package com.example.dynamics
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -38,10 +39,14 @@ class DynamicsAdapter : ListAdapter<Event, DynamicsAdapter.ViewHolder> (Dynamics
                     tvDynamicsTime.text = formatTimestamp(item.eventTime)
                     tvDynamicsText.text = item.json.msg
                     if (item.pics.isNotEmpty()) {
-                        ivDynamicPhoto.visibility = android.view.View.VISIBLE
+                        ivDynamicPhoto.visibility = View.VISIBLE
                         Glide.with(binding.root.context).load(item.pics[0].originUrl).into(ivDynamicPhoto)
                     } else {
-                        ivDynamicPhoto.visibility = android.view.View.GONE
+                        ivDynamicPhoto.visibility = View.GONE
+                    }
+                    if (item.json.song==null){
+                        binding.llContent2.visibility = View.GONE
+                        return
                     }
                     Glide.with(binding.root.context).load(item.json.song.album.picUrl).into(ivDynamicSongAvatar)
                     tvDynamicsSong.text = item.json.song.name

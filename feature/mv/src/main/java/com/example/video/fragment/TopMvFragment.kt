@@ -86,6 +86,11 @@ class TopMvFragment : BaseFragment<FragmentTopMvBinding>(FragmentTopMvBinding::i
         }
     }
 
+    override fun onDestroyView() {
+        _binding?.rvMvTop?.adapter = null
+        super.onDestroyView()
+    }
+
     private fun setButtonSelected(buttons: List<Button>, button: Button) {
         for (btn in buttons) {
             btn.isSelected = false

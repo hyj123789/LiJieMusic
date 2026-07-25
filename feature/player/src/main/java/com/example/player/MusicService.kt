@@ -164,15 +164,21 @@ class MusicService : MediaSessionService() {
         }
 
         if (notification != null) {
-            // startForeground(通知ID, 通知对象)
-            // 通知ID：用来标识这个通知，同一 ID 会覆盖之前的
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Android 10+ 需要指定前台服务类型
-                startForeground(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
-            } else {
-                startForeground(NOTIFICATION_ID, notification)
+            try {
+                // startForeground(通知ID, 通知对象)
+                // 通知ID：用来标识这个通知，同一 ID 会覆盖之前的
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // Android 10+ 需要指定前台服务类型
+                    startForeground(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                } else {
+                    startForeground(NOTIFICATION_ID, notification)
+                }
+                isForegroundService = true
+            } catch (e: Exception) {
+                // Android 12+ 限制：后台启动的 Service 不允许调用 startForeground()
+                // 这里捕获异常避免崩溃，播放功能仍然可以正常进行
+                android.util.Log.w("MusicService", "startForeground 失败（后台限制），播放继续: ${e.message}")
             }
-            isForegroundService = true
         }
     }
 

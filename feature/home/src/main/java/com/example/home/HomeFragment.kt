@@ -174,6 +174,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
          }
     }
 
+    override fun onDestroyView() {
+        _binding?.rv1?.adapter = null
+        _binding?.rv2?.adapter = null
+        _binding?.rv3?.adapter = null
+        _binding?.rv4?.adapter = null
+        super.onDestroyView()
+    }
+
     private fun navigateToPlaylist(playlistId: Long) {
         val request = NavDeepLinkRequest.Builder
             .fromUri(Uri.parse("musicapp://playlist/$playlistId"))

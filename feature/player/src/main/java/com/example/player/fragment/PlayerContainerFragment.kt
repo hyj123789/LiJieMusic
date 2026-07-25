@@ -1,15 +1,14 @@
 package com.example.player.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.example.player.R
+import com.example.base.BaseFragment
+import com.example.player.adapter.ViewPagerAdapter
+import com.example.player.databinding.FragmentPlayerContainerBinding
 
-class PlayerContainerFragment : Fragment() {
+class PlayerContainerFragment :
+    BaseFragment<FragmentPlayerContainerBinding>(FragmentPlayerContainerBinding::inflate) {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,31 +16,16 @@ class PlayerContainerFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_player_container, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val viewPager = view.findViewById<ViewPager2>(R.id.main_viewpager2)
-
-        //设置适配器，加载两个全屏的 Fragment
-        viewPager.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount(): Int = 2
-
-            override fun createFragment(position: Int): Fragment {
-                return when (position) {
-                    0 -> PlayerFragment()
-                    1 -> WikiFragment()
-                    else -> PlayerFragment()
-                }
-            }
-        }
+        // 关闭 ViewPager2 的状态保存/恢复，防止重建时 Fragment 引用失效崩溃
+        binding.mainViewpager2.setSaveEnabled(false)
+        val list = listOf({ PlayerFragment() }, { WikiFragment() })
+        binding.mainViewpager2.adapter = ViewPagerAdapter(this, list)
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
 }

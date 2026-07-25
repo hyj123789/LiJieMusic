@@ -29,9 +29,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     return@collect
                 } else {
                     binding.apply {
+                        Log.d("lll",profile.toString())
                         tvNickname.text = profile.nickname
                         tvVip.text = if (profile.vipType == 0) "非会员" else "会员"
-                        Glide.with(requireContext()).load(profile.avatarUrl).circleCrop().into(ivAvatar)
+                        Glide.with(this@ProfileFragment).load(profile.avatarUrl).circleCrop().into(ivAvatar)
                         tvSignature.text = if(profile.signature.isNullOrBlank()) "这个人很懒，什么也没有留下" else profile.signature
                         tvFollows.text = "${profile.follows}关注"
                         tvFolloweds.text = "${profile.followeds}粉丝"
@@ -60,6 +61,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             mAdapter.notifyDataSetChanged()
         }
     }
+    override fun onDestroyView() {
+        _binding?.rvPlaylist?.adapter = null
+        super.onDestroyView()
+    }
+
     override fun initObservers() {
         super.initObservers()
         lifecycleScope.launch {
