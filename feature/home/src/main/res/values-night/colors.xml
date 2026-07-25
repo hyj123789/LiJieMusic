@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="background_primary">#1A1A1A</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#E6E6E6</color>
+    <color name="text_tertiary">#808080</color>
+
+    <!-- 图片上的文字（日夜一致） -->
+    <color name="text_on_image">#FFFFFF</color>
+    <color name="text_on_image_secondary">#CCCCCC</color>
+
+    <!-- 图片占位 -->
+    <color name="image_placeholder">#3A3A3A</color>
+</resources>

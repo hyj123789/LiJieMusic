@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F5F5F8</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#333333</color>
+    <color name="text_tertiary">#999999</color>
+
+    <!-- 图片/渐变上的文字 -->
+    <color name="text_on_image">#FFFFFF</color>
+    <color name="text_on_image_dim">#DDFFFFFF</color>
+
+    <!-- 分割线 -->
+    <color name="divider_primary">#EEEEEE</color>
+    <color name="divider_on_image">#66FFFFFF</color>
+
+    <!-- 强调色 -->
+    <color name="accent_red">#FF3A3A</color>
+    <color name="accent_red_dark">#CC2244</color>
+
+    <!-- VIP标签背景 -->
+    <color name="vip_tag_bg">#33FFFFFF</color>
+
+    <!-- 图标着色 -->
+    <color name="text_secondary">#666666</color>
+</resources>

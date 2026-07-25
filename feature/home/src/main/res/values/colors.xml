@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="background_primary">#FFFFFF</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#333333</color>
+    <color name="text_tertiary">#999999</color>
+
+    <!-- 图片上的文字 -->
+    <color name="text_on_image">#FFFFFF</color>
+    <color name="text_on_image_secondary">#E0E0E0</color>
+
+    <!-- 图片占位 -->
+    <color name="image_placeholder">#EAEAEA</color>
+</resources>

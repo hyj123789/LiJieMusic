@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F5F5F8</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_tertiary">#999999</color>
+
+    <!-- 分割线 -->
+    <color name="divider_secondary">#E5E5E5</color>
+
+    <!-- 链接 -->
+    <color name="link_blue">#5B7CA8</color>
+
+    <!-- 图标填充色 -->
+    <color name="icon_fill">#333333</color>
+</resources>

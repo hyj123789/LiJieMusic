@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="background_primary">#1A1A1A</color>
+    <color name="background_secondary">#2C2C2C</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#E6E6E6</color>
+
+    <!-- 迷你播放器封面占位 -->
+    <color name="mini_player_cover_placeholder">#444444</color>
+</resources>

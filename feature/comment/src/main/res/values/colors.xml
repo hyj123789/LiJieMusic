@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 背景 -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_tertiary">#F5F5F5</color>
+    <color name="background_song_info">#F8F8F8</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_tertiary">#999999</color>
+    <color name="text_title">#000000</color>
+
+    <!-- 输入框 -->
+    <color name="edit_text_hint">#AAAAAA</color>
+
+    <!-- 分割线 -->
+    <color name="divider_secondary">#E5E5E5</color>
+
+    <!-- 链接 -->
+    <color name="link_blue">#5B7CA8</color>
+</resources>
