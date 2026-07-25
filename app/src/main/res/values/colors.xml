@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- 背景 -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F8F8F8</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#333333</color>
+
+    <!-- 迷你播放器封面占位 -->
+    <color name="mini_player_cover_placeholder">#DDDDDD</color>
 </resources>

@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text="嗷嗷~ 正在拼命加载更多~"
         android:textStyle="bold"
-        android:textColor="#999999"
+        android:textColor="@color/text_tertiary"
         android:visibility="gone"
         android:gravity="center"
         android:padding="12dp"

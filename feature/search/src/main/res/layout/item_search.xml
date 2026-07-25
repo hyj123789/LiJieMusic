@@ -14,7 +14,7 @@
         android:id="@+id/ivSearchCover"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="#EEEEEE"
+        android:background="@color/search_image_placeholder"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
         android:layout_marginEnd="12dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="#333333"
+        android:textColor="@color/text_primary"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tvSearchSinger"
@@ -46,7 +46,7 @@
         android:layout_marginEnd="12dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="#888888"
+        android:textColor="@color/text_secondary"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/ivSearchCover"
         app:layout_constraintEnd_toStartOf="@+id/ivSearchMore"
@@ -62,7 +62,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#BDBDBD"
+        app:tint="@color/icon_secondary_tint"
         android:src="@drawable/ic_paly" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

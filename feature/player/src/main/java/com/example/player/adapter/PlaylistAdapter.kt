@@ -52,8 +52,8 @@ class PlaylistAdapter(
                 //当前播放标绿
                 tvSongName.setTextColor("#A5D6A7".toColorInt())
             } else {
-                //其他播放标黑
-                tvSongName.setTextColor(Color.BLACK)
+                //其他歌曲使用 XML 默认色（text_primary，随日夜切换）
+                tvSongName.setTextColor(itemView.context.getColor(com.example.player.R.color.text_primary))
             }
 
             //点击整行触发切歌

@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="用户名"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_on_image"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +61,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="12dp"
                 android:text="非会员"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_on_image"
                 android:textSize="11sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="32dp"
                 android:text="追求卓越，成功就会在不经意间找上你~~~"
-                android:textColor="#DDFFFFFF"
+                android:textColor="@color/text_on_image_dim"
                 android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -96,13 +96,13 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="32dp"
                     android:text="0 关注"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/text_on_image"
                     android:textSize="14sp" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="16dp"
-                    android:background="#66FFFFFF" />
+                    android:background="@color/divider_on_image" />
 
                 <TextView
                     android:id="@+id/tv_followeds"
@@ -110,7 +110,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="32dp"
                     android:text="0 粉丝"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/text_on_image"
                     android:textSize="14sp" />
 
             </LinearLayout>

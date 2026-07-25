@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/background_primary"
     android:padding="4dp"
     android:orientation="vertical">
 
@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:text="评论"
             android:gravity="center"
-            android:textColor="#000000"
+            android:textColor="@color/text_title"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -42,7 +42,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F8F8F8"
+        android:background="@color/background_song_info"
         android:gravity="center_vertical"
         android:padding="12dp">
 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
             tools:text="歌名" />
 
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
             tools:text="歌手" />
     </LinearLayout>
@@ -82,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:textSize="15sp"
             android:textStyle="bold"
             tools:text="评论 (32618)" />
@@ -98,7 +98,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="推荐 "
-            android:textColor="#999999"
+            android:textColor="@color/text_tertiary"
             android:textSize="13sp" />
 
         <TextView
@@ -108,7 +108,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="| 最热"
-            android:textColor="#999999"
+            android:textColor="@color/text_tertiary"
             android:textSize="13sp" />
 
         <TextView
@@ -118,7 +118,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="| 最新"
-            android:textColor="#999999"
+            android:textColor="@color/text_tertiary"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -141,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
+        android:background="@color/background_primary"
         android:elevation="8dp"
         android:padding="12dp">
 
@@ -149,11 +149,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#F5F5F5"
+            android:background="@color/background_tertiary"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:hint="听说爱评论的人粉丝多"
-            android:textColor="#AAAAAA"
+            android:textColor="@color/edit_text_hint"
             android:textSize="16dp" />
 
         <ImageView

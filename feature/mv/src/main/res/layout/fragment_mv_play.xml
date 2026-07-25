@@ -37,7 +37,7 @@
             android:text="点赞"
             android:textSize="13sp"
             android:paddingHorizontal="5dp"
-            android:textColor="#666666"
+            android:textColor="@color/text_secondary"
             android:drawableLeft="@drawable/ic_favorite"
             android:drawablePadding="4dp" />
         <View
@@ -52,7 +52,7 @@
             android:text="评论"
             android:paddingHorizontal="5dp"
             android:textSize="13sp"
-            android:textColor="#666666"
+            android:textColor="@color/text_secondary"
             android:drawableLeft="@drawable/ic_comment"
             android:drawablePadding="4dp" />
         <View
@@ -68,7 +68,7 @@
             android:textSize="13sp"
             android:paddingHorizontal="5dp"
 
-            android:textColor="#666666"
+            android:textColor="@color/text_secondary"
             android:drawableLeft="@drawable/ic_share"
             android:drawablePadding="4dp" />
         <View

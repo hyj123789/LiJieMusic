@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="test"
                 android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textColor="@color/text_primary"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -50,7 +50,7 @@
                 android:layout_marginTop="4dp"
                 android:text="test"
                 android:textSize="12sp"
-                android:textColor="#999999" />
+                android:textColor="@color/text_tertiary" />
         </LinearLayout>
     </LinearLayout>
 
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:text="test"
                 android:textSize="15sp"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:maxLines="1"
                 android:ellipsize="end" />
 
@@ -124,7 +124,7 @@
                 android:layout_marginTop="4dp"
                 android:text="test"
                 android:textSize="13sp"
-                android:textColor="#999999"
+                android:textColor="@color/text_tertiary"
                 android:maxLines="1"
                 android:ellipsize="end" />
         </LinearLayout>
@@ -195,7 +195,7 @@
         android:layout_width="0dp"
         android:layout_height="0.5dp"
         android:layout_marginTop="12dp"
-        android:background="#F0F0F0"
+        android:background="@color/divider_tertiary"
         app:layout_constraintTop_toBottomOf="@+id/ll_content3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

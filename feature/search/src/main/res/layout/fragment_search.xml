@@ -16,7 +16,7 @@
             android:layout_height="56dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:background="#F5F5F8"
+            android:background="@color/background_secondary"
             app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -25,7 +25,7 @@
             android:layout_height="48dp"
             android:padding="14dp"
             android:src="@drawable/back"
-            app:tint="#333333" />
+            app:tint="@color/text_primary" />
 
         <EditText
             android:id="@+id/search"
@@ -41,7 +41,7 @@
             android:paddingEnd="12dp"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:textColorHint="#999999"
+            android:textColorHint="@color/text_tertiary"
             android:textSize="14sp" />
 
         <TextView
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="搜索"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -84,7 +84,7 @@
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:text="歌手"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp" />
 
             <TextView
@@ -95,7 +95,7 @@
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:text="曲风"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp" />
 
             <TextView
@@ -106,7 +106,7 @@
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:text="专区"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp" />
 
             <TextView
@@ -117,7 +117,7 @@
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:text="识曲"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -132,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="猜你喜欢"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +146,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/tv_guess_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_guess_title"
-                app:tint="#999999" />
+                app:tint="@color/text_tertiary" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView

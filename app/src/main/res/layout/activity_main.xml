@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:background="#DDDDDD" />
+        android:background="@color/mini_player_cover_placeholder" />
 
 </androidx.cardview.widget.CardView>
 
@@ -68,7 +68,7 @@
         android:layout_marginEnd="12dp"
         android:ellipsize="marquee"
         android:singleLine="true"
-        android:textColor="#333333"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         android:text="歌名"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -87,7 +87,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_mini_playlist"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#333333" />
+        app:tint="@color/text_primary" />
 
 
     <ImageView
@@ -99,7 +99,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#333333" />
+        app:tint="@color/text_primary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -109,7 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:translationZ="-10dp"
-        android:background="#F8F8F8"
+        android:background="@color/background_secondary"
         app:itemActiveIndicatorStyle="@null"
         app:itemTextAppearanceActive="@style/BottomNavTextActive"
         app:itemTextAppearanceInactive="@style/BottomNavTextNormal"

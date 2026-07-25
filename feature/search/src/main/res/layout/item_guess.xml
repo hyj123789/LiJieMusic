@@ -12,7 +12,7 @@
         android:text="歌名"
         android:gravity="center"
         android:textSize="14dp"
-        android:background="#F5F5F8"
+        android:background="@color/background_secondary"
         tools:ignore="MissingConstraints" />
     
     

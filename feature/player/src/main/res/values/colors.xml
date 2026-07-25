@@ -23,4 +23,17 @@
 
     <!-- 专辑封面占位背景 -->
     <color name="album_cover_bg">#E0E0E0</color>
+
+    <!-- Wiki 深色主题页面（日夜一致） -->
+    <color name="wiki_background">#151515</color>
+    <color name="wiki_card_bg">#222222</color>
+    <color name="wiki_text_primary">#FFFFFF</color>
+    <color name="wiki_text_secondary">#888888</color>
+    <color name="wiki_text_detail">#DDDDDD</color>
+
+    <!-- 弱化文字（更多/相似歌曲列表） -->
+    <color name="text_muted">#757575</color>
+
+    <!-- 音质选择弹窗背景 -->
+    <color name="quality_sheet_bg">#C7E8AF</color>
 </resources>

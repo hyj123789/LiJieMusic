@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:text="相似艺人"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/wiki_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:text="歌手"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/wiki_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -55,7 +55,7 @@
                 android:maxLines="2"
                 android:padding="4dp"
                 android:text=""
-                android:textColor="#888888"
+                android:textColor="@color/wiki_text_secondary"
                 android:textSize="12dp" />
         </LinearLayout>
     </FrameLayout>

@@ -1,9 +1,28 @@
+<!--<resources xmlns:tools="http://schemas.android.com/tools">-->
+<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
+<!--    <style name="Base.Theme.LiJieMusic" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; Customize your dark theme here. &ndash;&gt;-->
+<!--        &lt;!&ndash; <item name="colorPrimary">@color/my_dark_primary</item> &ndash;&gt;-->
+<!--    </style>-->
+<!--    <style name="ShapeAppearanceOverlay.App.DrawerActionItem" parent="">-->
+<!--        &lt;!&ndash; 50% 表示把矩形的左右两边完全削成半圆形，变成胶囊状 &ndash;&gt;-->
+<!--        <item name="cornerSize">50%</item>-->
+<!--    </style>-->
+<!--</resources>-->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LiJieMusic" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- 直接重写暴露给 Application 使用的最终主题，继承日间的 Base -->
+    <style name="Theme.LiJieMusic" parent="Base.Theme.LiJieMusic">
+        <!-- 修复透明状态栏问题：夜间模式下，背景是深色，状态栏图标和文字必须保持默认的白色 -->
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+
+        <!-- 注意：如果你已经在 values-night/colors.xml 中定义了同名的颜色，
+             系统会自动去读取夜间颜色，所以你甚至不需要在这里重新给 colorPrimary 赋值！-->
     </style>
+
+    <!-- 关于这个胶囊形状的样式 -->
+    <!-- 如果它在日间和夜间长得一模一样（都是 50%），你完全可以把它从这个夜间文件里删掉，
+         只保留在日间文件里即可，系统会自动复用。如果夜间有特殊要求，再保留在这里。-->
     <style name="ShapeAppearanceOverlay.App.DrawerActionItem" parent="">
         <!-- 50% 表示把矩形的左右两边完全削成半圆形，变成胶囊状 -->
         <item name="cornerSize">50%</item>
