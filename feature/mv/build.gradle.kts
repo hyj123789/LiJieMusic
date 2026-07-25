@@ -73,4 +73,5 @@ dependencies {
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v9.0.0-release-jitpack")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
+
 }

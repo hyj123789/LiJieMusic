@@ -13,3 +13,9 @@ data class Track(
     val name: String,
     val fee: Int
 )
+
+data class MySimpleSong(
+    val id: Long,
+    val name: String,
+    val firstArtistName: String
+)

@@ -7,14 +7,21 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.base.Album
+import com.example.base.Artist
 import com.example.base.BaseFragment
 import com.example.base.PlayerManager
+import com.example.base.SongDetail
 import com.example.playlist.databinding.FragmentPlaylistBinding
+import com.example.playlist.model.MySimpleSong
 import kotlinx.coroutines.launch
+import kotlin.text.toLongOrNull
 
 class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistBinding::inflate){
     private val viewModel : PlaylistViewModel by viewModels()
     private val mAdapter = SongAdapter()
+
+    private var currentPlaylistSongs: List<SongDetail> = emptyList()
     private val playlistId: String by lazy {
         arguments?.getString("playlistId") ?: ""
     }
@@ -34,6 +41,12 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 songName: String,
                 artistName: String
             ) {
+
+                // 清除旧歌单
+                PlayerManager.clearPlaylist()
+                //赋值新歌单
+                PlayerManager.updatePlaylist(currentPlaylistSongs)
+                //播放歌曲
                 PlayerManager.playSong(id,songName,artistName)
             }
             override fun onSongNextPlayClick(
@@ -88,6 +101,29 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                         counts?.apply {
                             binding.tvCounts.text=counts
                         } ?: return@collect
+                    }
+                }
+                launch {
+                    viewModel.Song.collect { trackList ->
+                        //清除歌单
+                        val myExtractedSongs = trackList?.map { track ->
+                            //取出歌曲列表需要的数据
+                            val currentId = track.id
+                            val currentName = track.name
+                            val firstArtist = track.artists?.firstOrNull()
+                            val artistName = firstArtist?.name ?: "未知歌手"
+
+                            //组装成你需要的精简对象
+                           SongDetail(
+                                id = currentId,
+                                name = currentName,
+                                ar = listOf(Artist(id = 0L, name = artistName)),
+                                al = Album(id = 0L, name = "", picUrl = ""),
+                                dt = 0,
+                                fee = 0
+                            )
+                        }
+                        currentPlaylistSongs = myExtractedSongs?:emptyList()
                     }
                 }
             }

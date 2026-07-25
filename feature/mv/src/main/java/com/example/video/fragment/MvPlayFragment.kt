@@ -6,8 +6,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.BaseFragment
 import com.example.video.VideoViewModel
+import com.example.video.adapter.MvCommentAdapter
 import com.example.video.databinding.FragmentMvPlayBinding
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import kotlinx.coroutines.launch
@@ -16,6 +18,8 @@ class MvPlayFragment : BaseFragment<FragmentMvPlayBinding>(FragmentMvPlayBinding
     val id : Long by lazy { requireArguments().getString("mvId")?.toLong() ?: 0L }
     private val viewModel : VideoViewModel by viewModels()
     private var orientationUtils: OrientationUtils? = null
+
+    private val mvCommentAdapter = MvCommentAdapter()
 
     override fun initView() {
         super.initView()
@@ -35,6 +39,10 @@ class MvPlayFragment : BaseFragment<FragmentMvPlayBinding>(FragmentMvPlayBinding
                 Log.d("ljh", "startWindowFullscreen 返回: $result")
             }
         }
+
+     //配置mv评论的adpter
+        binding.rvComment.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvComment.adapter = mvCommentAdapter
     }
 
     override fun initEvent() {
@@ -42,6 +50,7 @@ class MvPlayFragment : BaseFragment<FragmentMvPlayBinding>(FragmentMvPlayBinding
         Log.d("ljh","拿到MVid"+id)
         viewModel.fetchMvUrl(id)
         viewModel.fetchMvDetail(id)
+        viewModel.fetchMvComment(id)
     }
 
     override fun initObservers() {
@@ -63,6 +72,12 @@ class MvPlayFragment : BaseFragment<FragmentMvPlayBinding>(FragmentMvPlayBinding
                             binding.videoPlayer.setUp(url,true,"MV")
                             binding.videoPlayer.startPlayLogic()
                         }
+                    }
+                }
+
+                launch {
+                    viewModel.mvComment.collect { commentList->
+                        mvCommentAdapter.submitList(commentList)
                     }
                 }
             }

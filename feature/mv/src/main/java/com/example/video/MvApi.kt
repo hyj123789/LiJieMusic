@@ -4,6 +4,7 @@ import com.example.video.model.GetAllMvRes
 import com.example.video.model.GetMvDetailRes
 import com.example.video.model.GetMvUrlRes
 import com.example.video.model.GetTopMvRes
+import com.example.video.model.MvCommentResponse
 import com.example.video.model.VideoRecommendResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -26,4 +27,12 @@ interface MvApi {
     @GET("/top/mv")
     suspend fun getTopMv(@Query("limit") limit: Int = 30,
                          @Query("offset") offset: Int = 0) : GetTopMvRes
+
+
+    @GET("/comment/mv")
+    suspend fun getMvComment(
+        @Query("id") id: Long ,
+        @Query("limit") limit: Int = 30,
+        @Query("offset") offset: Int = 0
+    ) : MvCommentResponse
 }

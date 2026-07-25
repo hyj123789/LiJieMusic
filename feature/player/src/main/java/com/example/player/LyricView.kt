@@ -14,7 +14,7 @@ import com.example.player.model.Lyric
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-
+//自动生成多个构造函数
 class LyricView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -82,7 +82,7 @@ class LyricView @JvmOverloads constructor(
     fun setLyrics(lyrics: List<Lyric>) {
         this.lyrics = lyrics
         currentIndex = findCurrentIndex()
-        isBrowsing = false  // 切歌时重置浏览状态
+        isBrowsing = false  //切歌时重置浏览状态
         cancelAutoRecover()
         invalidate()
     }

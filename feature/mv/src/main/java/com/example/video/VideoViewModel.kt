@@ -11,10 +11,10 @@ import com.example.net.RetrofitClient
 import com.example.video.model.DataTop
 import com.example.video.model.DataX
 import com.example.video.model.GetMvDetailRes
+import com.example.video.model.HotComment
 import com.example.video.model.VideoItemWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
@@ -26,15 +26,18 @@ class VideoViewModel : BaseViewModel() {
     private val _allArea = MutableStateFlow("全部")
     private val _allType = MutableStateFlow("全部")
 
-    private val _topMvList = MutableStateFlow<List<DataTop>?>(null)
     private val _recommendMvRes = MutableStateFlow<List<VideoItemWrapper>>(emptyList())
     private val _toastMsg = MutableStateFlow<String?>(null)
     private val _mvDetail = MutableStateFlow<GetMvDetailRes?>(null)
     private val _mvUrl = MutableStateFlow<String?>(null)
-    val recommendMvRes: StateFlow<List<VideoItemWrapper>> = _recommendMvRes
+
+    private val _mvComment = MutableStateFlow<List<HotComment>?>(null)
+    val recommendMvRes = _recommendMvRes.asStateFlow()
     val toastMsg = _toastMsg.asStateFlow()
     val mvDetail = _mvDetail.asStateFlow()
     val mvUrl = _mvUrl.asStateFlow()
+
+    val mvComment = _mvComment
     val allMvPagingFlow: Flow<PagingData<DataX>> =
         kotlinx.coroutines.flow.combine(_allArea, _allType) { area, type ->
             area to type
@@ -94,8 +97,6 @@ class VideoViewModel : BaseViewModel() {
         }
     }
 
-
-
     fun updateTopArea(area: String) {
         _topArea.value = area
     }
@@ -103,6 +104,7 @@ class VideoViewModel : BaseViewModel() {
     fun fetchRecommendMv(currentOffset: Int) {
         launchRequest {
             try {
+
                 Log.d("hyj", "开启MV的网络请求，currentOffset = ${currentOffset}")
                 val response1 = api.getRecommendMv(currentOffset)
 
@@ -117,4 +119,22 @@ class VideoViewModel : BaseViewModel() {
             }
         }
     }
+
+    fun fetchMvComment(id: Long) {
+        launchRequest {
+            try {
+
+                val response1 = api.getMvComment(id)
+                Log.d("hyj", "mv返回的数目大小：${response1.total}")
+
+                if (response1.total != 0) {
+                    _mvComment.value = response1.hotComments ?: emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("hyj", "mv评论网络请求直接崩溃了！罪魁祸首是：${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
 }
+
