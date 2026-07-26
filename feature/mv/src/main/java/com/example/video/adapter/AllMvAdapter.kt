@@ -11,6 +11,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.video.databinding.ItemAllMvBinding
 import com.example.video.model.DataX
 
+//第一个界面fragment的adapter
+//用PagingDataAdapter实现自动分页
 class AllMvAdapter(private val onItemClick :(Long)-> Unit) : PagingDataAdapter<DataX, AllMvAdapter.ViewHolder>(DataXDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,

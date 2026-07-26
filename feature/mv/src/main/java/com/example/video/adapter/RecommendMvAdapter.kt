@@ -13,7 +13,11 @@ import com.example.video.R
 import com.example.video.model.VideoItemWrapper
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 
-class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.VideoViewHolder>(VideoDiffCallback()) {
+class RecommendMvAdapter :
+    ListAdapter<VideoItemWrapper, RecommendMvAdapter.VideoViewHolder>(VideoDiffCallback()) {
+
+    /** 当前正在界面上（已绑定/未回收）的 ViewHolder，用于 releaseAllPlayers 兜底释放 */
+    private val activeViewHolders = mutableSetOf<VideoViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_mv, parent, false)
@@ -21,6 +25,9 @@ class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.Vide
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+        // 标记为活跃，releaseAllPlayers 兜底释放时会用到
+        activeViewHolders.add(holder)
+
         //拿到具体的数据对象
         val videoData = getItem(position).data ?: return
 
@@ -34,7 +41,7 @@ class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.Vide
         // setUp 方法参数：播放地址，是否缓存，视频标题
         holder.gsyPlayer.setUp(videoUrl, true, videoData.title)
 
-        // 增加视频封面图 (这是 GSYVideoPlayer 非常贴心的功能)
+        // 增加视频封面图
         val coverImageView = ImageView(holder.itemView.context)
         coverImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         Glide.with(holder.itemView.context)
@@ -48,11 +55,12 @@ class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.Vide
         holder.gsyPlayer.backButton.visibility = View.GONE
     }
 
-/**
+    /**
      * 回收离屏的ViewHolder时释放GSYVideoPlayer，防止滚动后播放器实例泄漏
      */
     override fun onViewRecycled(holder: VideoViewHolder) {
         super.onViewRecycled(holder)
+        activeViewHolders.remove(holder)
         releasePlayer(holder)
     }
 
@@ -68,10 +76,8 @@ class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.Vide
      * 释放所有GSYVideoPlayer实例，防止视频播放器内存泄漏
      */
     fun releaseAllPlayers() {
-        for (i in 0 until itemCount) {
-            // 通过遍历当前可见的ViewHolder来释放
-            // onViewRecycled已经处理了离屏的，这里兜底释放所有可见的
-        }
+        activeViewHolders.toList().forEach { releasePlayer(it) }
+        activeViewHolders.clear()
     }
 
     /**
@@ -89,14 +95,19 @@ class RecommendMvAdapter : ListAdapter<VideoItemWrapper, RecommendMvAdapter.Vide
         val tvDesc: TextView = itemView.findViewById(R.id.tv_video_ds)
     }
 
-    // 差异比对器
     class VideoDiffCallback : DiffUtil.ItemCallback<VideoItemWrapper>() {
-        override fun areItemsTheSame(oldItem: VideoItemWrapper, newItem: VideoItemWrapper): Boolean {
+        override fun areItemsTheSame(
+            oldItem: VideoItemWrapper,
+            newItem: VideoItemWrapper
+        ): Boolean {
             //通过url来判断是不是同一个视频
             return oldItem.data?.urlInfo?.url == newItem.data?.urlInfo?.url
         }
 
-        override fun areContentsTheSame(oldItem: VideoItemWrapper, newItem: VideoItemWrapper): Boolean {
+        override fun areContentsTheSame(
+            oldItem: VideoItemWrapper,
+            newItem: VideoItemWrapper
+        ): Boolean {
             return oldItem == newItem
         }
     }

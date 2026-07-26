@@ -33,9 +33,7 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
     }
 
-    private val similarArtistAdapter = SimilarArtistAdapter{
-
-    }
+    private val similarArtistAdapter = SimilarArtistAdapter{}
 
     private val moreSongAdapter = MoreSongAdapter{ songItem ->
         PlayerManager.playSong(songItem.id.toString(),songItem.name?:"未知歌名",songItem.ar?.get(0)?.name?:"未知歌手")
@@ -71,7 +69,6 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
                     child.alpha = 1f - progress
 
                 } else {
-                    //卡片在屏幕内或即将从右侧滑入，重置为正常状态
                     child.scaleX = 1f
                     child.scaleY = 1f
                     child.translationY = 0f
@@ -81,15 +78,14 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
         }
     }
 
-    //保存OnItemTouchListener引用，用于在onDestroyView中移除
     private val itemTouchListener = object : RecyclerView.OnItemTouchListener {
         override fun onInterceptTouchEvent(rv: RecyclerView, e: android.view.MotionEvent): Boolean {
             when (e.action) {
-                android.view.MotionEvent.ACTION_DOWN -> {
+                MotionEvent.ACTION_DOWN -> {
                     rv.parent.requestDisallowInterceptTouchEvent(true)
                 }
-                android.view.MotionEvent.ACTION_UP,
-                android.view.MotionEvent.ACTION_CANCEL -> {
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> {
                     rv.parent.requestDisallowInterceptTouchEvent(false)
                 }
             }
@@ -264,7 +260,7 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
                 //监听歌手
                 launch {
-                    viewModel.songer.collect { data ->
+                    viewModel.singer.collect { data ->
                         binding.tvSonger.text = data?.artistName
                         binding.describe.text = data?.desc
                         Glide.with(this@WikiFragment)
@@ -282,9 +278,9 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
 
                 //监听歌手
                 launch {
-                    viewModel.similarSonger.collect { songer ->
-                        similarArtistAdapter.submitList(songer)
-                        Log.d("hyj","相似歌手的数据为：${songer.toString()}")
+                    viewModel.similarSinger.collect { singer ->
+                        similarArtistAdapter.submitList(singer)
+                        Log.d("hyj","相似歌手的数据为：${singer.toString()}")
                     }
                 }
 

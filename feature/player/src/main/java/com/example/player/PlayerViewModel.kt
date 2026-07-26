@@ -2,12 +2,9 @@ package com.example.player
 
 import SongWikiData
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
-import com.example.player.model.Artist
 import com.example.player.model.ArtistData
 import com.example.player.model.Lyric
 import com.example.player.model.LyricParser
@@ -16,8 +13,6 @@ import com.example.player.model.SimilarArtist
 import com.example.player.model.Song
 import com.example.player.model.SongData
 import com.example.player.model.SongUrlData
-import com.example.player.model.SongUrlResponse
-import com.example.util.ToastUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,22 +21,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
- * 播放器 ViewModel
- *
- * 职责：
- * 1. 管理播放状态（播放/暂停/进度）
- * 2. 管理歌曲列表
- * 3. 处理播放控制逻辑
- */
-class PlayerViewModel : BaseViewModel() {
 
+class PlayerViewModel : BaseViewModel() {
 
     //用户id监听
     private val _currentSongId = MutableStateFlow<Long?>(null)
     val currentSongId: StateFlow<Long?> = _currentSongId.asStateFlow()
 
-    /** 当前播放进度 (0-100) */
+    //当前播放进度 (0-100)
     private val _progress = MutableStateFlow(0)
     val progress: StateFlow<Int> = _progress.asStateFlow()
 
@@ -51,35 +38,35 @@ class PlayerViewModel : BaseViewModel() {
 
     // ========== 歌曲信息 ==========
 
-    /** 当前播放的歌曲 */
-    private val _currentSong = MutableLiveData<SongUrlData?>()
-    val currentSong: LiveData<SongUrlData?> = _currentSong
+    //当前播放的歌曲
+    private val _currentSong = MutableStateFlow<SongUrlData?>(null)
+    val currentSong= _currentSong.asStateFlow()
 
-    /** 当前歌曲索引 */
-    private val _currentIndex = MutableLiveData(0)
-    val currentIndex: LiveData<Int> = _currentIndex
+    //当前歌曲索引
+    private val _currentIndex = MutableStateFlow<Int>(0)
+    val currentIndex= _currentIndex.asStateFlow()
 
     /** 歌曲封面 URL */
-    private val _coverUrl = MutableLiveData<String?>()
-    val coverUrl: LiveData<String?> = _coverUrl
+    private val _coverUrl = MutableStateFlow<String?>(null)
+    val coverUrl= _coverUrl.asStateFlow()
 
 
     /** 歌手名 */
-    private val _artistName = MutableLiveData("未知歌手")
-    val artistName: LiveData<String> = _artistName
+    private val _artistName = MutableStateFlow("未知歌手")
+    val artistName = _artistName.asStateFlow()
 
     /** 歌曲名 */
-    private val _songName = MutableLiveData("未知歌曲")
-    val songName: LiveData<String> = _songName
+    private val _songName = MutableStateFlow("未知歌曲")
+    val songName= _songName.asStateFlow()
 
 
     //解析后的歌词列表（含逐字/逐句）
-    private val _lyricList = MutableLiveData<List<Lyric>>()
-    val lyricList: LiveData<List<Lyric>> = _lyricList
+    private val _lyricList = MutableStateFlow<List<Lyric>?>(null)
+    val lyricList= _lyricList.asStateFlow()
 
    //歌词加载状态
-    private val _lyricLoading = MutableLiveData(false)
-    val lyricLoading: LiveData<Boolean> = _lyricLoading
+    private val _lyricLoading = MutableStateFlow(false)
+    val lyricLoading= _lyricLoading.asStateFlow()
 
     //历史听歌
     private val _wikiData = MutableStateFlow<SongWikiData?>(null)
@@ -90,16 +77,16 @@ class PlayerViewModel : BaseViewModel() {
     val songDetail: StateFlow<SongData?> = _songDetail
 
     //歌手
-    private val _songer = MutableStateFlow<ArtistData?>(null)
-    val songer: StateFlow<ArtistData?> = _songer
+    private val _singer = MutableStateFlow<ArtistData?>(null)
+    val singer: StateFlow<ArtistData?> = _singer
 
     //相似歌词
     private val _similarSong = MutableStateFlow<List<Song>?>(null)
     val similarSong: StateFlow<List<Song>?> = _similarSong
 
     //相似歌手
-    private val _similarSonger = MutableStateFlow<List<SimilarArtist>?>(null)
-    val similarSonger : StateFlow<List<SimilarArtist>?> = _similarSonger
+    private val _similarSinger = MutableStateFlow<List<SimilarArtist>?>(null)
+    val similarSinger : StateFlow<List<SimilarArtist>?> = _similarSinger
 
     //歌手歌曲
     private val _moreSong = MutableStateFlow<List<MoreSongItem>?>(null)
@@ -267,7 +254,7 @@ class PlayerViewModel : BaseViewModel() {
             val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getSongerDetail(songId.toLong())
             if (result.code == 200 ) {
-                _songer.value = result.data
+                _singer.value = result.data
             }
         }
     }
@@ -290,7 +277,7 @@ class PlayerViewModel : BaseViewModel() {
             val result = api.getSimilarSongerDetail(songId.toLong())
             Log.d("hyj","请求相似歌手返回的请求码:${result.code}，数据为${result.artists}")
             if (result.code == 200 ) {
-                _similarSonger.value = result.artists
+                _similarSinger.value = result.artists
             }else{
                 Log.e("hyj","请求相似歌手发生错误了")
             }

@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.base.BaseFragment
 import com.example.searchpage.databinding.FragmentSearchPageBinding
+import com.example.util.DrawerUtil
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -39,6 +40,13 @@ class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearc
                 .build()
 
             findNavController().navigate(request)
+        }
+    }
+
+    override fun initEvent() {
+        super.initEvent()
+        binding.btnDrawer.setOnClickListener {
+            (activity as? DrawerUtil)?.openDrawer()
         }
     }
 

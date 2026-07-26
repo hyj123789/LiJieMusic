@@ -30,7 +30,7 @@ class MvPlayFragment : BaseFragment<FragmentMvPlayBinding>(FragmentMvPlayBinding
         }
         // GSYVideoPlayer v9 全屏按钮没有内置逻辑，手动绑定
         binding.videoPlayer.fullscreenButton.setOnClickListener {
-            Log.d("ljh", "====== 点击了全屏按钮 ======")
+            Log.d("ljh", "点击了全屏按钮")
             if (binding.videoPlayer.isIfCurrentIsFullscreen) {
                 Log.d("ljh", "当前已全屏，退出全屏")
                 binding.videoPlayer.onBackFullscreen()

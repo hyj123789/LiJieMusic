@@ -1,7 +1,7 @@
 package com.example.profile
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,10 +16,13 @@ import kotlinx.coroutines.launch
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate){
     private val viewModel: ProfileViewModel by viewModels()
-    private val mAdapter = PlaylistAdapter({id->
-        findNavController().navigate(Uri.parse("musicapp://playlist/$id"))
+    //歌单的adapter
+    private val mAdapter = PlaylistAdapter{id->
+        findNavController().navigate(("musicapp://playlist/$id").toUri())
         Log.d("ljh","DeepLink传歌单ID跳转"+id)
-    })
+    }
+
+    //初始化主页信息以及rv
     override fun initView() {
         super.initView()
         lifecycleScope.launch{
@@ -46,9 +49,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             layoutManager= LinearLayoutManager(requireContext())
             Log.d("ljh","RV初始化成功")
         }
+        //网络请求一次，加载歌单信息
         viewModel.loadPlaylist()
     }
 
+    //设置点击事件
     override fun initEvent() {
         super.initEvent()
         binding.tvCheckAll.setOnClickListener {
@@ -62,6 +67,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         }
     }
     override fun onDestroyView() {
+        //置空，防内存泄漏
         _binding?.rvPlaylist?.adapter = null
         super.onDestroyView()
     }
@@ -76,7 +82,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                             val newList = this.toMutableList()
                             mAdapter.submitList(newList)
                             binding.tvPlaylistCount.text="${newList.size}个歌单"
-                            Log.d("ljh","塔台呼叫，这边是observer，已经观察到了list变化了，adapter已经提交"+newList.toString())
+                            Log.d("ljh","这边是observer，已经观察到了list变化了，adapter已经提交"+newList.toString())
                         } ?: return@collect
                     }
                 }

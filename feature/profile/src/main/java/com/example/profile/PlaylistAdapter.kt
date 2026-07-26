@@ -13,6 +13,7 @@ import com.example.profile.model.playlist.Playlist
 
 class PlaylistAdapter(private val onItemClick: (String) -> Unit) :
     ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(PlaylistDiffCallback()) {
+    //用于描述有没有限制歌单展示数量的bool值
     private var isLimited: Boolean = true
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         Log.d("ljh", "onCreateViewHolder执行了")
@@ -27,6 +28,7 @@ class PlaylistAdapter(private val onItemClick: (String) -> Unit) :
         holder.bind(item)
     }
 
+    //通过重写getItemCount来返回控制的数目
     override fun getItemCount(): Int {
         val initCount = super.getItemCount()
         if (isLimited) {
@@ -47,6 +49,7 @@ class PlaylistAdapter(private val onItemClick: (String) -> Unit) :
         init {
             binding.root.setOnClickListener {
                 val pos = bindingAdapterPosition
+                //点的是RV的无效位置就不触发
                 if (pos != RecyclerView.NO_POSITION) {
                     currentItem?.let {
                         onItemClick(it.id.toString())

@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.video.R
 import com.example.video.model.HotComment
 
+//MV评论的RvAdpter
 class MvCommentAdapter : ListAdapter<HotComment, MvCommentAdapter.CommentViewHolder>(CommentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {

@@ -57,10 +57,6 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 PlayerManager.addSongToPlaylist(id,songName,artistName)
             }
         })
-
-
-
-
     }
     override fun initEvent() {
         super.initEvent()
@@ -104,7 +100,7 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                     }
                 }
                 launch {
-                    viewModel.Song.collect { trackList ->
+                    viewModel.song.collect { trackList ->
                         //清除歌单
                         val myExtractedSongs = trackList?.map { track ->
                             //取出歌曲列表需要的数据

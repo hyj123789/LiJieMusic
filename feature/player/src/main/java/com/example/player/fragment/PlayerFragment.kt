@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,19 +27,20 @@ import kotlinx.coroutines.launch
 
 @Route(path = RoutePath.PLAYER_MAIN)
 class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding::inflate) {
-    val currentUid = UserManager.profile.value?.userId.toString()
+    private val currentUid = UserManager.profile.value?.userId.toString()
 
     private val viewModel: PlayerViewModel by activityViewModels()
 
     private val qualityOptions = arrayOf("臻品母带", "臻品全景音", "臻品音质")
     private var currentQualityIndex = 0
 
-    var id = ""
-    var songname  = ""
-    //封面
-    var coverurl = ""
+    private var id = ""
+    private var songName = ""
 
-    var Islike : Boolean  = false
+    private var coverUrl = ""
+
+    private var isLike: Boolean = false
+
     //是否拖动
     private var isUserSeeking = false
 
@@ -48,7 +51,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         //点击中间区域，切换封面和歌词的显示
         binding.flCenterContent.setOnClickListener {
-            if (binding.lvLyrics.visibility == View.VISIBLE) {
+            if (binding.lvLyrics.isVisible) {
                 binding.lvLyrics.visibility = View.GONE
                 binding.ivAlbumCover.visibility = View.VISIBLE
                 binding.layoutSong.visibility = View.VISIBLE
@@ -116,7 +119,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                //手指松开正式指挥播放器跳转到松开的位置
+                //手指松开正式指挥播放器跳转到松开的位 置
                 seekBar?.let {
                     val duration = PlayerManager.duration.value
                     val seekPosition = (duration * it.progress) / 100
@@ -153,14 +156,14 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
             //利用DeepLink深层链接跳转
             val songId = id
             Log.d("test_lyric", "当前歌曲ID: $id")
-            val songName = songname
+            val songName = songName
             // 注意：如果是图片网址，里面有斜杠等特殊字符，最好 Encode 一下防止解析错误
-            val coverUrl = Uri.encode(coverurl )
+            val coverUrl = Uri.encode(coverUrl)
             //拼出我们定义的那个网址暗号
-            val uriString = "lijiemusic://comment?songId=$songId&songName=$songName&coverUrl=$coverUrl"
+            val uriString =
+                "lijiemusic://comment?songId=$songId&songName=$songName&coverUrl=$coverUrl"
             //Navigation会自动跨模块找到它！
-            findNavController().navigate(Uri.parse(uriString))
-
+            findNavController().navigate(uriString.toUri())
         }
 
         // 分享按钮
@@ -191,18 +194,95 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
     override fun initObservers() {
         super.initObservers()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    // 保存当前歌曲ID
+                    viewModel.currentSong.collect { songData ->
+                        if (songData != null && !songData.url.isNullOrEmpty()) {
+                            id = songData.id.toString()
+                            Log.d("Ben", "当前歌曲ID: $id")
+                        }
+                    }
+                }
+                launch {
+                    //封面
+                    viewModel.coverUrl.collect { url ->
+                        //当网络请求成功url有值的时候，这里的代码才会被触发！
+                        if (!url.isNullOrEmpty()) {
+                            Glide.with(this@PlayerFragment)
+                                .load(url)
+                                .transform(RoundedCorners(30))
+                                .into(binding.ivAlbumCover)
 
-        //播放音乐
-        viewModel.currentSong.observe(viewLifecycleOwner) { songData ->
-            if (songData != null && !songData.url.isNullOrEmpty()) {
-//
-//                Log.d("hyj", "网络请求大功告成，拿到了歌曲URL，准备出声: ${songData.url}")
-//
-//                PlayerManager.startPlayEngine(songData.id.toString(), songData.url)
-                id = songData.id.toString()
-                Log.d("Ben", "当前歌曲ID: $id")
+                            coverUrl = url
+
+                        } else {
+                            Log.d("hyj", "播放器封面链接还是空的！")
+                        }
+                    }
+                }
+                launch {
+                    //获取歌词 —— 解析后传给 LyricView
+                    viewModel.lyricList.collect { lyrics ->
+                        if (lyrics.isNullOrEmpty()) return@collect
+                        binding.lvLyrics.setLyrics(lyrics)
+                    }
+
+                }
+                launch {
+                    viewModel.isLiked.collect { bool ->
+                        //为是否喜欢赋值
+                        isLike = bool
+                        if (isLike) {
+                            binding.btnFavorite.setImageResource(R.drawable.like1)
+                        } else {
+                            binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
+                        }
+
+                    }
+                }
+                launch {
+                    PlayerManager.isPlaying.collect { isPlaying ->
+                        // 更新播放/暂停图标
+                        binding.btnPlay.setImageResource(
+                            if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                        )
+                    }
+                }
+                launch {
+                    PlayerManager.currentPosition.collect { position ->
+                        binding.tvCurrentTime.text = viewModel.formatTime(position)
+                        //监听进度条
+                        val duration = PlayerManager.duration.value
+                        if (duration > 0) {
+                            binding.seekBar.progress =
+                                ((position.toFloat() / duration) * 100).toInt()
+                        }
+                        // 更新 LyricView 的进度 —— 它会自动高亮当前行
+                        binding.lvLyrics.updateProgress(position)
+                    }
+                }
+                launch {
+                    // 观察歌手名
+                    viewModel.artistName.collect { artist ->
+                        binding.tvArtist.text = artist
+                    }
+                }
+                launch {
+                    // 观察歌曲名
+                    viewModel.songName.collect { name ->
+                        songName = name
+                        binding.tvSong.text = name
+                    }
+                }
+                launch {
+                    PlayerManager.duration.collect { duration ->
+                        binding.tvTotalTime.text = viewModel.formatTime(duration)
+                    }
+                }
             }
-        }
+
 //
 //        viewLifecycleOwner.lifecycleScope.launch {
 //            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -226,103 +306,13 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 //
 //            }
 //        }
-
-        //封面
-        viewModel.coverUrl.observe(viewLifecycleOwner) { url ->
-            //当网络请求成功url有值的时候，这里的代码才会被触发！
-            if (!url.isNullOrEmpty()) {
-                Glide.with(this@PlayerFragment)
-                    .load(url)
-                    .transform(RoundedCorners(30))
-                    .into(binding.ivAlbumCover)
-
-                coverurl = url
-
-            } else {
-                Log.d("hyj", "播放器封面链接还是空的！")
-            }
-        }
-
-        //获取歌词 —— 解析后传给 LyricView
-        viewModel.lyricList.observe(viewLifecycleOwner) { lyrics ->
-            binding.lvLyrics.setLyrics(lyrics)
-        }
-
-        // 观察播放状态
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                PlayerManager.isPlaying.collect { isPlaying ->
-                    // 更新播放/暂停图标
-                    binding.btnPlay.setImageResource(
-                        if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
-                    )
-                }
-            }
-        }
-        // 观察当前播放时间
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                PlayerManager.currentPosition.collect { position ->
-                    binding.tvCurrentTime.text = viewModel.formatTime(position)
-                    //监听进度条
-                    val duration = PlayerManager.duration.value
-                    if (duration > 0) {
-                        binding.seekBar.progress = ((position.toFloat() / duration) * 100).toInt()
-                    }
-                    // 更新 LyricView 的进度 —— 它会自动高亮当前行
-                    binding.lvLyrics.updateProgress(position)
-                }
-            }
-        }
-
-        // 观察总时长
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                PlayerManager.duration.collect { duration ->
-                    binding.tvTotalTime.text = viewModel.formatTime(duration)
-                }
-            }
-        }
-
-        // 观察歌手名
-        viewModel.artistName.observe(viewLifecycleOwner) { artist ->
-            binding.tvArtist.text = artist
-        }
-
-        // 观察歌曲名
-        viewModel.songName.observe(viewLifecycleOwner) { songName ->
-            binding.tvSong.text = songName
-            songname = songName
-        }
-
-        // 观察错误信息
-        handleApiError(viewModel)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                //要用launch单独包裹不然会被阻塞
-                launch {
-                    viewModel.isLiked.collect { isLike ->
-                        //为是否喜欢赋值
-                        Islike = isLike
-                        if (isLike) {
-                            binding.btnFavorite.setImageResource(R.drawable.like1)
-                        } else {
-                            binding.btnFavorite.setImageResource(R.drawable.ic_favorite)
-                        }
-
-                    }
-                }
-            }
         }
     }
 
-
-    /**
-     * 显示音质选择对话框
-     * 需要用到 context，直接放在 UI 层
-     */
-//    private fun showQualityDialog() {
+    //显示音质选择对话框
+    //需要用到 context，直接放在 UI 层
+    //
+    //private fun showQualityDialog() {
 //        AlertDialog.Builder(requireContext())
 //            .setTitle("选择音质")
 //            .setSingleChoiceItems(qualityOptions, currentQualityIndex) { dialog, which ->
@@ -354,7 +344,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         qualityDialog.onQualitySelected = { level, name ->
             //更新 UI 上的文字
             binding.tvQuality.text = name
-            if(name == "臻品音质") binding.tvQuality.setTextColor("#BDE39F".toColorInt())
+            if (name == "臻品音质") binding.tvQuality.setTextColor("#BDE39F".toColorInt())
             else binding.tvQuality.setTextColor("#1C1C1E".toColorInt())
             ToastUtil.popToastLong("已切换到 $name", requireContext())
 

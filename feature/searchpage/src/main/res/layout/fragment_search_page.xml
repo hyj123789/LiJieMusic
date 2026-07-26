@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/liebiao"
+                android:id="@+id/btn_drawer"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="14dp"

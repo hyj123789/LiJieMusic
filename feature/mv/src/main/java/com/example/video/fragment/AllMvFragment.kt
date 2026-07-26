@@ -99,6 +99,7 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
         }
     }
 
+    /** 只有一个button能被选中 */
     private fun setButtonSelected(buttons: List<Button>, button: Button) {
         for (btn in buttons) {
             btn.isSelected = false

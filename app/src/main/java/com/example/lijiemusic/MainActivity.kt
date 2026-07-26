@@ -66,11 +66,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     override fun initEvent() {
         super.initEvent()
         binding.navDrawer.setNavigationItemSelectedListener { menuItem ->
-            when(menuItem.itemId){
+            when (menuItem.itemId) {
                 R.id.menu_dynamics -> {
                     TheRouter.build(RoutePath.DYNAMICS_MAIN).navigation()
                 }
-                R.id.menu_logout ->{
+
+                R.id.menu_logout -> {
                     showLogoutDialog()
                 }
             }
@@ -106,14 +107,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 binding.layoutMiniPlayer.visibility = View.VISIBLE
                 binding.bottomNavView.visibility = View.VISIBLE
             }
-            if(destination.id!=R.id.fragment_home&&destination.id!=R.id.fragment_search_page&&destination.id!=R.id.fragment_video&&destination.id!=R.id.fragment_profile){
+            if (destination.id != R.id.fragment_home && destination.id != R.id.fragment_search_page && destination.id != R.id.fragment_video && destination.id != R.id.fragment_profile) {
                 binding.bottomNavView.visibility = View.GONE
                 binding.layoutMiniPlayer
                 val constraintSet = ConstraintSet()
                 constraintSet.clone(binding.main)
                 constraintSet.connect(
                     R.id.layout_mini_player,
-                    ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID,
                     ConstraintSet.BOTTOM,
                     5
                 )
@@ -140,57 +141,57 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             })
         mediaControllerHelper?.connect()
 
-        //监听歌曲歌名
-        viewModel.songName.observe(this) { name ->
-            if (name != null) {
-                binding.tvMiniSong.text = name
-            }
-        }
 
-        //监听封面
-        viewModel.coverUrl.observe(this) { cover ->
-            Glide.with(this)
-                .load(cover)
-                .transform(RoundedCorners(16)) //小封面圆角给小一点
-                .into(binding.ivMiniCover)
 
-        }
-
-        //监听播放状态变化（更新播放/暂停按钮的图标）
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                PlayerManager.isPlaying.collect { isPlaying ->
-                    if (isPlaying) {
-                        binding.ivMiniPlay.setImageResource(R.drawable.play)
-                    } else {
-                        binding.ivMiniPlay.setImageResource(R.drawable.pause)
+                launch {
+                    PlayerManager.isPlaying.collect { isPlaying ->
+                        if (isPlaying) {
+                            binding.ivMiniPlay.setImageResource(R.drawable.play)
+                        } else {
+                            binding.ivMiniPlay.setImageResource(R.drawable.pause)
+                        }
+                    }
+                }
+                launch {
+                    //监听歌曲歌名
+                    viewModel.songName.collect { name ->
+                        if (name != null) {
+                            binding.tvMiniSong.text = name
+                        }
+                    }
+                }
+                launch {
+                    viewModel.coverUrl.collect { cover ->
+                        Glide.with(this@MainActivity)
+                            .load(cover)
+                            .transform(RoundedCorners(16)) //小封面圆角给小一点
+                            .into(binding.ivMiniCover)
+                    }
+                }
+                launch {
+                    PlayerManager.currentSong.collect { song ->
+                        if (song != null) {
+                            Log.d("hyj", "【全局】大管家切歌了！指派ViewModel去请求！ID: ${song.id}")
+                            viewModel.fetchMusicUrl(song.id.toString())
+                            viewModel.fetchSongDetail(song.id.toString())
+                            viewModel.fetchLyric(song.id.toString())
+                            viewModel.checkSongIsLiked(song.id.toString())
+                        }
+                    }
+                }
+                launch {
+                    viewModel.currentSong.collect { songData ->
+                        if (songData != null && !songData.url.isNullOrEmpty()) {
+                            val url = songData?.url
+                            Log.d("hyj", "【全局】拿到歌曲URL，准备出声: ${songData.url}")
+                            PlayerManager.startPlayEngine(songData.id.toString(), url.toString())
+                        }
                     }
                 }
             }
         }
-
-        //全局监听器：大管家切歌 -> 发起网络请求
-        lifecycleScope.launch {
-            PlayerManager.currentSong.collect { song ->
-                if (song != null) {
-                    Log.d("hyj", "【全局】大管家切歌了！指派ViewModel去请求！ID: ${song.id}")
-                    viewModel.fetchMusicUrl(song.id.toString())
-                    viewModel.fetchSongDetail(song.id.toString())
-                    viewModel.fetchLyric(song.id.toString())
-                    viewModel.checkSongIsLiked(song.id.toString())
-                }
-            }
-        }
-
-        //全局监听器：拿到 URL -> 启动底层播放器发声
-        viewModel.currentSong.observe(this) { songData ->
-            if (songData != null && !songData.url.isNullOrEmpty()) {
-                val url = songData?.url
-                Log.d("hyj", "【全局】拿到歌曲URL，准备出声: ${songData.url}")
-                PlayerManager.startPlayEngine(songData.id.toString(), url.toString())
-            }
-        }
-
     }
 
     //新增：页面销毁时，断开连接，防止内存泄漏
@@ -199,7 +200,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         mediaControllerHelper?.disconnect()
         mediaControllerHelper = null
     }
-    override fun openDrawer(){
+
+    override fun openDrawer() {
         binding.drawerlayout.openDrawer(binding.navDrawer)
     }
 
@@ -207,8 +209,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         binding.drawerlayout.closeDrawer(binding.navDrawer)
     }
 
-    private fun showLogoutDialog(){
-        LogoutDialog().show(supportFragmentManager,"logout")
+    private fun showLogoutDialog() {
+        LogoutDialog().show(supportFragmentManager, "logout")
     }
 
     override fun onStop() {

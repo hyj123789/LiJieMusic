@@ -26,7 +26,6 @@ import androidx.media3.session.MediaSessionService
  */
 class MusicService : MediaSessionService() {
 
-    // ========== 成员变量 ==========
 
     /**
      * MediaSession：把 ExoPlayer 的播放能力暴露给系统
@@ -77,9 +76,7 @@ class MusicService : MediaSessionService() {
                 PendingIntent.getActivity(
                     this,
                     0,
-                    // TODO: 这里改成你 App 主界面的 Activity，点击通知栏时跳回去
-                    // Intent(this, MainActivity::class.java),
-                    Intent().apply { setPackage(packageName) },
+                    Intent(this, Class.forName("com.example.lijiemusic.MainActivity")),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             )

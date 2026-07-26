@@ -16,6 +16,7 @@ class ViewPagerAdapter(
         fragment: Fragment,
         fragmentCreators: List<() -> Fragment>
     ) : this(fragment.childFragmentManager, fragment.lifecycle, fragmentCreators)
+
     constructor(
         activity: FragmentActivity,
         fragmentCreators: List<() -> Fragment>

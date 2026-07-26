@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
+    //设置点击事件
     override fun initEvent() {
         super.initEvent()
         binding.btnLogin.setOnClickListener {

@@ -11,13 +11,13 @@ import kotlinx.coroutines.launch
 
 class PlaylistViewModel: ViewModel() {
     private val api = RetrofitClient.createApi(PlayListApi::class.java)
-    private val _Song = MutableStateFlow<List<Track>?>(null)
+    private val _song = MutableStateFlow<List<Track>?>(null)
     private val _rvList = MutableStateFlow<List<Track>?>(null)
     private val _coverUrl = MutableStateFlow<String?>(null)
     private val _name = MutableStateFlow<String?>(null)
     private val _songCounts = MutableStateFlow<String?>(null)
 
-    val Song : StateFlow<List<Track>?> = _Song
+    val song : StateFlow<List<Track>?> = _song
     val rvList : StateFlow<List<Track>?> = _rvList
     val coverUrl : StateFlow<String?> = _coverUrl
     val name : StateFlow<String?> = _name
@@ -29,7 +29,7 @@ class PlaylistViewModel: ViewModel() {
                 _rvList.value=playlistRes.playlist.tracks
                 _coverUrl.value=playlistRes.playlist.coverImgUrl
                 _name.value=playlistRes.playlist.name
-                _Song.value = playlistRes.playlist.tracks
+                _song.value = playlistRes.playlist.tracks
                 _songCounts.value= "${playlistRes.playlist.trackCount}首"
                 Log.d("ljh","歌曲信息"+playlistRes.playlist.toString())
             } catch (e: Exception) {

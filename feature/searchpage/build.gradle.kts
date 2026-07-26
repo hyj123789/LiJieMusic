@@ -38,6 +38,7 @@ dependencies {
     //导入base
     implementation(project(":core:base"))
     implementation(project(":core:net"))
+    implementation(project(":core:util"))
 
     //viewmodel
     implementation(libs.lifecycle.viewmodel.ktx)
