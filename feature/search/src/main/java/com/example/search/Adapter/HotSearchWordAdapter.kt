@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.search.R
 import com.example.search.model.HotSearchData
+import androidx.core.graphics.toColorInt
 
 class HotSearchWordAdapter : ListAdapter<HotSearchData, HotSearchWordAdapter.WordViewHolder>(HotSearchDiffCallback()) {
 
@@ -35,10 +36,10 @@ class HotSearchWordAdapter : ListAdapter<HotSearchData, HotSearchWordAdapter.Wor
         holder.tvRank.text = rank.toString()
 
         if (rank <= 3) {
-            holder.tvRank.setTextColor(Color.parseColor("#FF3A3A")) //红色
+            holder.tvRank.setTextColor("#FF3A3A".toColorInt()) //红色
             holder.tv.typeface = Typeface.create(holder.tv.typeface, Typeface.BOLD)
         } else {
-            holder.tvRank.setTextColor(Color.parseColor("#999999")) //灰色
+            holder.tvRank.setTextColor("#999999".toColorInt()) //灰色
             holder.tv.typeface = Typeface.create(holder.tv.typeface, Typeface.NORMAL)
         }
 
@@ -59,7 +60,6 @@ class HotSearchWordAdapter : ListAdapter<HotSearchData, HotSearchWordAdapter.Wor
         override fun areItemsTheSame(oldItem: HotSearchData, newItem: HotSearchData): Boolean {
             return oldItem.searchWord == newItem.searchWord
         }
-
         override fun areContentsTheSame(oldItem: HotSearchData, newItem: HotSearchData): Boolean {
             return oldItem == newItem
         }

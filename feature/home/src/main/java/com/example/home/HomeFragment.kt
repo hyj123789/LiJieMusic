@@ -1,8 +1,6 @@
 package com.example.home
 
 import RV4Adapter
-import android.net.Uri
-import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,33 +19,30 @@ import com.example.util.DrawerUtil
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate){
 
     //获取viewmodel
     private val viewModel: HomeViewModel by viewModels()
-    //获取Rv1的Adapter
-    private val RV1Adapter = Rv1Adapter { playlistId ->
+    //获取所有的Adapter
+    private val rv1Adapter = Rv1Adapter { playlistId ->
         navigateToPlaylist(playlistId)
     }
 
-    //获取Rv2的Adapter
-    private val RV2Adapter = Rv2Adapter { playlistId ->
+    private val rv2Adapter = Rv2Adapter { playlistId ->
         navigateToPlaylist(playlistId)
     }
-    //获取Rv3的Adapter
-    private val Rv3Adapte = Rv3Adapte()
-
-    private val RV4Adapter = RV4Adapter()
+    private val rv3Adapte = Rv3Adapte()
+    private val rv4Adapter = RV4Adapter()
 
     override fun initView() {
         //榜定rv1
         binding.rv1.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
-        binding.rv1.adapter = RV1Adapter
+        binding.rv1.adapter = rv1Adapter
         //榜定rv2
         binding.rv2.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL, false)
-        binding.rv2.adapter = RV2Adapter
-
+        binding.rv2.adapter = rv2Adapter
         //榜定rv3
         val gridLayoutManager3 = GridLayoutManager(
             requireContext(),
@@ -55,73 +50,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             GridLayoutManager.HORIZONTAL,
             false
         )
+        binding.rv3.layoutManager = gridLayoutManager3
+        binding.rv3.adapter = rv3Adapte
         //绑定Rv4
+        //定义网格布局
         val gridLayoutManager4 = GridLayoutManager(
             requireContext(),
             3,
             GridLayoutManager.HORIZONTAL,
             false
         )
-        binding.rv3.layoutManager = gridLayoutManager3
-        binding.rv3.adapter = Rv3Adapte
-
         binding.rv4.layoutManager = gridLayoutManager4
-        binding.rv4.adapter = RV4Adapter
-
+        binding.rv4.adapter = rv4Adapter
 
         //使唤ViewModel去请求数据
         viewModel.fetchRecommendPlaylists()
-
-        binding.imgtosearch.setOnClickListener {
-
-            //对于这个暗号进行访问
-            val request = NavDeepLinkRequest.Builder
-                .fromUri(Uri.parse("musicapp://search_page"))
-                .build()
-
-            findNavController().navigate(request)
-
-        }
-
-        Rv3Adapte.OnSongClickListener3(object : Rv3Adapte.OnSongClickListener {
-
-            override fun onSongPlayClick(
-                id: String,
-                songName: String,
-                artistName: String
-            ) {
-                PlayerManager.playSong(id,songName,artistName)
-            }
-
-            override fun onSongNextPlayClick(
-                id: String,
-                songName: String,
-                artistName: String
-            ) {
-                PlayerManager.addSongToPlaylist(id,songName,artistName)
-            }
-        })
-
-        RV4Adapter.OnSongClickListener4(object : Rv3Adapte.OnSongClickListener {
-
-            override fun onSongPlayClick(
-                id: String,
-                songName: String,
-                artistName: String
-            ) {
-                PlayerManager.playSong(id,songName,artistName)
-            }
-
-            override fun onSongNextPlayClick(
-                id: String,
-                songName: String,
-                artistName: String
-            ) {
-                PlayerManager.addSongToPlaylist(id,songName,artistName)
-            }
-        })
-
-
     }
 
 
@@ -130,11 +73,53 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.btnDrawer.setOnClickListener {
             (activity as? DrawerUtil)?.openDrawer()
         }
+        //跳往搜索页面
+        binding.imgtosearch.setOnClickListener {
+            //对于这个暗号进行访问
+            val request = NavDeepLinkRequest.Builder
+                .fromUri("musicapp://search_page".toUri())
+                .build()
+            findNavController().navigate(request)
+
+        }
+        //rv3rv4点击事件的书写
+        rv3Adapte.OnSongClickListener3(object : Rv3Adapte.OnSongClickListener {
+            override fun onSongPlayClick(
+                id: String,
+                songName: String,
+                artistName: String
+            ) {
+                PlayerManager.playSong(id,songName,artistName)
+            }
+            override fun onSongNextPlayClick(
+                id: String,
+                songName: String,
+                artistName: String
+            ) {
+                PlayerManager.addSongToPlaylist(id,songName,artistName)
+            }
+        })
+
+        rv4Adapter.setOnSongClickListener(object : RV4Adapter.OnSongClickListener {
+            override fun onSongPlayClick(
+                id: String,
+                songName: String,
+                artistName: String
+            ) {
+                PlayerManager.playSong(id,songName,artistName)
+            }
+            override fun onSongNextPlayClick(
+                id: String,
+                songName: String,
+                artistName: String
+            ) {
+                PlayerManager.addSongToPlaylist(id,songName,artistName)
+            }
+        })
     }
 
      override fun initObservers() {
          viewLifecycleOwner.lifecycleScope.launch {
-
              //只有在页面可见时才监听，不可见就没有必要监听
              repeatOnLifecycle(Lifecycle.State.STARTED) {
 
@@ -142,7 +127,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                      .onEach { realData ->
                          //只要数据不是空的就给Rv1的Apdater配置数据
                          if (realData.isNotEmpty()) {
-                             RV1Adapter.submitList(realData)
+                             rv1Adapter.submitList(realData)
                          }
                      }
                      .launchIn(this) //把任务交给当前repeatOnLifecycle所在的协程去后台跑
@@ -150,7 +135,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                  viewModel.playlistFlow2
                      .onEach { realData ->
                          if (realData.isNotEmpty()) {
-                             RV2Adapter.submitList(realData)
+                             rv2Adapter.submitList(realData)
                          }
                      }
                      .launchIn(this)
@@ -158,7 +143,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                  viewModel.playlistFlow3
                      .onEach { realData ->
                          if (realData.isNotEmpty()) {
-                             Rv3Adapte.submitList(realData)
+                             rv3Adapte.submitList(realData)
                          }
                      }
                      .launchIn(this)
@@ -166,7 +151,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                  viewModel.playlistFlow4
                      .onEach { realData ->
                          if (realData.isNotEmpty()) {
-                             RV4Adapter.submitList(realData)
+                             rv4Adapter.submitList(realData)
                          }
                      }
                      .launchIn(this)
@@ -184,7 +169,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun navigateToPlaylist(playlistId: Long) {
         val request = NavDeepLinkRequest.Builder
-            .fromUri(Uri.parse("musicapp://playlist/$playlistId"))
+            .fromUri("musicapp://playlist/$playlistId".toUri())
             .build()
         findNavController().navigate(request)
     }

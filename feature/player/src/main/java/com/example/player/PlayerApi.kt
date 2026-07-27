@@ -7,6 +7,7 @@ import com.example.player.model.LikeResponse
 import com.example.player.model.LyricResponse
 import com.example.player.model.MoreSongResponse
 import com.example.player.model.MusicAvailableResponse
+import com.example.player.model.ShareSongData
 import com.example.player.model.SimilarArtistResponse
 import com.example.player.model.SimilarSongsResponse
 import com.example.player.model.SongApiResponse
@@ -86,4 +87,10 @@ interface PlayerApi {
         @Query("offset") offset: Int = 0
     ): MoreSongResponse
 
+    //分享的api
+    @GET("/share/resource")
+    suspend fun getshareSong(
+        @Query("id") songId: Long,
+        @Query("msg") msg: String
+    ): ShareSongData
 }

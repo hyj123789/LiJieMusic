@@ -2,7 +2,7 @@ package com.example.searchpage
 
 data class PlaylistResponse(
     val code: Int,
-    val playlists: List<PlaylistItem>? // 🌟 这里的名字必须和 JSON 里的 "playlists" 一模一样
+    val playlists: List<PlaylistItem>?
 )
 data class PlaylistItem(
     val id: Long,

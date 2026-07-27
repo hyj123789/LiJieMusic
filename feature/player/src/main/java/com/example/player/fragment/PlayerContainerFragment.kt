@@ -24,6 +24,9 @@ class PlayerContainerFragment :
         binding.mainViewpager2.adapter = ViewPagerAdapter(this, list)
     }
 
+    fun goToSecondPage() {
+        binding.mainViewpager2.currentItem = 1
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

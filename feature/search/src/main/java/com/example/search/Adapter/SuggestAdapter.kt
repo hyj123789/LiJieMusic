@@ -7,23 +7,22 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.search.R
-import com.example.search.model.SuggestSong
 
 class SuggestAdapter(
     private val onItemClick: (String) -> Unit
 )  : ListAdapter<String, SuggestAdapter.SuggestViewHolder>(SuggestDiffCallback()){
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): SuggestAdapter.SuggestViewHolder {
+    ): SuggestViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_search_suggest, parent, false)
         return SuggestViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: SuggestAdapter.SuggestViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SuggestViewHolder, position: Int) {
         val itemText = getItem(position)
         holder.tvSuggestText.text = itemText
     }

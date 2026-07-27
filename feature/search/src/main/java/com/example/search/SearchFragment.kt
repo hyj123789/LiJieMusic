@@ -1,16 +1,9 @@
 package com.example.search
 
 import SearchResultAdapter
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -77,10 +70,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
         binding.rvSeachResponse.layoutManager = LinearLayoutManager(requireContext())
 
-
         //输入就展示
         showSearchResponse()
+        viewModel.fetchRecommendPlaylists()
 
+    }
+
+    override fun initEvent() {
+        super.initEvent()
         //仍保留按钮功能
         binding.tvSearch.setOnClickListener {
             val keyword = binding.search.text.toString().trim()
@@ -99,14 +96,54 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             }
         }
 
-        viewModel.fetchRecommendPlaylists()
-
         binding.back.setOnClickListener {
-
             //告诉导航仪退回上一个页面
             findNavController().navigateUp()
         }
+    }
 
+    override fun initObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                viewModel.hotSearchFlow
+                    .onEach { realData ->
+                        if (realData.isNotEmpty()) {
+                            HotsearcgAdapter.submitList(realData)
+                        }
+                    }
+                    .launchIn(this)
+
+
+                viewModel.guessFlow
+                    .onEach { realData ->
+                        if (realData.isNotEmpty()) {
+                            guessAdapter.submitList(realData)
+                        }
+                    }
+                    .launchIn(this)
+
+                viewModel.searchFlow
+                    .onEach { realData ->
+                        if (realData.isNotEmpty()) {
+                            searchResultAdapter.submitList(realData)
+                        }
+                    }
+                    .launchIn(this)
+
+
+                //搜集建议列表
+                viewModel.searchFlowSuggest
+                    .onEach { realData ->
+                        if (realData.isNotEmpty()) {
+                            searchSuggestAdapter.submitList(realData);
+                        }
+                    }
+                    .launchIn(this)
+
+            }
+        }
     }
 
     private fun showSearchResponse() {
@@ -123,51 +160,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             } else {
                 binding.rvSeachResponse.visibility = View.GONE
                 binding.layoutHotSearch.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-
-            //只有在页面可见时才监听，不可见就没有必要监听
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-                viewModel.hotSearchFlow
-                    .onEach { realData ->
-                        if (realData.isNotEmpty()) {
-                            HotsearcgAdapter.submitList(realData)
-                        }
-                    }
-                    .launchIn(this)
-
-
-                viewModel.GuessFlow
-                    .onEach { realData ->
-                        if (realData.isNotEmpty()) {
-                            guessAdapter.submitList(realData)
-                        }
-                    }
-                    .launchIn(this)
-
-                viewModel.SearchFlow
-                    .onEach { realData ->
-                        if (realData.isNotEmpty()) {
-                            searchResultAdapter.submitList(realData)
-                        }
-                    }
-                    .launchIn(this)
-
-
-                //搜集建议列表
-                viewModel.SearchFlowSuggest
-                    .onEach { realData ->
-                        if (realData.isNotEmpty()) {
-                            searchSuggestAdapter.submitList(realData);
-                        }
-                    }
-                    .launchIn(this)
-
             }
         }
     }

@@ -1,5 +1,7 @@
 package com.example.comment
 
+import com.example.comment.model.FloorCommentResponse
+import com.example.comment.model.NewCommentResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,7 +13,6 @@ interface CommentApi {
 //        @Query("limit") limit: Int = 20,
 //        @Query("offset") offset: Int = 0
 //    ): CommentResponse
-
 
     @GET("/comment/new")
     suspend fun getNewComments(

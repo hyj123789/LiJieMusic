@@ -1,7 +1,6 @@
-package com.example.comment
+package com.example.comment.model
 
 import com.google.gson.annotations.SerializedName
-
 
 data class FloorCommentResponse(
     @SerializedName("code")

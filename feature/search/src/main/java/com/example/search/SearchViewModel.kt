@@ -5,63 +5,66 @@ import com.example.base.BaseViewModel
 import com.example.net.RetrofitClient
 import com.example.search.model.HotSearchData
 import com.example.search.model.HotSearchItem
-import com.example.search.model.HotSearchResponse
 import com.example.search.model.SongItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class SearchViewModel : BaseViewModel() {
     private val _hotSearchFlow = MutableStateFlow<List<HotSearchData>>(emptyList())
-
     val hotSearchFlow : StateFlow<List<HotSearchData>> get() = _hotSearchFlow
-
-    private val _GuessFlow = MutableStateFlow<List<HotSearchItem>>(emptyList())
-
-    val GuessFlow : StateFlow<List<HotSearchItem>> get() = _GuessFlow
-
-    private val _SearchFlow = MutableStateFlow<List<SongItem>>(emptyList())
-    val SearchFlow : StateFlow<List<SongItem>> get() = _SearchFlow
-
-
-    private val _SearchFlowSuggest = MutableStateFlow<List<String>>(emptyList())
-
-    val SearchFlowSuggest : StateFlow<List<String>> get() = _SearchFlowSuggest
+    private val _guessFlow = MutableStateFlow<List<HotSearchItem>>(emptyList())
+    val guessFlow : StateFlow<List<HotSearchItem>> get() = _guessFlow
+    private val _searchFlow = MutableStateFlow<List<SongItem>>(emptyList())
+    val searchFlow : StateFlow<List<SongItem>> get() = _searchFlow
+    private val _searchFlowSuggest = MutableStateFlow<List<String>>(emptyList())
+    val searchFlowSuggest : StateFlow<List<String>> get() = _searchFlowSuggest
 
     fun fetchRecommendPlaylists() {
         launchRequest {
-            //创建 Api 实例
-            val api = RetrofitClient.createApi(SearchApi::class.java)
-            //发起请求拿数据
-            val response2 = api.getSearchhot()
-            val response1 = api.getguesshot()
+            try {
+                //创建 Api 实例
+                val api = RetrofitClient.createApi(SearchApi::class.java)
+                //发起请求拿数据
+                val response2 = api.getSearchhot()
+                val response1 = api.getguesshot()
 
 
 
-            Log.d("hyj", "Guess 接口状态码: ${response1.code}, 数据量: ${response1.result?.hots?.size}")
-            Log.d("hyj", "Hotsearch 接口状态码: ${response2.code}, 数据量: ${response2.data?.size}")
+                Log.d("hyj", "Guess 接口状态码: ${response1.code}, 数据量: ${response1.result?.hots?.size}")
+                Log.d("hyj", "Hotsearch 接口状态码: ${response2.code}, 数据量: ${response2.data?.size}")
 
-            //如果成功拿到数据就放进
-            if (response2.code == 200) {
-                _hotSearchFlow.value = response2.data ?: emptyList()
-            }
+                //如果成功拿到数据就放进
+                if (response2.code == 200) {
+                    _hotSearchFlow.value = response2.data ?: emptyList()
+                }
 
-            if (response1.code == 200){
-                _GuessFlow.value = response1.result?.hots?:emptyList()
+                if (response1.code == 200){
+                    _guessFlow.value = response1.result?.hots?:emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("hyj", "fetchRecommendPlaylists 接口请求异常", e)
+                _hotSearchFlow.value = emptyList()
+                _guessFlow.value = emptyList()
             }
         }
     }
 
     fun searchit(keyword: String){
         launchRequest {
-            val api = RetrofitClient.createApi(SearchApi::class.java)
+            try {
+                val api = RetrofitClient.createApi(SearchApi::class.java)
 
-            val response3 = api.getsearchSongs(keyword, 30, 1)
+                val response3 = api.getsearchSongs(keyword, 30, 1)
 
-            Log.d("hyj", "Search 接口状态码:${response3.code} ,数据量${response3.result?.songs?.size}")
-            Log.d("hyj", "服务器真实返回的JSON: ${response3}")
+                Log.d("hyj", "Search 接口状态码:${response3.code} ,数据量${response3.result?.songs?.size}")
+                Log.d("hyj", "服务器真实返回的JSON: $response3")
 
-            if (response3.code == 200) {
-                _SearchFlow.value = response3.result?.songs ?: emptyList()
+                if (response3.code == 200) {
+                    _searchFlow.value = response3.result?.songs ?: emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("hyj", "searchit 接口请求异常", e)
+                _searchFlow.value = emptyList()
             }
         }
     }
@@ -103,17 +106,15 @@ class SearchViewModel : BaseViewModel() {
                         }
                     }
                     //上传数据
-                    _SearchFlowSuggest.value = suggestList
-
+                    _searchFlowSuggest.value = suggestList
                 } else {
                     Log.e("hyj", "请求成功，但数据是空的")
                 }
             } catch (e: Exception) {
                 // 捕获网络异常（比如没网了）
                 Log.e("hyj", "网络请求崩溃啦: ${e.message}")
+                _searchFlowSuggest.value = emptyList()
             }
         }
     }
-
-
 }

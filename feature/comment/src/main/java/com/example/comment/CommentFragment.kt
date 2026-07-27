@@ -1,6 +1,6 @@
 package com.example.comment
 
-import android.os.Bundle
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.base.BaseFragment
 import com.example.comment.databinding.FragmentCommentBinding
-import com.therouter.router.Route
 import kotlinx.coroutines.launch
 
 class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBinding::inflate) {
@@ -36,7 +35,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
 
             //代表在向下滑动
             if (dy > 0){
-                // canScrollVertically(1) 返回 false 说明到底了！
+                //canScrollVertically(1) 返回 false 说明到底了
                 if (!recyclerView.canScrollVertically(1)) {
                     //如果当前没有在加载，才去请求新数据
                     if (!isLoading && viewModel.hasMore.value) {
@@ -44,6 +43,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
                         isLoading = true
                         binding.jiazai.visibility = View.VISIBLE
                         binding.jiazai.text = "加载中..."
+                        //去取评论
                         viewModel.fetchComments(id,true,sorttype)
                         Log.d("hyj","开始评论的触底自动刷新,本次id为${id}")
                     }
@@ -79,7 +79,6 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
         //设置点击时间，好去拿楼层数据
         commentAdapter.setOnItemClickListener(object : OnCommentItemClickListener {
             override fun onExpandClick(commendid: Long) {
-
                 //收到 Adapter 的通知，开始处理网络请求
                 Toast.makeText(context, "正在请求数据", Toast.LENGTH_SHORT).show()
                 //模拟网络请求
@@ -115,12 +114,13 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
             viewModel.fetchComments(id,false,3)
             sorttype = 3
         }
-
-
+        //触底监听用于触底自动刷新
         binding.rvComments.addOnScrollListener(scrollListener)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initObservers() {
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {

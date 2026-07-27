@@ -36,14 +36,11 @@ class PlaylistAdapter(
         //取第一个tag作为主标题
         val mainTag = playlist.tags?.firstOrNull() ?: "精选推荐"
         holder.tvMainTitle.text = mainTag
-
         //副标题
         holder.tvSubTitle.text = playlist.name
-
         Glide.with(holder.itemView.context)
             .load(playlist.coverImgUrl)
             .into(holder.ivCover)
-
         holder.itemView.setOnClickListener {
             onItemClick(playlist.id)
         }
@@ -54,7 +51,6 @@ class PlaylistAdapter(
         override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
             return oldItem.id == newItem.id
         }
-
         override fun areContentsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
             return oldItem == newItem
         }

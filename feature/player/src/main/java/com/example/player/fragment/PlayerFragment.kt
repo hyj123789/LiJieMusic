@@ -1,8 +1,11 @@
 package com.example.player.fragment
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -44,6 +47,9 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
     //是否拖动
     private var isUserSeeking = false
 
+    //动画变量
+    private lateinit var rotateAnimator: ObjectAnimator
+
     override fun initView() {
         super.initView()
         // 初始化 UI 状态
@@ -79,6 +85,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 //        }else{
 //            Log.d("hyj","没有歌曲要播放")
 //        }
+        initRotateAnimation()
     }
 
     override fun initEvent() {
@@ -168,14 +175,18 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
         // 分享按钮
         binding.btnShare.setOnClickListener {
-            // TODO: 实现分享功能
-            ToastUtil.popToast("分享功能开发中", requireContext())
+            val shareSongBottomSheet = ShareSongBottomSheet(id.toLong())
+            shareSongBottomSheet.show(childFragmentManager, "ShareSongBottomSheetTag")
+            ToastUtil.popToast("前往分享中。。。", requireContext())
         }
 
         // 更多详情按钮
         binding.btnDetail.setOnClickListener {
-            // TODO: 显示歌曲详情
-            ToastUtil.popToast("详情功能开发中", requireContext())
+            //获取父部的fragment
+            val parent = requireParentFragment() as? PlayerContainerFragment
+            parent?.goToSecondPage()
+
+            ToastUtil.popToast("前往歌曲百科", requireContext())
         }
 
         // 返回按钮
@@ -202,6 +213,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                         if (songData != null && !songData.url.isNullOrEmpty()) {
                             id = songData.id.toString()
                             Log.d("Ben", "当前歌曲ID: $id")
+                            rotateAnimator.currentPlayTime = 0
                         }
                     }
                 }
@@ -212,7 +224,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                         if (!url.isNullOrEmpty()) {
                             Glide.with(this@PlayerFragment)
                                 .load(url)
-                                .transform(RoundedCorners(30))
+                               // .transform(RoundedCorners(30))
                                 .into(binding.ivAlbumCover)
 
                             coverUrl = url
@@ -248,6 +260,20 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                         binding.btnPlay.setImageResource(
                             if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
                         )
+                        //根据真实的播放状态，控制封面的旋转！
+                        if (isPlaying) {
+                            //如果正在播放，就让它转
+                            if (rotateAnimator.isPaused) {
+                                rotateAnimator.resume()
+                            } else if (!rotateAnimator.isRunning) {
+                                rotateAnimator.start()
+                            }
+                        } else {
+                            //如果暂停了，就让它停在原地
+                            if (rotateAnimator.isRunning) {
+                                rotateAnimator.pause()
+                            }
+                        }
                     }
                 }
                 launch {
@@ -355,5 +381,13 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
         }
         //显示弹窗
         qualityDialog.show(childFragmentManager, "QualityDialogTag")
+    }
+
+    private fun initRotateAnimation() {
+        rotateAnimator = ObjectAnimator.ofFloat(binding.ivAlbumCover, "rotation", 0f, 360f).apply {
+            duration = 40000
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
+        }
     }
 }

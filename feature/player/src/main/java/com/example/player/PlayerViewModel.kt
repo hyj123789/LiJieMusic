@@ -1,9 +1,12 @@
 package com.example.player
 
 import SongWikiData
+import android.annotation.SuppressLint
+import android.system.StructMsghdr
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
+import com.example.model.UserManager
 import com.example.net.RetrofitClient
 import com.example.player.model.ArtistData
 import com.example.player.model.Lyric
@@ -91,6 +94,9 @@ class PlayerViewModel : BaseViewModel() {
     //歌手歌曲
     private val _moreSong = MutableStateFlow<List<MoreSongItem>?>(null)
     val moreSongItem : StateFlow<List<MoreSongItem>?> = _moreSong
+
+    private val _sharecode = MutableStateFlow<Int>(0)
+    val sharecode= _sharecode.asStateFlow()
     fun updateSongId(id: Long) {
         _currentSongId.value = id
     }
@@ -142,6 +148,7 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     /** 格式化时间 (毫秒 -> mm:ss) */
+    @SuppressLint("DefaultLocale")
     fun formatTime(millis: Long): String {
         val totalSeconds = millis / 1000
         val minutes = totalSeconds / 60
@@ -296,5 +303,19 @@ class PlayerViewModel : BaseViewModel() {
                 Log.e("hyj","请求相似歌手发生错误了")
             }
         }
+    }
+
+    //发送分想歌曲
+    fun fetchShareSonger(songId: Long,msg : String) {
+        launchRequest {
+            val api = RetrofitClient.createApi(PlayerApi::class.java)
+            val result = api.getshareSong(songId,msg)
+            Log.d("hyj","分享歌曲返回的请求码:${result.code}")
+            _sharecode.value = result.code
+        }
+    }
+    fun resetShareCode() {
+        // 假设你的 sharecode 是 MutableStateFlow
+        _sharecode.value = 0 // 使用 0 代表没有任何操作的初始状态
     }
 }

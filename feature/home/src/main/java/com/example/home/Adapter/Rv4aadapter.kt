@@ -13,10 +13,9 @@ import com.example.home.model.Rv4Item
 
 class RV4Adapter : ListAdapter<Rv4Item, RV4Adapter.SongViewHolder>(Rv4ItemDiffCallback()) {
 
-    private var listener: Rv3Adapte.OnSongClickListener? = null
-
+    private var listener: RV4Adapter.OnSongClickListener? = null
     //暴露一个给外部调用的设置方法
-    fun OnSongClickListener4(listener: Rv3Adapte.OnSongClickListener) {
+    fun setOnSongClickListener(listener: OnSongClickListener) {
         this.listener = listener
     }
 

@@ -1,9 +1,9 @@
 package com.example.comment
 
 import android.util.Log
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
+import com.example.comment.model.CommentItem
 import com.example.net.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,24 +15,16 @@ class CommentViewModel : BaseViewModel() {
     val comment : StateFlow<List<CommentItem>> get() = _comment
     private var _totalCount = MutableStateFlow(0)
     val totalCount: StateFlow<Int> = _totalCount
-
     private var _commentsTitle = MutableStateFlow("还看呢，加载不出来了，好绕")
     val commentsTitle: StateFlow<String> = _commentsTitle
-
     private var _replyState = MutableStateFlow<List<CommentItem>>(emptyList())
     val replyState: StateFlow<List<CommentItem>> = _replyState
-
     //通知fragment是否还有更多数据
     private val _hasMore = MutableStateFlow(true)
     val hasMore: StateFlow<Boolean> = _hasMore
-
-
-    //private var currentOffset = 0
-    //private val pageSize = 20
-
     private var currentCursor: String? = null //用于时间排序的游标
     private var currentPageNo = 1             //用于推荐和热度排序的页码
-    private val pageSize = 10                //请求的数目
+    private val pageSize = 10//请求的数目
 
     //传id查评论
     fun fetchComments(songId: String, loadmore: Boolean,sortType: Int) {
@@ -62,8 +54,6 @@ class CommentViewModel : BaseViewModel() {
                     cursor = currentCursor
                 )
 
-
-
                 // 提取列表数据
                 val newComments = response.data?.comments ?: emptyList()
 
@@ -86,8 +76,7 @@ class CommentViewModel : BaseViewModel() {
                 //更新评论数目
                 _totalCount.value = response.data?.totalCount ?: 0
                 //更新评论标题
-                _commentsTitle.value = response.data?.commentsTitle?:"不可能为空啊，不是为什么非要让我处理"
-
+                _commentsTitle.value = response.data?.commentsTitle?:"暂无标题"
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -101,7 +90,7 @@ class CommentViewModel : BaseViewModel() {
                 val api = RetrofitClient.createApi(CommentApi::class.java)
                 val response = api.getFloorComments(commentId.toLong(),songId,0,10,null)
                 Log.d("hyj","楼层评论返回码：${response.code},返回的评论数目为${response.data.comments?.size}")
-                _replyState.value = response?.data?.comments?:emptyList()
+                _replyState.value = response.data.comments ?:emptyList()
             }catch (e : Exception){
                 e.printStackTrace()
             }

@@ -14,7 +14,7 @@ import com.example.search.R
 import com.example.search.model.SongItem
 
 class SearchResultAdapter(
-    private val onSongClick: (SongItem) -> Unit, // 点击整首歌的回调（用于播放）
+    private val onSongClick: (SongItem) -> Unit,
     private val onMoreClick: (SongItem) -> Unit
 ) : ListAdapter<SongItem, SearchResultAdapter.ViewHolder>(SongDiffCallback()) {
 
