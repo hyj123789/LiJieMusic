@@ -68,6 +68,7 @@
                 android:paddingHorizontal="16dp">
 
                 <TextView
+                    android:id="@+id/img_rank"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -80,6 +81,7 @@
 
 
                 <TextView
+                    android:id="@+id/img_singer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -91,6 +93,7 @@
                     android:textSize="13sp" />
 
                 <TextView
+                    android:id="@+id/img_genre"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -102,6 +105,7 @@
                     android:textSize="13sp" />
 
                 <TextView
+                    android:id="@+id/img_album"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -113,6 +117,7 @@
                     android:textSize="13sp" />
 
                 <TextView
+                    android:id="@+id/img_book"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
