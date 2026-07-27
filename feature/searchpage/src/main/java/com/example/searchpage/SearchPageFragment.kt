@@ -10,6 +10,7 @@ import com.example.searchpage.databinding.FragmentSearchPageBinding
 import kotlinx.coroutines.launch
 import kotlin.getValue
 import androidx.core.net.toUri
+import com.example.searchpage.adapter.PlaylistAdapter
 import com.example.util.DrawerUtil
 
 class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearchPageBinding::inflate){
@@ -38,6 +39,7 @@ class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearc
         binding.btnDrawer.setOnClickListener {
             (activity as? DrawerUtil)?.openDrawer()
         }
+        clickEvent()
     }
 
     override fun initObservers() {
@@ -60,5 +62,32 @@ class SearchPageFragment : BaseFragment<FragmentSearchPageBinding>(FragmentSearc
     override fun onDestroyView() {
         _binding?.rvgedan?.adapter = null
         super.onDestroyView()
+    }
+
+    fun clickEvent(){
+        binding.imgRank.setOnClickListener {
+            val bottomSheet = WheelMenuBottomSheet(0)
+            bottomSheet.show(childFragmentManager, "WheelMenu")
+        }
+
+        binding.imgSinger.setOnClickListener {
+            val bottomSheet = WheelMenuBottomSheet(1)
+            bottomSheet.show(childFragmentManager, "WheelMenu")
+        }
+
+        binding.imgGenre.setOnClickListener {
+            val bottomSheet = WheelMenuBottomSheet(2)
+            bottomSheet.show(childFragmentManager, "WheelMenu")
+        }
+
+        binding.imgAlbum.setOnClickListener {
+            val bottomSheet = WheelMenuBottomSheet(3)
+            bottomSheet.show(childFragmentManager, "WheelMenu")
+        }
+        binding.imgBook.setOnClickListener {
+            val bottomSheet = WheelMenuBottomSheet(4)
+            bottomSheet.show(childFragmentManager, "WheelMenu")
+        }
+
     }
 }

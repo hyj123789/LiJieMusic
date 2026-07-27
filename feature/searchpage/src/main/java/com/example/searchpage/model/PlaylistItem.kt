@@ -1,4 +1,4 @@
-package com.example.searchpage
+package com.example.searchpage.model
 
 data class PlaylistResponse(
     val code: Int,
