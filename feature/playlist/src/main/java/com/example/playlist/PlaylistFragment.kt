@@ -14,17 +14,19 @@ import com.example.base.PlayerManager
 import com.example.base.SongDetail
 import com.example.playlist.databinding.FragmentPlaylistBinding
 import com.example.playlist.model.MySimpleSong
+import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
 import kotlin.text.toLongOrNull
 
 class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistBinding::inflate){
     private val viewModel : PlaylistViewModel by viewModels()
-    private val mAdapter = SongAdapter()
 
     private var currentPlaylistSongs: List<SongDetail> = emptyList()
     private val playlistId: String by lazy {
         arguments?.getString("playlistId") ?: ""
     }
+    private val mAdapter by lazy { SongAdapter(playlistId.toLong()) }
+
     override fun initView() {
         super.initView()
         binding.rvSongs.apply {
@@ -41,7 +43,6 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 songName: String,
                 artistName: String
             ) {
-
                 // 清除旧歌单
                 PlayerManager.clearPlaylist()
                 //赋值新歌单
@@ -55,6 +56,13 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 artistName: String
             ) {
                 PlayerManager.addSongToPlaylist(id,songName,artistName)
+            }
+            override fun onRemoveSong(pid: Long,ids: String) {
+                viewModel.removeSong(pid,ids)
+            }
+
+            override fun onToggleSong(pid: Long, ids: String) {
+                viewModel.toggleSong(pid,ids)
             }
         })
     }
@@ -120,6 +128,12 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                             )
                         }
                         currentPlaylistSongs = myExtractedSongs?:emptyList()
+                    }
+                }
+                launch {
+                    viewModel.toastMsg.collect { msg->
+                        if (msg==null) return@collect
+                        ToastUtil.popToast(msg,requireContext())
                     }
                 }
             }

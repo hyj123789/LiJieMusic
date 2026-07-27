@@ -12,19 +12,21 @@ import com.bumptech.glide.Glide
 import com.example.playlist.databinding.ItemSongBinding
 import com.example.playlist.model.Track
 
-class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback()){
+class SongAdapter(private val pid: Long) :
+    ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback()) {
 
-    private var listener: SongAdapter.OnSongClickListener? = null
+    private var listener: OnSongClickListener? = null
 
     //暴露一个给外部调用的设置方法
     fun OnSongClickListener(listener: OnSongClickListener) {
         this.listener = listener
     }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -46,33 +48,45 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
             listener?.onSongPlayClick(song.id.toString(), song.name, artistName)
         }
     }
-    fun moveItem(from : Int,to : Int){
+
+    fun moveItem(from: Int, to: Int) {
         val list = currentList.toMutableList()
         val track = list.removeAt(from)
-        list.add(to,track)
+        list.add(to, track)
+        val ids = list.joinToString(
+            separator = ",",
+            prefix = "[",
+            postfix = "]"
+        ) { it.id.toString() }
+        listener?.onToggleSong(pid,ids)
         submitList(list)
     }
-    fun removeItem(position: Int){
+
+    fun removeItem(position: Int) {
         val list = currentList.toMutableList()
         list.removeAt(position)
+        listener?.onRemoveSong(pid, getItem(position).id.toString())
         submitList(list)
     }
-    class ViewHolder(val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Track){
+
+    class ViewHolder(val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Track) {
             binding.apply {
                 Glide.with(binding.root.context).load(item.album?.picUrl).into(ivCover)
-                tvSongName.text=item.name
-                tvArtistName.text=item.artists?.joinToString(separator = "|") { it.name }
-                when(item.fee){
+                tvSongName.text = item.name
+                tvArtistName.text = item.artists?.joinToString(separator = "|") { it.name }
+                when (item.fee) {
                     0 -> ivVip.visibility = View.GONE
                     1 -> {
                         ivVip.visibility = View.VISIBLE
                         ivVip.setImageResource(R.drawable.ic_vip)
                     }
+
                     8 -> {
                         ivVip.visibility = View.VISIBLE
                         ivVip.setImageResource(R.drawable.ic_fee)
-                        val paddingPx = (5 * binding.root.context.resources.displayMetrics.density + 0.5f).toInt()
+                        val paddingPx =
+                            (5 * binding.root.context.resources.displayMetrics.density + 0.5f).toInt()
                         ivVip.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
                     }
                 }
@@ -83,6 +97,8 @@ class SongAdapter : ListAdapter<Track, SongAdapter.ViewHolder>(SongDiffCallback(
     interface OnSongClickListener {
         fun onSongPlayClick(id: String, songName: String, artistName: String)
         fun onSongNextPlayClick(id: String, songName: String, artistName: String)
+        fun onRemoveSong(pid: Long, ids: String)
+        fun onToggleSong(pid: Long, ids: String)
     }
 }
 

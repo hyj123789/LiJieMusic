@@ -1,5 +1,6 @@
 package com.example.login.fragment
 
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,6 +18,19 @@ import kotlinx.coroutines.launch
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
+    val countDownTimer = object : CountDownTimer(60000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            // 每秒回调一次，更新按钮文字和状态
+            binding.btnCaptcha.isEnabled = false
+            binding.btnCaptcha.text = "${millisUntilFinished / 1000}s 后重试"
+        }
+
+        override fun onFinish() {
+            // 倒计时结束，恢复按钮
+            binding.btnCaptcha.isEnabled = true
+            binding.btnCaptcha.text = "获取验证码"
+        }
+    }
     //设置点击事件
     override fun initEvent() {
         super.initEvent()
@@ -24,7 +38,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             viewModel.loginByPhone(binding.etPhone.text.toString(),binding.etPassword.text.toString())
         }
         binding.btnCaptcha.setOnClickListener {
+            if (binding.etPhone.text.toString().isBlank()){
+                ToastUtil.popToastLong("wochaowei,没写号码你获取什么验证码",requireContext())
+                return@setOnClickListener
+            }
             viewModel.sendCaptcha(binding.etPhone.text.toString())
+            countDownTimer.start()
         }
         binding.btnLoginMail.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_mailFragment)
@@ -59,5 +78,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer.cancel()
     }
 }
