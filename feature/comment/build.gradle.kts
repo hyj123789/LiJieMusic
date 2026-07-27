@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":core:base"))
     implementation(project(":core:net"))
     implementation(project(":core:therouter"))
+    implementation(project(":core:util"))
 
     //viewmodel
     implementation(libs.lifecycle.viewmodel.ktx)

@@ -2,6 +2,7 @@ package com.example.comment
 
 import com.example.comment.model.FloorCommentResponse
 import com.example.comment.model.NewCommentResponse
+import com.example.comment.model.SendCommentData
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -35,5 +36,14 @@ interface CommentApi {
         @Query("time") time: Long? = null
     ): FloorCommentResponse
 
+    @GET("/comment")
+    suspend fun getSendComment(
+        @Query("t") t: Int = 1,
+        @Query("type") type: Int = 0,
+        @Query("id") id: Long? = null,
+        @Query("content") content: String,
+        @Query("commentId") commentId: Long? = null,
+        @Query("threadId") threadId: String? = null
+    ): SendCommentData
 
 }

@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.base.BaseFragment
 import com.example.comment.databinding.FragmentCommentBinding
+import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
 
 class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBinding::inflate) {
@@ -86,6 +90,28 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
                 viewModel.fetchReplies(commendid.toString(),id)
             }
         })
+
+//        binding.etComment.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//            override fun afterTextChanged(s: Editable?) {
+//                if (s.toString().trim().isNotEmpty()) {
+//                    binding.imgSend.setColorFilter("#1DB954".toColorInt())
+//                } else {
+//                    val defaultColor = ContextCompat.getColor(requireContext(), R.color.text_tertiary)
+//                    binding.imgSend.setColorFilter(defaultColor)
+//                }
+//            }
+//        })
+        binding.etComment.doAfterTextChanged { text ->
+            // 这里的 text 就是当前的输入内容 (Editable 类型)
+            if (text.toString().trim().isNotEmpty()) {
+                binding.imgSend.setColorFilter("#1DB954".toColorInt())
+            } else {
+                val defaultColor = ContextCompat.getColor(requireContext(), R.color.text_tertiary)
+                binding.imgSend.setColorFilter(defaultColor)
+            }
+        }
     }
 
     override fun initEvent() {
@@ -116,6 +142,13 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
         }
         //触底监听用于触底自动刷新
         binding.rvComments.addOnScrollListener(scrollListener)
+
+        binding.imgSend.setOnClickListener {
+            val content = binding.etComment.text.toString().trim()
+            if (content.isNotEmpty()){
+                viewModel.fetchSendComment(content,id)
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -178,6 +211,22 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(FragmentCommentBind
                                 binding.jiazai.text = "暂无更多评论啦~"
                                 binding.jiazai.visibility = View.VISIBLE
                             }
+                        }
+                    }
+                }
+
+                launch {
+                    //获取评论题目
+                    viewModel.sendComment.collect { code ->
+                        if (code == 200){
+                            ToastUtil.popToast("发送成功，请前往最新查看",requireContext())
+                            viewModel.changCode()
+                            binding.etComment.text.clear()
+                        }else if(code == 0){
+
+                        }else{
+                            ToastUtil.popToast("发送失败，请稍后再试",requireContext())
+                            viewModel.changCode()
                         }
                     }
                 }

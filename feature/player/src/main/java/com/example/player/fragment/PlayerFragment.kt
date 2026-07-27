@@ -258,7 +258,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                     PlayerManager.isPlaying.collect { isPlaying ->
                         // 更新播放/暂停图标
                         binding.btnPlay.setImageResource(
-                            if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                            if (isPlaying) R.drawable.ic_pause1 else R.drawable.ic_play
                         )
                         //根据真实的播放状态，控制封面的旋转！
                         if (isPlaying) {

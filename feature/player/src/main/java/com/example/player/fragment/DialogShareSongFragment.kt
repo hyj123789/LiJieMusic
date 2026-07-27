@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -54,21 +55,13 @@ class ShareSongBottomSheet( songId : Long) : BottomSheetDialogFragment() {
             dismiss()
         }
 
-        // 2. 监听输入框字数变化
-        etContent.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            @SuppressLint("SetTextI18n")
-            override fun afterTextChanged(s: Editable?) {
-                val length = s?.length ?: 0
-                tvCharCount.text = "$length/140"
-
-                //没有输入文字时，按钮不可点击且半透明
-                btnPublish.isEnabled = length > 0
-                btnPublish.alpha = if (length > 0) 1.0f else 0.5f
-            }
-        })
+        //监听输入框字数变化
+        etContent.doAfterTextChanged { s ->
+            val length = s?.length ?: 0
+            tvCharCount.text = "$length/140"
+            btnPublish.isEnabled = length > 0
+            btnPublish.alpha = if (length > 0) 1.0f else 0.5f
+        }
 
         //初始化按钮状态
         btnPublish.isEnabled = false
@@ -123,9 +116,7 @@ class ShareSongBottomSheet( songId : Long) : BottomSheetDialogFragment() {
                                     dismiss()
                                 }
                                 else -> {
-                                    // 非 0 且非 200 的状态（比如 400，或者其他网络错误码）
                                     ToastUtil.popToast("发布失败，请稍后再试", requireContext())
-                                    // 【关键】报错弹完 Toast 后，也要重置状态，防止疯狂弹！
                                     viewModel.resetShareCode()
                                 }
                             }

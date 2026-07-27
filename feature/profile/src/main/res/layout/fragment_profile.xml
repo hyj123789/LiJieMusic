@@ -17,8 +17,18 @@
             android:id="@+id/cl_avatar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_profile_header"
-            android:paddingBottom="24dp">
+            android:background="@drawable/bg_profile_header">
+
+            <ImageView
+                android:id="@+id/ivAvatarBackground"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <!-- 头像 -->
             <ImageView
                 android:id="@+id/iv_avatar"

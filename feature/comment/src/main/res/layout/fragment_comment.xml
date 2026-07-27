@@ -146,6 +146,7 @@
         android:padding="12dp">
 
         <EditText
+            android:id="@+id/et_comment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -153,13 +154,15 @@
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:hint="听说爱评论的人粉丝多"
-            android:textColor="@color/edit_text_hint"
-            android:textSize="16dp" />
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
 
         <ImageView
+            android:id="@+id/img_send"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/send"
+            android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"/>
     </LinearLayout>
 

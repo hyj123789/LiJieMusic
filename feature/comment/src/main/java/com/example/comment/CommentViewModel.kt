@@ -7,6 +7,7 @@ import com.example.comment.model.CommentItem
 import com.example.net.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CommentViewModel : BaseViewModel() {
@@ -22,6 +23,9 @@ class CommentViewModel : BaseViewModel() {
     //通知fragment是否还有更多数据
     private val _hasMore = MutableStateFlow(true)
     val hasMore: StateFlow<Boolean> = _hasMore
+    //发送评论返回码
+    private var _sendComment = MutableStateFlow<Int>(0)
+    val sendComment = _sendComment.asStateFlow()
     private var currentCursor: String? = null //用于时间排序的游标
     private var currentPageNo = 1             //用于推荐和热度排序的页码
     private val pageSize = 10//请求的数目
@@ -95,5 +99,22 @@ class CommentViewModel : BaseViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun fetchSendComment(msg: String, songId: String) {
+        viewModelScope.launch {
+            try {
+                val api = RetrofitClient.createApi(CommentApi::class.java)
+                val response = api.getSendComment(1,0,songId.toLong(),msg)
+                Log.d("hyj","发送评论返回码：${response.code}")
+                _sendComment.value = response.code
+            }catch (e : Exception){
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun changCode(){
+        _sendComment.value = 0
     }
 }

@@ -39,6 +39,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         tvSignature.text = if(profile.signature.isNullOrBlank()) "这个人很懒，什么也没有留下" else profile.signature
                         tvFollows.text = "${profile.follows}关注"
                         tvFolloweds.text = "${profile.followeds}粉丝"
+
+                        Glide.with(requireContext())
+                                .load(profile.backgroundUrl)
+                                .centerCrop()
+                                .into(ivAvatarBackground)
+
                         Log.d("ljh","个人信息"+profile.toString())
                     }
                 }
