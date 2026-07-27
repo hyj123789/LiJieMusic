@@ -1,4 +1,4 @@
-package com.example.search.Adapter
+package com.example.search.adapter
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -15,7 +15,9 @@ import com.example.search.R
 import com.example.search.model.HotSearchData
 import androidx.core.graphics.toColorInt
 
-class HotSearchWordAdapter : ListAdapter<HotSearchData, HotSearchWordAdapter.WordViewHolder>(HotSearchDiffCallback()) {
+class HotSearchWordAdapter(
+    private val onItemClick: (String) -> Unit
+) : ListAdapter<HotSearchData, HotSearchWordAdapter.WordViewHolder>(HotSearchDiffCallback()) {
 
     class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvRank: TextView = itemView.findViewById(R.id.tv_rank)
@@ -44,6 +46,9 @@ class HotSearchWordAdapter : ListAdapter<HotSearchData, HotSearchWordAdapter.Wor
         }
 
         holder.tv.text = item.searchWord
+        holder.itemView.setOnClickListener {
+            onItemClick(item.searchWord)
+        }
 
         if (!item.iconUrl.isNullOrEmpty()) {
             holder.imgHot.visibility = View.VISIBLE

@@ -1,3 +1,5 @@
+package com.example.search.adapter
+
 import android.R.attr.radius
 import android.util.Log
 import android.view.LayoutInflater

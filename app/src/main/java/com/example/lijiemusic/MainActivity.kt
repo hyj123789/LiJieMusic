@@ -143,6 +143,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
 
 
+        // ===== UI 收集器：生命周期重启时重新收集无副作用，保留在 repeatOnLifecycle 里 =====
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -155,7 +156,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                     }
                 }
                 launch {
-                    //监听歌曲歌名
                     viewModel.songName.collect { name ->
                         if (name != null) {
                             binding.tvMiniSong.text = name
@@ -166,29 +166,32 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                     viewModel.coverUrl.collect { cover ->
                         Glide.with(this@MainActivity)
                             .load(cover)
-                            .transform(RoundedCorners(16)) //小封面圆角给小一点
+                            .transform(RoundedCorners(16))
                             .into(binding.ivMiniCover)
                     }
                 }
-                launch {
-                    PlayerManager.currentSong.collect { song ->
-                        if (song != null) {
-                            Log.d("hyj", "【全局】大管家切歌了！指派ViewModel去请求！ID: ${song.id}")
-                            viewModel.fetchMusicUrl(song.id.toString())
-                            viewModel.fetchSongDetail(song.id.toString())
-                            viewModel.fetchLyric(song.id.toString())
-                            viewModel.checkSongIsLiked(song.id.toString())
-                        }
-                    }
+            }
+        }
+
+        // ===== 播放触发收集器：用 lifecycleScope.launch 而非 repeatOnLifecycle，
+        //       避免锁屏/解锁时生命周期重启导致 StateFlow 重发旧值、重新播放 =====
+        lifecycleScope.launch {
+            PlayerManager.currentSong.collect { song ->
+                if (song != null) {
+                    Log.d("hyj", "【全局】大管家切歌了！指派ViewModel去请求！ID: ${song.id}")
+                    viewModel.fetchMusicUrl(song.id.toString())
+                    viewModel.fetchSongDetail(song.id.toString())
+                    viewModel.fetchLyric(song.id.toString())
+                    viewModel.checkSongIsLiked(song.id.toString())
                 }
-                launch {
-                    viewModel.currentSong.collect { songData ->
-                        if (songData != null && !songData.url.isNullOrEmpty()) {
-                            val url = songData?.url
-                            Log.d("hyj", "【全局】拿到歌曲URL，准备出声: ${songData.url}")
-                            PlayerManager.startPlayEngine(songData.id.toString(), url.toString())
-                        }
-                    }
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.currentSong.collect { songData ->
+                if (songData != null && !songData.url.isNullOrEmpty()) {
+                    val url = songData?.url
+                    Log.d("hyj", "【全局】拿到歌曲URL，准备出声: ${songData.url}")
+                    PlayerManager.startPlayEngine(songData.id.toString(), url.toString())
                 }
             }
         }

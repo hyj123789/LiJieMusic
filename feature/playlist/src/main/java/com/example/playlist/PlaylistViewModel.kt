@@ -1,5 +1,11 @@
 package com.example.playlist
 
+import android.app.Application
+import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +16,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.http.Url
+import java.io.ByteArrayOutputStream
 
 class PlaylistViewModel : ViewModel() {
     private val api = RetrofitClient.createApi(PlayListApi::class.java)
@@ -72,6 +83,29 @@ class PlaylistViewModel : ViewModel() {
                 Log.e("ljh", "调整顺序失败" + e.message)
                 _toastMsg.value = "调整顺序失败"
             }
+        }
+    }
+
+    fun uploadCover(pid: Long, uri: Uri, contentResolver: ContentResolver) {
+        try {
+            viewModelScope.launch{ // 1. 从 Uri 读取图片
+                val inputStream = contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream)  // 85%质量
+                val bytes = stream.toByteArray()
+                bitmap.recycle()
+                val requestBody = bytes.toRequestBody("image/jpeg".toMediaType())
+                val part = MultipartBody.Part.createFormData("imgFile", "cover.jpg", requestBody)
+                val updateCover = api.updateCover(pid, part)
+                if (updateCover.code==200){
+                    _toastMsg.value="上传成功"
+                }else _toastMsg.value="上传失败"
+            }
+        } catch (e: Exception) {
+            Log.d("ljh","上传歌单封面失败谢谢")
+            _toastMsg.value="上传失败"
         }
     }
 }

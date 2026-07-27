@@ -72,6 +72,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                     viewModel.loginSuccess.collect { bool ->
                         if (bool) {
                             TheRouter.build(RoutePath.MAIN_ACTIVITY).navigation()
+                            activity?.finish()
                             Log.d("ljh","跳转方法执行了")
                         }
                     }

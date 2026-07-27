@@ -1,6 +1,5 @@
 package com.example.search
 
-import SearchResultAdapter
 import android.util.Log
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
@@ -13,9 +12,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.base.BaseFragment
 import com.example.base.PlayerManager
-import com.example.search.Adapter.GuessAdapter
-import com.example.search.Adapter.HotSearchWordAdapter
-import com.example.search.Adapter.SuggestAdapter
+import com.example.search.adapter.GuessAdapter
+import com.example.search.adapter.HotSearchWordAdapter
+import com.example.search.adapter.SearchResultAdapter
+import com.example.search.adapter.SuggestAdapter
 import com.example.search.databinding.FragmentSearchBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,8 +25,14 @@ import kotlin.getValue
 class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate) {
 
     private val viewModel: SearchViewModel by viewModels()
-    private val HotsearcgAdapter = HotSearchWordAdapter()
-    private val guessAdapter = GuessAdapter()
+    private val HotsearcgAdapter = HotSearchWordAdapter{text ->
+        binding.search.setText(text)
+        binding.tvSearch.performClick()
+    }
+    private val guessAdapter = GuessAdapter{text ->
+        binding.search.setText(text)
+        binding.tvSearch.performClick()
+    }
     private val searchSuggestAdapter = SuggestAdapter { rawText ->
 
         //取出格式，只搜索歌名

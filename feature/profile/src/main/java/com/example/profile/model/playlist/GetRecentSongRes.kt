@@ -1,3 +1,3 @@
 package com.example.profile.model.playlist
 
-data class GetUserCloudRes(val code: Int)
+data class GetRecentSongRes(val code: Int)

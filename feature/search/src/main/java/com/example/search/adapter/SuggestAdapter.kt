@@ -1,4 +1,4 @@
-package com.example.search.Adapter
+package com.example.search.adapter
 
 import android.view.LayoutInflater
 import android.view.View

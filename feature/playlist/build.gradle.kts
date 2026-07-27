@@ -55,4 +55,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
+
+    implementation("com.github.yalantis:ucrop:2.2.8")
 }

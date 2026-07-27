@@ -1,5 +1,6 @@
 package com.example.playlist
 
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,19 +14,22 @@ import com.example.base.BaseFragment
 import com.example.base.PlayerManager
 import com.example.base.SongDetail
 import com.example.playlist.databinding.FragmentPlaylistBinding
-import com.example.playlist.model.MySimpleSong
 import com.example.util.ToastUtil
 import kotlinx.coroutines.launch
-import kotlin.text.toLongOrNull
 
 class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistBinding::inflate){
     private val viewModel : PlaylistViewModel by viewModels()
-
     private var currentPlaylistSongs: List<SongDetail> = emptyList()
+
     private val playlistId: String by lazy {
         arguments?.getString("playlistId") ?: ""
     }
     private val mAdapter by lazy { SongAdapter(playlistId.toLong()) }
+    private val pickImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent() // 系统级 API：隐式 Intent 调用系统相册
+    ) { uri ->
+        uri?.let { viewModel.uploadCover(playlistId.toLong(),it,requireActivity().contentResolver) }
+    }
 
     override fun initView() {
         super.initView()
@@ -71,6 +75,9 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
         viewModel.init(playlistId)
         binding.ivBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        binding.ivCover.setOnClickListener {
+            pickImageLauncher.launch("image/*")
         }
     }
 

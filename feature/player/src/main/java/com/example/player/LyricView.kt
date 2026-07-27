@@ -62,7 +62,7 @@ class LyricView @JvmOverloads constructor(
     private var touchDownY = 0f
     private var wasDrag = false
     private var realIndexOnTouchDown = 0
-    private val TAP_THRESHOLD = 30f
+    private val TAP_THRESHOLD = 30f //点击阈值
     private var onSeekListener: ((Long) -> Unit)? = null
     private val handler = Handler(Looper.getMainLooper())
     private val autoRecoverRunnable = Runnable {
@@ -76,13 +76,13 @@ class LyricView @JvmOverloads constructor(
 
     private fun startAutoRecover() {
         cancelAutoRecover()
-        handler.postDelayed(autoRecoverRunnable, 5000)
+        handler.postDelayed(autoRecoverRunnable, 3000)
     }
 
     fun setLyrics(lyrics: List<Lyric>) {
         this.lyrics = lyrics
         currentIndex = findCurrentIndex()
-        isBrowsing = false  //切歌时重置浏览状态
+        isBrowsing = false
         cancelAutoRecover()
         invalidate()
     }
@@ -110,7 +110,7 @@ class LyricView @JvmOverloads constructor(
             drawEmptyState(canvas)
             return
         }
-
+        //一次性画十一 行
         val start = maxOf(0, currentIndex - 5)
         val end = minOf(lyrics.size - 1, currentIndex + 5)
 
@@ -179,7 +179,7 @@ class LyricView @JvmOverloads constructor(
                 if (currentPosition < word.startTime) break
                 val progress =
                     if (word.endTime > currentPosition) {
-                        (currentPosition - word.startTime).toFloat() / (word.endTime - word.startTime)
+                        (currentPosition - word.startTime).toFloat() / (word.endTime - word.startTime) //算一个字唱了多少
                     } else {
                         1f
                     }.coerceIn(0f, 1f)
@@ -273,6 +273,7 @@ class LyricView @JvmOverloads constructor(
         val originalAlign = paint.textAlign
         val save = canvas.save()
         paint.textAlign = Paint.Align.LEFT
+        //裁剪
         canvas.clipRect(
             textHorizontalPadding,
             getTextClipTop(y, paint),
@@ -295,10 +296,12 @@ class LyricView @JvmOverloads constructor(
 
     private fun getTextClipTop(y: Float, paint: Paint): Float {
         return y + paint.fontMetrics.ascent - 8f
+        //paint.fontMetrics.ascent文字顶部到基准线的距离（负数）
     }
 
     private fun getTextClipBottom(y: Float, paint: Paint): Float {
         return y + paint.fontMetrics.descent + 8f
+        //paint.fontMetrics.descent文字底部到基准线的距离（正数）
     }
 
     private fun getLyricText(lyric: Lyric): String {

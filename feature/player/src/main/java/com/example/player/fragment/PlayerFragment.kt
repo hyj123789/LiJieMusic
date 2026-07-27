@@ -360,7 +360,12 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 //    }
 
     override fun onDestroyView() {
+        //防止内存泄漏
+        rotateAnimator.cancel()
+        rotateAnimator.removeAllListeners()
+        rotateAnimator.target = null
         _binding?.seekBar?.setOnSeekBarChangeListener(null)
+        _binding?.ivAlbumCover?.setOnClickListener(null)
         super.onDestroyView()
     }
 
