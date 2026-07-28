@@ -23,7 +23,7 @@ class ArtistAdapter(
         fun bind(artist: ArtistEntity) {
             tvArtistName.text = artist.name
 
-            Glide.with(itemView.context)
+            Glide.with(ivArtistCover)
                 .load(artist.picUrl)
                 .into(ivArtistCover)
 

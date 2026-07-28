@@ -30,7 +30,7 @@ class GenreAdapter(
             val realUrl = "https://p1.music.126.net/$cleanPath"
             android.util.Log.d("ImageDebug", "最终拼接的图片地址是: $realUrl")
 
-            Glide.with(itemView.context)
+            Glide.with(ivGenreBg)
                 .load(realUrl)
                 .error(android.R.color.holo_red_dark)
                 .into(ivGenreBg)

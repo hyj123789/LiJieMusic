@@ -58,7 +58,7 @@ class SearchResultAdapter(
         holder.tvSinger.text = song.ar?.get(0)?.name?:"未知歌手"
 
         Log.d("hyj", "准备加载的图片地址: ${song.al}?.picUrl")
-        Glide.with(holder.itemView.context)
+        Glide.with(holder.ivCover)
             .load(song.al?.picUrl)
             .transform(RoundedCorners(radius))
             .into(holder.ivCover)

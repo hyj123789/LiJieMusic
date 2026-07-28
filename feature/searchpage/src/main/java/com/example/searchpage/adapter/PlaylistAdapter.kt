@@ -40,7 +40,7 @@ class PlaylistAdapter(
         holder.tvMainTitle.text = mainTag
         //副标题
         holder.tvSubTitle.text = playlist.name
-        Glide.with(holder.itemView.context)
+        Glide.with(holder.ivCover)
             .load(playlist.coverImgUrl)
             .into(holder.ivCover)
         holder.itemView.setOnClickListener {

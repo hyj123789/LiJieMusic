@@ -25,7 +25,7 @@ class AlbumAdapter(
             tvAlbumName.text = album.name
             tvArtistName.text = album.artist?.name ?: "未知歌手"
 
-            Glide.with(itemView.context)
+            Glide.with(ivAlbumCover)
                 .load(album.picUrl)
                 .placeholder(android.R.color.darker_gray)
                 .into(ivAlbumCover)

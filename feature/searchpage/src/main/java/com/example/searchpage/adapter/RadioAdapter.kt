@@ -25,7 +25,7 @@ class RadioAdapter(
             tvRadioName.text = radio.name
             tvAuthorName.text = radio.dj?.nickname ?: "未知主播"
 
-            Glide.with(itemView.context)
+            Glide.with(ivRadioCover)
                 .load(radio.picUrl)
                 .placeholder(android.R.color.darker_gray)
                 .into(ivRadioCover)

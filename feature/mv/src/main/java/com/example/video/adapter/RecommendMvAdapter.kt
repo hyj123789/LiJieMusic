@@ -44,7 +44,7 @@ class RecommendMvAdapter :
         // 增加视频封面图
         val coverImageView = ImageView(holder.itemView.context)
         coverImageView.scaleType = ImageView.ScaleType.CENTER_CROP
-        Glide.with(holder.itemView.context)
+        Glide.with(coverImageView)
             .load(videoData.coverUrl)
             .into(coverImageView)
 

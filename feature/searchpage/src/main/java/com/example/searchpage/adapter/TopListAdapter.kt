@@ -28,7 +28,7 @@ class TopListAdapter(
             tvUpdateFrequency.text = item.updateFrequency
             tvDescription.text = item.description ?: "暂无榜单描述"
 
-            Glide.with(itemView.context)
+            Glide.with(ivCover)
                 .load(item.coverImgUrl)
                 .into(ivCover)
 

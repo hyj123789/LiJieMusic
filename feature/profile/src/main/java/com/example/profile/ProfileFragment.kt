@@ -25,27 +25,29 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     //初始化主页信息以及rv
     override fun initView() {
         super.initView()
-        lifecycleScope.launch{
-            UserManager.profile.collect { profile ->
-                if (profile==null){
-                    Log.d("ljh","我超伟，profile信息为空")
-                    return@collect
-                } else {
-                    binding.apply {
-                        Log.d("lll",profile.toString())
-                        tvNickname.text = profile.nickname
-                        tvVip.text = if (profile.vipType == 0) "非会员" else "会员"
-                        Glide.with(this@ProfileFragment).load(profile.avatarUrl).circleCrop().into(ivAvatar)
-                        tvSignature.text = if(profile.signature.isNullOrBlank()) "这个人很懒，什么也没有留下" else profile.signature
-                        tvFollows.text = "${profile.follows}关注"
-                        tvFolloweds.text = "${profile.followeds}粉丝"
+        viewLifecycleOwner.lifecycleScope.launch{
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                UserManager.profile.collect { profile ->
+                    if (profile==null){
+                        Log.d("ljh","我超伟，profile信息为空")
+                        return@collect
+                    } else {
+                        binding.apply {
+                            Log.d("lll",profile.toString())
+                            tvNickname.text = profile.nickname
+                            tvVip.text = if (profile.vipType == 0) "非会员" else "会员"
+                            Glide.with(ivAvatar).load(profile.avatarUrl).circleCrop().into(ivAvatar)
+                            tvSignature.text = if(profile.signature.isNullOrBlank()) "这个人很懒，什么也没有留下" else profile.signature
+                            tvFollows.text = "${profile.follows}关注"
+                            tvFolloweds.text = "${profile.followeds}粉丝"
 
-                        Glide.with(requireContext())
+                            Glide.with(ivAvatarBackground)
                                 .load(profile.backgroundUrl)
                                 .centerCrop()
                                 .into(ivAvatarBackground)
 
-                        Log.d("ljh","个人信息"+profile.toString())
+                            Log.d("ljh","个人信息"+profile.toString())
+                        }
                     }
                 }
             }

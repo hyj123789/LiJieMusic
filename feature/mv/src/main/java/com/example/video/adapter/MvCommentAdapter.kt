@@ -39,7 +39,7 @@ class MvCommentAdapter : ListAdapter<HotComment, MvCommentAdapter.CommentViewHol
         fun bind(comment: HotComment) {
             val user = comment.user
             tvNickname.text = user?.nickname ?: "未知用户"
-            Glide.with(itemView.context)
+            Glide.with(ivAvatar)
                 .load(user?.avatarUrl)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
                 .into(ivAvatar)

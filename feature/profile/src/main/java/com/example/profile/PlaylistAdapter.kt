@@ -64,7 +64,7 @@ class PlaylistAdapter(private val onItemClick: (String) -> Unit) :
             binding.tvPlaylistName.text = item.name
             binding.tvPlaylistDescription.text =
                 "歌单|${item.trackCount}首|${UserManager.profile.value?.nickname ?: "null"}"
-            Glide.with(binding.root.context).load(item.coverImgUrl).into(binding.ivCover)
+            Glide.with(binding.ivCover).load(item.coverImgUrl).into(binding.ivCover)
             Log.d(
                 "ljh",
                 "绑定成功了，歌单|${item.playCount}首|${UserManager.profile.value?.nickname ?: "null"}" + item.name

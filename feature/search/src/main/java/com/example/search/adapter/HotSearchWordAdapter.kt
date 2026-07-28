@@ -52,7 +52,7 @@ class HotSearchWordAdapter(
 
         if (!item.iconUrl.isNullOrEmpty()) {
             holder.imgHot.visibility = View.VISIBLE
-            Glide.with(holder.itemView.context)
+            Glide.with(holder.imgHot)
                 .load(item.iconUrl)
                 .into(holder.imgHot)
         } else {

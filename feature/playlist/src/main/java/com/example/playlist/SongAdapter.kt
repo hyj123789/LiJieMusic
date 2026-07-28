@@ -72,7 +72,7 @@ class SongAdapter(private val pid: Long) :
     class ViewHolder(val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Track) {
             binding.apply {
-                Glide.with(binding.root.context).load(item.album?.picUrl).into(ivCover)
+                Glide.with(ivCover).load(item.album?.picUrl).into(ivCover)
                 tvSongName.text = item.name
                 tvArtistName.text = item.artists?.joinToString(separator = "|") { it.name }
                 when (item.fee) {
@@ -99,6 +99,13 @@ class SongAdapter(private val pid: Long) :
         fun onSongNextPlayClick(id: String, songName: String, artistName: String)
         fun onRemoveSong(pid: Long, ids: String)
         fun onToggleSong(pid: Long, ids: String)
+    }
+
+    // 当 RecyclerView 从屏幕（Window）上解绑，或者 Adapter 被置空时自动调用
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        // 主动清空监听器，防止持有 Fragment 导致内存泄漏
+        listener = null
     }
 }
 

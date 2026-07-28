@@ -38,7 +38,7 @@ class TopMvAdapter(private val onItemClick : (Long) -> Unit) : PagingDataAdapter
         }
         var currentId = 0L
         fun bind(item: DataTop) {
-            Glide.with(binding.root.context).load(item.cover).into(binding.ivItemAllMvCover)
+            Glide.with(binding.ivItemAllMvCover).load(item.cover).into(binding.ivItemAllMvCover)
             if (item.briefDesc.isNullOrEmpty()) {
                 binding.tvItemAllMvDesc.text = item.name
             } else binding.tvItemAllMvDesc.text = item.name + "|" + item.briefDesc

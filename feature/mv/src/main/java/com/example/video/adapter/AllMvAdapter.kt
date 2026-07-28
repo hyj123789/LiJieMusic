@@ -39,7 +39,7 @@ class AllMvAdapter(private val onItemClick :(Long)-> Unit) : PagingDataAdapter<D
         fun bind(item: DataX){
             binding.ivItemAllMvCover.tag = item.id.toLong()
             // 指定固定宽高加载图片，避免 Glide 加载全尺寸大图
-            Glide.with(binding.root.context)
+            Glide.with(binding.ivItemAllMvCover)
                 .load(item.cover)
                 .transform(CenterCrop())
                 .override(360, 180)
