@@ -29,6 +29,7 @@ class PlayerContainerFragment :
     }
 
     override fun onDestroyView() {
+        _binding?.mainViewpager2?.adapter=null
         super.onDestroyView()
     }
 }

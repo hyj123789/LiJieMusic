@@ -1,6 +1,7 @@
 package com.example.video.fragment
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,7 +28,7 @@ class MvRecommendFragment : BaseFragment<FragmentMvRecommendBinding>(FragmentMvR
     var isLoading = false
 
     //保存OnScrollListener引用，用于在onDestroyView中移除
-    private val scrollListener = object : RecyclerView.OnScrollListener(){
+    private var scrollListener = object : RecyclerView.OnScrollListener(){
         //触底监听
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -96,6 +97,12 @@ class MvRecommendFragment : BaseFragment<FragmentMvRecommendBinding>(FragmentMvR
     override fun onDestroyView() {
         _binding?.rv?.removeOnScrollListener(scrollListener)
         _binding?.rv?.adapter = null
+        _binding?.rv?.setRecycledViewPool(null)
+        _binding?.rv?.itemAnimator = null
+        _binding?.root?.let { view ->
+            // 从父布局中移除
+            (view.parent as? ViewGroup)?.removeView(view)
+        }
         MvAdapter.submitList(emptyList())
         super.onDestroyView()
     }
