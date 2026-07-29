@@ -6,6 +6,7 @@ import android.system.StructMsghdr
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
+import com.example.base.PlayerManager
 import com.example.model.UserManager
 import com.example.net.RetrofitClient
 import com.example.player.model.ArtistData
@@ -143,6 +144,8 @@ class PlayerViewModel : BaseViewModel() {
                 _artistName.value = song.ar.joinToString(", ") { it.name }
                 _coverUrl.value = song.al.picUrl
                 updateSongId(song.id)
+
+                PlayerManager.updateCurrentSongDetail(song)
             }
         }
     }

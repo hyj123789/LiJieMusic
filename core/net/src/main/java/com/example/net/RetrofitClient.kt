@@ -16,7 +16,6 @@ object RetrofitClient{
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-        Log.d("RetrofitClient", "日志级别: ${loggingInterceptor.level}") // 加这行
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)   //连接超时时间
             .readTimeout(15, TimeUnit.SECONDS)  //读取超时时间

@@ -25,7 +25,7 @@ class MediaControllerHelper(
 ) {
 
     private var mediaController: MediaController? = null
-    private var controllerFuture: ListenableFuture<MediaController>? = null
+    private var controllerFuture: ListenableFuture<MediaController>? = null  //Future，一个Java接口，代表一个尚未完成的异步任务的凭证
 
     /**
      * 连接到 MusicService
@@ -101,32 +101,6 @@ class MediaControllerHelper(
         }
     }
 
-    // ========== 播放控制方法 ==========
-
-    /**
-     * 播放指定歌曲列表
-     *
-     * @param songIds 歌曲 ID 列表
-     * @param startIndex 开始播放的索引
-     */
-    fun playSongs(songIds: List<String>, startIndex: Int = 0) {
-        val mediaItems = songIds.map { id ->
-            MediaItem.Builder()
-                .setMediaId(id)
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .build()
-                )
-                .build()
-        }
-
-        mediaController?.let {
-            it.setMediaItems(mediaItems, startIndex, 0)
-            it.prepare()
-            it.play()
-        }
-    }
-
     /**
      * 播放单首歌曲
      *
@@ -177,67 +151,26 @@ class MediaControllerHelper(
         }
     }
 
-    /**
-     * 下一曲
-     */
-    fun next() {
-        mediaController?.seekToNext()
-    }
 
-    /**
-     * 上一曲
-     */
-    fun previous() {
-        mediaController?.seekToPrevious()
-    }
-
-    /**
-     * 跳转到指定位置
-     *
-     * @param positionMs 位置（毫秒）
-     */
     fun seekTo(positionMs: Long) {
         mediaController?.seekTo(positionMs)
     }
 
-    /**
-     * 获取当前播放位置
-     */
+
     fun getCurrentPosition(): Long {
         return mediaController?.currentPosition ?: 0
     }
 
-    /**
-     * 获取总时长
-     */
+
     fun getDuration(): Long {
         return mediaController?.duration ?: 0
     }
 
-    /**
-     * 是否正在播放
-     */
+
     fun isPlaying(): Boolean {
         return mediaController?.isPlaying ?: false
     }
 
-    /**
-     * 设置播放模式（循环、随机等）
-     */
-    fun setRepeatMode(mode: Int) {
-        mediaController?.repeatMode = mode
-    }
-
-    /**
-     * 设置音量
-     */
-    fun setVolume(volume: Float) {
-        mediaController?.volume = volume
-    }
-
-    /**
-     * 更新 MediaMetadata（歌曲信息）
-     */
     fun updateMetadata(title: String, artist: String, coverUrl: String?) {
         mediaController?.let {
             val metadata = MediaMetadata.Builder()

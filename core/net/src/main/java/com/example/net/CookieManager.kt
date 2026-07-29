@@ -1,6 +1,7 @@
 package com.example.net
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import okhttp3.Cookie
 import okhttp3.CookieJar
@@ -13,7 +14,7 @@ object CookieManager : CookieJar {
     const val KEY = "raw_cookie"
 
     private val cookieStore = mutableMapOf<String, List<Cookie>>()
-    private lateinit var sp: android.content.SharedPreferences
+    private lateinit var sp: SharedPreferences
     private var initialized = false
 
     fun init(context: Context) {
@@ -63,7 +64,7 @@ object CookieManager : CookieJar {
         existing.add(cookie)
         cookieStore[BASE_HOST] = existing
         Log.d("ljh", "CookieManager.injectCookie: 成功注入 name=${cookie.name}, value=${cookie.value.take(30)}..., 共${existing.size}个cookie")
-        if (::sp.isInitialized) {
+        if (::sp.isInitialized) { //:: 是 Kotlin 的引用操作符，用来引用类、函数、属性。原理是反射
             sp.edit().putString(KEY, cookieStr).apply()
         }
     }

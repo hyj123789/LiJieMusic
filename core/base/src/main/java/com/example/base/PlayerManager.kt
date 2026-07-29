@@ -84,6 +84,7 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
     fun togglePlayPause() {
         mediaControllerHelper?.togglePlayPause()
     }
+
     //下一首
     fun next() {
         val currentList = _playlist.value
@@ -201,13 +202,13 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
     }
 
     override fun onMediaItemChanged(mediaItem: MediaItem) {
-        //TODO("Not yet implemented")
+
     }
 
 
 
     override fun onPlaybackEnded() {
-        PlayerManager.next()
+        next()
     }
 
     private fun startProgressTicker() {
@@ -292,10 +293,19 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
             PlayMode.SINGLE_LOOP -> PlayMode.SEQUENTIAL
         }
     }
+    fun updateCurrentSongDetail(song: SongDetail) {
+        _currentSong.value = song
+        // 顺便推给通知栏
+        mediaControllerHelper?.updateMetadata(
+            title = song.name,
+            artist = song.ar.firstOrNull()?.name ?: "",
+            coverUrl = song.al.picUrl
+        )
+    }
 }
 
 enum class PlayMode {
-    SEQUENTIAL, //顺序播放
+    SEQUENTIAL,
     SHUFFLE ,
     SINGLE_LOOP
 }
