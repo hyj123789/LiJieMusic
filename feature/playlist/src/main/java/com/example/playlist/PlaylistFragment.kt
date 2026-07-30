@@ -60,6 +60,7 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding>(FragmentPlaylistB
                 artistName: String
             ) {
                 PlayerManager.addSongToPlaylist(id,songName,artistName)
+                ToastUtil.popToast("已添加至列表，下一首播放",requireContext())
             }
             override fun onRemoveSong(pid: Long,ids: String) {
                 viewModel.removeSong(pid,ids)

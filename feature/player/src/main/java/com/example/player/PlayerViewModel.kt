@@ -2,12 +2,10 @@ package com.example.player
 
 import SongWikiData
 import android.annotation.SuppressLint
-import android.system.StructMsghdr
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.base.BaseViewModel
 import com.example.base.PlayerManager
-import com.example.model.UserManager
 import com.example.net.RetrofitClient
 import com.example.player.model.ArtistData
 import com.example.player.model.Lyric
@@ -27,6 +25,7 @@ import java.util.Locale
 
 
 class PlayerViewModel : BaseViewModel() {
+    val api = RetrofitClient.createApi(PlayerApi::class.java)
 
     //用户id监听
     private val _currentSongId = MutableStateFlow<Long?>(null)
@@ -109,7 +108,6 @@ class PlayerViewModel : BaseViewModel() {
     /** 检查歌曲是否可用 */
     fun checkMusicAvailable(id: String) {
         launchRequest {
-            val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.checkMusicIsAvailable(id)
             if (!result.success) {
                 throw Exception(result.message)
@@ -120,7 +118,6 @@ class PlayerViewModel : BaseViewModel() {
     /** 获取歌曲播放链接 */
     fun fetchMusicUrl(id: String, level: String = "standard") {
         launchRequest {
-            val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getMusicUrl(id, level)
             // 处理返回的歌曲链接
             if (result.code == 200 && result.data.isNotEmpty()) {
@@ -136,7 +133,6 @@ class PlayerViewModel : BaseViewModel() {
     /** 获取歌曲详情（封面、歌手名等） */
     fun fetchSongDetail(songId: String) {
         launchRequest {
-            val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getSongDetail(songId)
             if (result.code == 200 && result.songs.isNotEmpty()) {
                 val song = result.songs[0]
@@ -166,7 +162,6 @@ class PlayerViewModel : BaseViewModel() {
             // 切歌时先清空旧歌词，避免 UI 闪烁残留
             _lyricList.value = emptyList()
             try {
-                val api = RetrofitClient.createApi(PlayerApi::class.java)
                 val response = api.getlyric(songId)
                 Log.d("hyj","返回的歌词："+response.toString())
                 val lrc = response.lineLyric?.lyric ?: ""

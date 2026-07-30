@@ -36,6 +36,6 @@ object RetrofitClient{
 
     //开放给外面的可以通用的调用网络请求的方法
     fun <T> createApi(apiClass: Class<T>): T {
-        return retrofit.create(apiClass)
+        return retrofit.create(apiClass) //:: kotlin的引用操作符，底层反射
     }
 }

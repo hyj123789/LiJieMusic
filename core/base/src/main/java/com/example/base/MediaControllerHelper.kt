@@ -36,7 +36,7 @@ class MediaControllerHelper(
             ComponentName(context, "com.example.player.MusicService")
         )
 
-        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()//异步
         controllerFuture?.addListener({
             mediaController = controllerFuture?.get()
             setupPlayerListener()
@@ -108,19 +108,23 @@ class MediaControllerHelper(
      * @param url 播放链接
      */
     fun playSingleSong(songId: String, url: String) {
-        val mediaItem = MediaItem.Builder()
-            .setMediaId(songId)
-            .setUri(url)
-            .setMediaMetadata(
-                MediaMetadata.Builder()
+        mediaController?.let { controller ->
+            // 如果已存在 MediaItem，只更新 URI，保留已有元数据（通知栏数据）
+            if (controller.currentMediaItem != null) {
+                val newItem = controller.currentMediaItem?.buildUpon()
+                    ?.setMediaId(songId)
+                    ?.setUri(Uri.parse(url))
+                    ?.build() ?: return
+                controller.replaceMediaItem(controller.currentMediaItemIndex, newItem)
+            } else {
+                val mediaItem = MediaItem.Builder()
+                    .setMediaId(songId)
+                    .setUri(url)
                     .build()
-            )
-            .build()
-
-        mediaController?.let {
-            it.setMediaItem(mediaItem)
-            it.prepare()
-            it.play()
+                controller.setMediaItem(mediaItem)
+            }
+            controller.prepare()
+            controller.play()
         }
     }
 

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-object PlayerManager : MediaControllerHelper.MediaControllerListener{
+object PlayerManager : MediaControllerHelper.MediaControllerListener {
 
     //声明一个helper
     @SuppressLint("StaticFieldLeak")
@@ -79,7 +79,6 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
         _currentSong.value = newSong
     }
 
-
     //暂停
     fun togglePlayPause() {
         mediaControllerHelper?.togglePlayPause()
@@ -116,10 +115,12 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
                     randomIndex
                 }
             }
+
             PlayMode.SEQUENTIAL -> {
                 //顺序播放：使用取模运算%，实现列表循环
                 if (currentIndex == -1) 0 else (currentIndex + 1) % currentList.size
             }
+
             PlayMode.SINGLE_LOOP -> {
                 seekTo(0)
                 currentIndex
@@ -129,6 +130,7 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
         Log.d("hyj", "准备切换下一首，当前索引: $currentIndex，下一首索引: $nextIndex")
         _currentSong.value = currentList[nextIndex]
     }
+
     //前一首
     fun previous() {
         val currentList = _playlist.value
@@ -156,10 +158,12 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
                     randomIndex
                 }
             }
+
             PlayMode.SEQUENTIAL -> {
                 //顺序播放：如果是第一首就跳到最后一首
                 if (currentIndex <= 0) currentList.size - 1 else currentIndex - 1
             }
+
             PlayMode.SINGLE_LOOP -> {
                 seekTo(0)
                 currentIndex
@@ -169,10 +173,12 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
         //改变歌曲状态
         _currentSong.value = currentList[previousIndex]
     }
+
     //跳转某首
     fun seekTo(positionMs: Long) {
         mediaControllerHelper?.seekTo(positionMs)
     }
+
     //清空歌单
     fun clearPlaylist() {
         _playlist.value = emptyList()
@@ -206,7 +212,6 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
     }
 
 
-
     override fun onPlaybackEnded() {
         next()
     }
@@ -228,7 +233,7 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
         progressJob?.cancel()
     }
 
-   //移除某首歌
+    //移除某首歌
     fun removeSong(song: SongDetail) {
         //过滤掉被删掉的那首歌更新播放列表
         val newList = _playlist.value.filter { it.id != song.id }
@@ -255,46 +260,50 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
         )
 
         val currentList = _playlist.value.toMutableList()
-        if (currentList.none { it.id == newSong.id }) {
 
-            //添加在则会正在播放歌的后面
-            val currentPlayingSong = _currentSong.value
+        //添加在则会正在播放歌的后面
+        val currentPlayingSong = _currentSong.value
 
-            //找到当前播放歌曲在列表中的索引位置
-            val currentIndex = if (currentPlayingSong != null) {
-                currentList.indexOfFirst { it.id == currentPlayingSong.id }
-            } else {
-                -1
-            }
-
-            //决定插入的位置
-            if (currentIndex != -1) {
-                //如果找到了当前正在播放的歌，就把新歌插到它后面
-                currentList.add(currentIndex + 1, newSong)
-            } else {
-                //其他情况加最后就默认追加到列表末尾
-                currentList.add(newSong)
-            }
-            _playlist.value = currentList
+        //找到当前播放歌曲在列表中的索引位置
+        val currentIndex = if (currentPlayingSong != null) {
+            currentList.indexOfFirst { it.id == currentPlayingSong.id }
+        } else {
+            -1
         }
+        val idLong = id.toLong()
+        currentList.removeAll { it.id == idLong }
+        //决定插入的位置
+        if (currentIndex != -1) {
+            //如果已经添加过不允许重复添加
+            if (currentList[currentIndex + 1].id == id.toLong()) {
+                return
+            }
+            currentList.add(currentIndex + 1, newSong)
+        } else {
+            //其他情况加最后就默认追加到列表末尾
+            currentList.add(newSong)
+        }
+        _playlist.value = currentList
     }
 
     fun startPlayEngine(id: String, songUrl: String) {
         mediaControllerHelper?.playSingleSong(id, songUrl)
     }
+
     fun updatePlaylist(newList: List<SongDetail>) {
         _playlist.value = newList
     }
 
     fun togglePlayMode() {
-        _playMode.value = when(_playMode.value){
+        _playMode.value = when (_playMode.value) {
             PlayMode.SEQUENTIAL -> PlayMode.SHUFFLE
             PlayMode.SHUFFLE -> PlayMode.SINGLE_LOOP
             PlayMode.SINGLE_LOOP -> PlayMode.SEQUENTIAL
         }
     }
+
     fun updateCurrentSongDetail(song: SongDetail) {
-        _currentSong.value = song
+        if (_currentSong.value?.id != song.id) return
         // 顺便推给通知栏
         mediaControllerHelper?.updateMetadata(
             title = song.name,
@@ -306,6 +315,6 @@ object PlayerManager : MediaControllerHelper.MediaControllerListener{
 
 enum class PlayMode {
     SEQUENTIAL,
-    SHUFFLE ,
+    SHUFFLE,
     SINGLE_LOOP
 }
