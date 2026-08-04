@@ -1,7 +1,8 @@
-package com.example.video
+package com.example.video.resource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.video.MvApi
 import com.example.video.model.DataX
 
 class MyPagingSource(

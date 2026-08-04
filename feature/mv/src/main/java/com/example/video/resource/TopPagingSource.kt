@@ -1,11 +1,12 @@
-package com.example.video
+package com.example.video.resource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.video.MvApi
 import com.example.video.model.DataTop
 
 class TopPagingSource(private val api: MvApi,
-    private  val area  : String) : PagingSource<Int, DataTop>(){
+                      private  val area  : String) : PagingSource<Int, DataTop>(){
     override fun getRefreshKey(state: PagingState<Int, DataTop>): Int? {
         return state.anchorPosition?.let { anchorPosition->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)

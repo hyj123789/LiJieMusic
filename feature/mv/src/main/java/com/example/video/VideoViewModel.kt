@@ -13,9 +13,12 @@ import com.example.video.model.DataX
 import com.example.video.model.GetMvDetailRes
 import com.example.video.model.HotComment
 import com.example.video.model.VideoItemWrapper
+import com.example.video.resource.MyPagingSource
+import com.example.video.resource.TopPagingSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
@@ -39,7 +42,7 @@ class VideoViewModel : BaseViewModel() {
 
     val mvComment = _mvComment
     val allMvPagingFlow: Flow<PagingData<DataX>> =
-        kotlinx.coroutines.flow.combine(_allArea, _allType) { area, type ->
+        combine(_allArea, _allType) { area, type ->
             area to type
         }.flatMapLatest { (area, type) ->//核心概念：当上游数据发生变化时，取消之前正在执行的协程，转而执行新的协程。
             Pager(PagingConfig(pageSize = 30, initialLoadSize = 30)) {

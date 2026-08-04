@@ -205,6 +205,10 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
     override fun initObservers() {
         super.initObservers()
+        //TODO
+        viewLifecycleOwner.lifecycleScope.launch {
+
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {

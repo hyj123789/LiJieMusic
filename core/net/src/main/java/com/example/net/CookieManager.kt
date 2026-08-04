@@ -64,7 +64,7 @@ object CookieManager : CookieJar {
         existing.add(cookie)
         cookieStore[BASE_HOST] = existing
         Log.d("ljh", "CookieManager.injectCookie: 成功注入 name=${cookie.name}, value=${cookie.value.take(30)}..., 共${existing.size}个cookie")
-        if (::sp.isInitialized) { //:: 是 Kotlin 的引用操作符，用来引用类、函数、属性。原理是反射
+        if (::sp.isInitialized) {
             sp.edit().putString(KEY, cookieStr).apply()
         }
     }

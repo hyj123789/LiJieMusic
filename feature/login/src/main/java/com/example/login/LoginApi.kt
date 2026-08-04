@@ -18,9 +18,6 @@ interface LoginApi {
     suspend fun loginByPhone(@Query("phone")phone: String,
                      @Query("password")password: String = "xxx",
                      @Query("captcha") captcha: String) : LoginByPhoneRes
-    @GET("/login")
-    suspend fun loginByEmail(@Query("email") email: String,
-                     @Query("password")password: String)
     @GET("/login/qr/key")
     suspend fun getQrKey() : GetQrKeyRes
     @GET("/login/qr/create")

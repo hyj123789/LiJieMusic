@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.os.Build
+import android.util.Log
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
@@ -25,7 +26,6 @@ import androidx.media3.session.MediaSessionService
  *   用户主动停止或系统回收 → onDestroy()
  */
 class MusicService : MediaSessionService() {
-
 
     /**
      * MediaSession：把 ExoPlayer 的播放能力暴露给系统
@@ -174,7 +174,7 @@ class MusicService : MediaSessionService() {
             } catch (e: Exception) {
                 // Android 12+ 限制：后台启动的 Service 不允许调用 startForeground()
                 // 这里捕获异常避免崩溃，播放功能仍然可以正常进行
-                android.util.Log.w("MusicService", "startForeground 失败（后台限制），播放继续: ${e.message}")
+                Log.w("MusicService", "startForeground 失败（后台限制），播放继续: ${e.message}")
             }
         }
     }

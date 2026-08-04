@@ -67,7 +67,6 @@ class AllMvFragment : BaseFragment<FragmentAllMvBinding>(FragmentAllMvBinding::i
                     setButtonSelected(areaButtons, areaButton)
                     viewModel.updateAllArea(areaButton.text.toString())
                 }
-
             }
             for (typeButton in typeButtons) {
                 typeButton.setOnClickListener {
