@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.base.BaseFragment
 import com.example.base.PlayerManager
 import com.example.model.UserManager
@@ -205,11 +204,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
 
     override fun initObservers() {
         super.initObservers()
-        //TODO
         viewLifecycleOwner.lifecycleScope.launch {
-
-        }
-        lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     // 保存当前歌曲ID
@@ -228,7 +223,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                         if (!url.isNullOrEmpty()) {
                             Glide.with(this@PlayerFragment)
                                 .load(url)
-                               // .transform(RoundedCorners(30))
+                                // .transform(RoundedCorners(30))
                                 .into(binding.ivAlbumCover)
 
                             coverUrl = url
@@ -312,6 +307,7 @@ class PlayerFragment : BaseFragment<FragmentPlayerBinding>(FragmentPlayerBinding
                     }
                 }
             }
+
 
 //
 //        viewLifecycleOwner.lifecycleScope.launch {

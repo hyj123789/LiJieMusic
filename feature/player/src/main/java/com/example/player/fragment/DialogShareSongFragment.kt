@@ -72,7 +72,7 @@ class ShareSongBottomSheet( songId : Long) : BottomSheetDialogFragment() {
             val msg = etContent.text.toString().trim()
             if (msg.isEmpty()) return@setOnClickListener
 
-           viewModel.fetchShareSonger(id,msg)
+           viewModel.fetchShareSinger(id,msg)
         }
 
         //

@@ -219,9 +219,9 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
                             val id = data.artistRepVos?.get(0)?.artistId?:0L.toString()
                             Log.d("hyj","访问歌手的id为$id")
 
-                            viewModel.fetchSongerDetail(id.toString())
-                            viewModel.fetchSimilarSongerDetail(id.toString())
-                            viewModel.fetchMoreSongerDetail(id.toString())
+                            viewModel.fetchSingerDetail(id.toString())
+                            viewModel.fetchSimilarSingerDetail(id.toString())
+                            viewModel.fetchMoreSingerDetail(id.toString())
 
                             binding.language.text = data.language
                             binding.publishtime.text = ""+viewModel.formatTimestampToDate(data.publishTime ?:0)
@@ -245,7 +245,7 @@ class WikiFragment : BaseFragment<FragmentWikiBinding>(FragmentWikiBinding::infl
                             val composeList = data.composeArtists
                             if (!composeList.isNullOrEmpty()) {
                                 for (i in composeList.indices) {
-                                    val name = composeList[i].artistName ?: "未知"
+                                    val name = composeList[i].artistName
                                     composeNames += name
                                     if (i < composeList.size - 1) {
                                         composeNames += "/"

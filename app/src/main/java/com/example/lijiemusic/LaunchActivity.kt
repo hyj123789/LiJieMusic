@@ -2,6 +2,7 @@ package com.example.lijiemusic
 
 import android.util.Log
 import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.base.BaseActivity
@@ -20,11 +21,11 @@ import kotlinx.coroutines.launch
 class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding::inflate) {
     private val api = RetrofitClient.createApi(LoginApi::class.java)
 
+
     override fun initView() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-
         lifecycleScope.launch {
             delay(5000)
             binding.ivSplashCover.visibility = View.GONE

@@ -254,7 +254,7 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     //取出歌手详情
-    fun fetchSongerDetail(songId: String) {
+    fun fetchSingerDetail(songId: String) {
         launchRequest {
             val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getSongerDetail(songId.toLong())
@@ -276,7 +276,7 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     //取出相似的歌手
-    fun fetchSimilarSongerDetail(songId: String) {
+    fun fetchSimilarSingerDetail(songId: String) {
         launchRequest {
             val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getSimilarSongerDetail(songId.toLong())
@@ -290,7 +290,7 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     //取出歌手歌曲
-    fun fetchMoreSongerDetail(songId: String) {
+    fun fetchMoreSingerDetail(songId: String) {
         launchRequest {
             val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getMoreSongs(songId.toLong())
@@ -304,7 +304,7 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     //发送分想歌曲
-    fun fetchShareSonger(songId: Long,msg : String) {
+    fun fetchShareSinger(songId: Long,msg : String) {
         launchRequest {
             val api = RetrofitClient.createApi(PlayerApi::class.java)
             val result = api.getshareSong(songId,msg)
