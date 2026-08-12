@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -24,6 +25,9 @@ android {
     viewBinding{
         enable = true
     }
+    buildFeatures{
+        compose=true
+    }
 
 }
 
@@ -47,4 +51,8 @@ dependencies {
     implementation(libs.media3.session)
     implementation(libs.media3.ui)
     implementation(libs.gson)
+
+    // Compose（BaseComposeFragment 需要）
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
 }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.compose)
 }
 apply(plugin = "therouter")
 
@@ -13,6 +14,7 @@ android {
     }
     buildFeatures{
         viewBinding=true
+        compose=true
     }
 
     defaultConfig {
@@ -59,6 +61,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons.extended)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
     implementation (libs.glide)
     implementation(libs.okhttp)
     implementation(project(":core:base"))
