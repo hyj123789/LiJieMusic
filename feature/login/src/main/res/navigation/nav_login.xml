@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.login.fragment.LoginFragment"
+        android:name="com.example.login.ui.fragment.LoginFragment"
         android:label="LoginFragment" >
         <action
             android:id="@+id/action_loginFragment_to_mailFragment"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/mailFragment"
-        android:name="com.example.login.fragment.MailFragment"
+        android:name="com.example.login.ui.fragment.MailFragment"
         android:label="MailFragment" >
         <action
             android:id="@+id/action_mailFragment_to_loginFragment"
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/scanFragment"
-        android:name="com.example.login.fragment.ScanFragment"
+        android:name="com.example.login.ui.fragment.ScanFragment"
         android:label="ScanFragment" >
         <action
             android:id="@+id/action_scanFragment_to_loginFragment"

@@ -2,12 +2,11 @@ package com.example.lijiemusic
 
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.base.BaseActivity
 import com.example.lijiemusic.databinding.ActivityLaunchBinding
-import com.example.login.LoginApi
+import com.example.login.network.LoginApi
 import com.example.model.UserManager
 import com.example.net.CookieManager
 import com.example.net.RetrofitClient

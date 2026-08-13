@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -20,7 +21,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures{
-        viewBinding=true
+        viewBinding = true
+        compose = true
     }
 }
 
@@ -49,4 +51,13 @@ dependencies {
     implementation(libs.therouter.router)       // 运行时
     ksp(libs.therouter.apt)                     // 注解处理器
     implementation(libs.gson)
+
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.activity.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.coil.compose)
 }

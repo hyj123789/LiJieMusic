@@ -1,0 +1,159 @@
+package com.example.login.ui.viewmodel
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.login.network.LoginApi
+import com.example.login.network.bean.GetQrKeyRes
+import com.example.model.UserManager
+import com.example.net.CookieManager
+import com.example.net.RetrofitClient
+import com.example.therouter.RoutePath
+import com.therouter.TheRouter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+
+class LoginViewModel : ViewModel() {
+    private val _loginSuccess = MutableStateFlow(false)
+    private val _toastMsg = MutableStateFlow<String?>(null)
+    private val _qrBitmap = MutableStateFlow<Bitmap?>(null)
+    private val _codeStatus = MutableStateFlow<String?>(null)
+    private val api = RetrofitClient.createApi(LoginApi::class.java)
+    val loginSuccess: StateFlow<Boolean> = _loginSuccess
+    val toastMsg: StateFlow<String?> = _toastMsg
+    val qrBitmap : StateFlow<Bitmap?> =  _qrBitmap
+    val codeStatus: StateFlow<String?> = _codeStatus
+
+    fun loginByPhone(phone: String,captcha: String){
+        viewModelScope.launch {
+            try{
+                val loginByPhone = api.loginByPhone(phone, "xxx", captcha)
+                if (loginByPhone.code == 200) {
+                    _toastMsg.value = "验证成功，正在登录"
+                    val cookie = loginByPhone.cookie
+                    Log.d("ljh", "手机登录原始cookie: $cookie")
+                    val musicU = extractMusicU(cookie)
+                    Log.d("ljh", "提取后的MUSIC_U: ${musicU ?: "null，提取失败"}")
+                    if(musicU != null) {
+                        CookieManager.injectCookie(musicU)
+                    } else {
+                        // fallback: 直接注入原始 cookie 字符串
+                        Log.d("ljh", "MUSIC_U提取失败，尝试注入原始cookie")
+                        CookieManager.injectCookie(cookie)
+                    }
+                    Log.d("ljh", "MUSIC_U已注入CookieManager")
+                    _loginSuccess.value = true
+                    UserManager.profile.value=loginByPhone.profile
+                } else {
+                    _toastMsg.value = loginByPhone.msg
+                }
+            } catch (e: Exception){
+                Log.e("ljh","手机验证出错"+e.message)
+            }
+        }
+    }
+    fun sendCaptcha(phone: String){
+        viewModelScope.launch {
+            try {
+                api.sentCaptcha(phone)
+            } catch (e: Exception) {
+                Log.e("ljh","获取验证码失败"+e.message)
+            }
+        }
+    }
+
+    fun loginByGuest() {
+        viewModelScope.launch {
+            _toastMsg.value="游客登录中~耗时较长~~耐心等待~~~"
+            try {
+                val response = api.guestLogin()
+                val cookie = response.cookie
+                val musicU = extractMusicU(cookie)
+                Log.d("ljh", "游客登录提取MUSIC_U: ${musicU ?: "null"}")
+                if (musicU != null) {
+                    CookieManager.injectCookie(musicU)
+                } else {
+                    // fallback: 直接注入原始cookie
+                    CookieManager.injectCookie(cookie)
+                }
+            } catch (e: Exception) {
+                Log.e("ljh","游客登录失败"+e.message)
+                return@launch
+            }
+            TheRouter.build(RoutePath.MAIN_ACTIVITY).navigation()
+        }
+    }
+
+    fun loginByScanInPhone() {
+        _toastMsg.value="跳转二维码登录中~~~"
+    }
+    fun loginByMail(){
+        _toastMsg.value="邮箱登录暂未开放哇~~~"
+    }
+
+    fun getQrCode() {
+        viewModelScope.launch {
+            var qrKey: GetQrKeyRes? =null
+            try{
+                qrKey = api.getQrKey()
+                if (qrKey.code != 200) {
+                    _toastMsg.value = "获取二维码失败，检查网络问题"
+                    return@launch
+                }
+                Log.d("ljh","key:"+qrKey)
+                val createQr = api.createQr(qrKey.data.unikey)
+                if (createQr.code != 200) {
+                    _toastMsg.value = "获取二维码失败，检查网络问题"
+                    return@launch
+                }
+                val base64Data: String = createQr.data.qrimg
+                val pureBase64 = base64Data.substringAfter(",")
+                val imageBytes = Base64.decode(pureBase64, Base64.DEFAULT)
+                val bitmap =
+                    BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                _qrBitmap.value = bitmap
+            } catch (e: Exception){
+                Log.e("ljh","获取二维码失败"+e.message)
+            }
+
+            try{
+                while (true) {
+                    val checkQrStatus = api.checkQrStatus(qrKey!!.data.unikey)
+                    _codeStatus.value = checkQrStatus.message
+                    Log.d("ljh", "刷新二维码状态")
+                    if(checkQrStatus.code == 803) {
+                        val cookie = checkQrStatus.cookie
+                        val musicU = extractMusicU(cookie)
+                        Log.d("ljh", "提取后的MUSIC_U: ${musicU ?: "null，提取失败"}")
+                        if(musicU != null) {
+                            CookieManager.injectCookie(musicU)
+                        } else {
+                            Log.d("ljh", "MUSIC_U提取失败，尝试注入原始cookie")
+                            CookieManager.injectCookie(cookie)
+                        }
+                        Log.d("ljh", "MUSIC_U已注入CookieManager")
+                        _loginSuccess.value = true
+                        val loginStatus = api.getLoginStatus()
+                        UserManager.profile.value=loginStatus.data.profile
+                        UserManager.account.value=loginStatus.data.account
+                        break
+                    }
+                    delay(1000)
+                }
+            }catch (e: Exception){
+                Log.e("ljh","检查二维码状态出现问题"+e.message)
+            }
+        }
+    }
+    fun extractMusicU(cookieString: String): String? {
+        // 匹配 MUSIC_U 及其所有 cookie 属性（path, max-age, domain 等），
+        // 遇到下一个大写开头的 cookie 名或字符串结束就停
+        val regex = Regex("MUSIC_U=[^;]+(; [a-z-]+(=[^;]*)?)*")
+        return regex.find(cookieString)?.value
+    }
+}

@@ -31,6 +31,7 @@ glide = "4.16.0"
 media3CommonKtx = "1.10.1"
 legacySupportV4 = "1.0.0"
 composeBom = "2024.12.01"
+coil = "2.7.0"
 
 [libraries]
 # AndroidX Core
@@ -107,6 +108,8 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-material = { group = "androidx.compose.material", name = "material" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityKtx" }
+# Coil（Compose 专用图片加载库，替代 Glide）
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,4 +1,4 @@
-package com.example.login.ui.theme
+package com.example.dynamics.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

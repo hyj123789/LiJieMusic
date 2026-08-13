@@ -1,14 +1,7 @@
 [
   {
-    "path": "/playlist/main",
-    "className": "com.example.playlist.PlaylistFragment",
-    "action": "",
-    "description": "",
-    "params": {}
-  },
-  {
     "path": "/player/main",
-    "className": "com.example.player.PlayerFragment",
+    "className": "com.example.player.fragment.PlayerFragment",
     "action": "",
     "description": "",
     "params": {}
@@ -29,14 +22,7 @@
   },
   {
     "path": "/dynamics/main",
-    "className": "com.example.dynamics.DynamicsActivity",
-    "action": "",
-    "description": "",
-    "params": {}
-  },
-  {
-    "path": "/comment/main",
-    "className": "com.example.comment.CommentFragment",
+    "className": "com.example.dynamics.ui.activity.DynamicsActivity",
     "action": "",
     "description": "",
     "params": {}

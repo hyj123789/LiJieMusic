@@ -3,7 +3,7 @@
 
     <application>
         <activity
-            android:name=".DynamicsActivity"
+            android:name="com.example.dynamics.ui.activity.DynamicsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>
