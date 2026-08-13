@@ -1,4 +1,4 @@
-package com.example.profile.model.playlist
+package com.example.profile.network.bean
 
 data class Creator(
     val accountStatus: Int,

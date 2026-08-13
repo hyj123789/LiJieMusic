@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 class LaunchActivity : BaseActivity<ActivityLaunchBinding>(ActivityLaunchBinding::inflate) {
     private val api = RetrofitClient.createApi(LoginApi::class.java)
 
-
     override fun initView() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment

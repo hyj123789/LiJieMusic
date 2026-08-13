@@ -1,7 +1,6 @@
-package com.example.profile
+package com.example.profile.network.api
 
-import com.example.profile.model.playlist.GetPlaylistRes
-import com.example.profile.model.playlist.GetRecentSongRes
+import com.example.profile.network.bean.GetPlaylistRes
 import retrofit2.http.GET
 import retrofit2.http.Query
 

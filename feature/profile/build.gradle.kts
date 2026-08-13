@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -22,6 +23,7 @@ android {
     }
     buildFeatures{
         viewBinding=true
+        compose=true
     }
 }
 
@@ -46,4 +48,12 @@ dependencies {
     implementation(project(":core:model"))
     implementation(libs.therouter.router)       // 运行时
     ksp(libs.therouter.apt)                     // 注解处理器
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.coil.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -1,11 +1,12 @@
-package com.example.profile
+package com.example.profile.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.UserManager
 import com.example.net.RetrofitClient
-import com.example.profile.model.playlist.Playlist
+import com.example.profile.network.api.ProfileApi
+import com.example.profile.network.bean.Playlist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +19,6 @@ class ProfileViewModel : ViewModel(){
         viewModelScope.launch {
             try {
                 val playList = api.getPlayList(UserManager.profile.value?.userId.toString())
-                Log.d("ljh","这边是viewModel，已经加载歌单数据"+playList.toString())
                 _listData.value = playList.playlist
             } catch (e: Exception) {
                 Log.e("ljh","获取歌单时捕捉到异常"+e.message)

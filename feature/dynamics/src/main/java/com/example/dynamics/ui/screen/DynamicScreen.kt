@@ -93,13 +93,17 @@ fun DynamicScreen(
                 .background(MaterialTheme.colors.background)
         ) {
             ProfileHeader(profile)
-            LazyColumn(modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)) {
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
+            ) {
                 items(items = rvList ?: emptyList(), key = { it.id }) { event ->
                     DynamicsItem(event)
                 }
             }
+
         }
     }
 }
@@ -201,7 +205,12 @@ fun ProfileHeader(profile: Profile?) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                StatItem(value = profile?.follows ?: 0, label = "关注", textPrimary = textPrimary, textTertiary = textTertiary)
+                StatItem(
+                    value = profile?.follows ?: 0,
+                    label = "关注",
+                    textPrimary = textPrimary,
+                    textTertiary = textTertiary
+                )
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 28.dp)
@@ -209,7 +218,12 @@ fun ProfileHeader(profile: Profile?) {
                         .height(28.dp)
                         .background(dividerColor)
                 )
-                StatItem(value = profile?.followeds ?: 0, label = "粉丝", textPrimary = textPrimary, textTertiary = textTertiary)
+                StatItem(
+                    value = profile?.followeds ?: 0,
+                    label = "粉丝",
+                    textPrimary = textPrimary,
+                    textTertiary = textTertiary
+                )
             }
         }
     }

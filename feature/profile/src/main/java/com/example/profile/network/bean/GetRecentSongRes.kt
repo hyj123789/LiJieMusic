@@ -1,3 +1,3 @@
-package com.example.profile.model.playlist
+package com.example.profile.network.bean
 
 data class GetRecentSongRes(val code: Int)

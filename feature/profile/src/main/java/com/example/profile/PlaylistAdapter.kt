@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.model.UserManager
 import com.example.profile.databinding.ItemProfilePlaylistBinding
-import com.example.profile.model.playlist.Playlist
+import com.example.profile.network.bean.Playlist
 
 class PlaylistAdapter(private val onItemClick: (String) -> Unit) :
     ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(PlaylistDiffCallback()) {

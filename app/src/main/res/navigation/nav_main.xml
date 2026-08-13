@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/fragment_profile"
-        android:name="com.example.profile.ProfileFragment"
+        android:name="com.example.profile.ui.fragment.ProfileFragment"
         android:label="我的"
         tools:layout="@layout/fragment_profile" >
         <action
